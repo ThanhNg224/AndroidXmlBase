@@ -7,6 +7,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.fold
 import com.example.androidxmlbase.core.storage.DataStoreSettingsStore
 import com.example.androidxmlbase.core.storage.appSettingsDataStore
 import com.example.androidxmlbase.databinding.ActivityDemoBinding
@@ -22,7 +24,8 @@ class DemoActivity : AppCompatActivity() {
 
     private val viewModel: DemoViewModel by lazy {
         val settingsStore = DataStoreSettingsStore(applicationContext.appSettingsDataStore)
-        ViewModelProvider(this, DemoViewModelFactory(settingsStore)).get(DemoViewModel::class.java)
+        val factory = DemoViewModelFactory(applicationContext, settingsStore)
+        ViewModelProvider(this, factory).get(DemoViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,10 +46,17 @@ class DemoActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
                     binding.tvCount.text = state.count.toString()
+                    binding.tvMessage.text = state.message.toDisplayText()
                 }
             }
         }
     }
+
+    private fun ResultState<String>.toDisplayText(): String = fold(
+        onLoading = { "Loading…" },
+        onSuccess = { message -> message },
+        onError = { message, _ -> message },
+    )
 
     private fun observeEffects() {
         lifecycleScope.launch {

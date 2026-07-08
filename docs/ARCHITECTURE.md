@@ -212,7 +212,7 @@ Improve architecture incrementally by making small, safe refactors that preserve
 - [ ] Is the architecture scalable and maintainable for future growth?  
 - [ ] Are tests easily written for UseCases, repositories, and ViewModels?
 
-## Current Package Layout (Phase 0-2)
+## Current Package Layout (Phase 0-3)
 
 Everything above this section describes the target architecture. The folders below are what actually exists in the codebase today; check here (or the source tree) before assuming a core module already exists.
 
@@ -233,16 +233,31 @@ app/src/main/java/com/example/androidxmlbase/
       DataStoreSettingsStore.kt              # DataStore<Preferences>-backed implementation
       AppDataStore.kt                        # Context.appSettingsDataStore delegate
       AppSettingsKeys.kt                     # the 5 base app-wide keys
+    network/
+      ApiResult.kt                           # Success/HttpError/NetworkError/ParseError/EmptyBody
+      ApiConfig.kt
+      AuthTokenProvider.kt                   # + NoOpAuthTokenProvider
+      ConnectivityChecker.kt                 # + AndroidConnectivityChecker
+      ApiClient.kt
+      RetrofitApiClient.kt                   # classifies Retrofit calls into ApiResult
+      NetworkModule.kt                       # hand-wired Retrofit/OkHttp composition root
+      interceptor/
+        AuthTokenInterceptor.kt
+        ConnectivityInterceptor.kt
   feature/
     demo/
       domain/
         repository/DemoRepository.kt
-        usecase/IncrementCounterUseCase.kt, ObserveDemoCountUseCase.kt, SaveDemoCountUseCase.kt
+        usecase/IncrementCounterUseCase.kt, ObserveDemoCountUseCase.kt, SaveDemoCountUseCase.kt,
+          FetchDemoMessageUseCase.kt
       data/
-        repository/DemoRepositoryImpl.kt     # SettingsStore-backed, owns its own feature-specific key
+        repository/DemoRepositoryImpl.kt     # SettingsStore- and remote-data-source-backed
+        dto/DemoMessageDto.kt
+        datasource/DemoApiService.kt, DemoRemoteDataSource.kt (+ DemoRemoteDataSourceImpl)
+        mapper/DemoMessageMapper.kt          # ApiResult<DemoMessageDto> -> ResultState<String>
       presentation/
         state/DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt
         viewmodel/DemoViewModel.kt, DemoViewModelFactory.kt
         ui/DemoActivity.kt
 
-`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. `core/storage`'s 5 base keys (`AppSettingsKeys`) are not yet consumed by any screen — they're reserved for Phase 4 (language/theme) and a future logging core.
+`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) are not yet consumed by any screen — they're reserved for Phase 4 (language/theme) and a future logging core.

@@ -1,7 +1,9 @@
 package com.example.androidxmlbase.feature.demo.presentation.viewmodel
 
 import app.cash.turbine.test
+import com.example.androidxmlbase.core.architecture.ResultState
 import com.example.androidxmlbase.feature.demo.domain.repository.DemoRepository
+import com.example.androidxmlbase.feature.demo.domain.usecase.FetchDemoMessageUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.IncrementCounterUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.ObserveDemoCountUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.SaveDemoCountUseCase
@@ -23,7 +25,10 @@ class DemoViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private class FakeDemoRepository(initialCount: Int = 0) : DemoRepository {
+    private class FakeDemoRepository(
+        initialCount: Int = 0,
+        private val messageResult: ResultState<String> = ResultState.Success("fake message"),
+    ) : DemoRepository {
         private val countFlow = MutableStateFlow(initialCount)
         val savedCounts = mutableListOf<Int>()
 
@@ -32,6 +37,35 @@ class DemoViewModelTest {
         override suspend fun saveCount(count: Int) {
             savedCounts.add(count)
             countFlow.value = count
+        }
+
+        override suspend fun fetchMessage(): ResultState<String> = messageResult
+    }
+
+    /**
+     * Unlike [FakeDemoRepository], [fetchMessage] here genuinely suspends until
+     * [releaseMessageFetch] is called, mimicking a real network call that hasn't resolved yet.
+     */
+    private class DeferredMessageFakeDemoRepository(
+        initialCount: Int = 0,
+        private val messageResult: ResultState<String>,
+    ) : DemoRepository {
+        private val messageGate = CompletableDeferred<Unit>()
+        private val countFlow = MutableStateFlow(initialCount)
+
+        fun releaseMessageFetch() {
+            messageGate.complete(Unit)
+        }
+
+        override fun observeCount(): Flow<Int> = countFlow
+
+        override suspend fun saveCount(count: Int) {
+            countFlow.value = count
+        }
+
+        override suspend fun fetchMessage(): ResultState<String> {
+            messageGate.await()
+            return messageResult
         }
     }
 
@@ -58,6 +92,8 @@ class DemoViewModelTest {
             savedCounts.add(count)
             countFlow.value = count
         }
+
+        override suspend fun fetchMessage(): ResultState<String> = ResultState.Success("fake message")
     }
 
     private fun createViewModel(repository: DemoRepository): DemoViewModel {
@@ -65,6 +101,7 @@ class DemoViewModelTest {
             incrementCounter = IncrementCounterUseCase(),
             observeDemoCount = ObserveDemoCountUseCase(repository),
             saveDemoCount = SaveDemoCountUseCase(repository),
+            fetchDemoMessage = FetchDemoMessageUseCase(repository),
         )
     }
 
@@ -149,5 +186,32 @@ class DemoViewModelTest {
         }
 
         assertEquals(listOf(6), repository.savedCounts)
+    }
+
+    @Test
+    fun `message state starts Loading then becomes the fetch result once it resolves`() = runTest {
+        val repository = DeferredMessageFakeDemoRepository(messageResult = ResultState.Success("hello"))
+        val viewModel = createViewModel(repository)
+
+        viewModel.state.test {
+            assertEquals(ResultState.Loading, awaitItem().message)
+
+            repository.releaseMessageFetch()
+            assertEquals(ResultState.Success("hello"), awaitItem().message)
+        }
+    }
+
+    @Test
+    fun `message state reflects a failed fetch`() = runTest {
+        val error = ResultState.Error("No connection")
+        val repository = DeferredMessageFakeDemoRepository(messageResult = error)
+        val viewModel = createViewModel(repository)
+
+        viewModel.state.test {
+            assertEquals(ResultState.Loading, awaitItem().message)
+
+            repository.releaseMessageFetch()
+            assertEquals(error, awaitItem().message)
+        }
     }
 }

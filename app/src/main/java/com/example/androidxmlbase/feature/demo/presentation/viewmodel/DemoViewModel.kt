@@ -2,6 +2,7 @@ package com.example.androidxmlbase.feature.demo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.androidxmlbase.core.architecture.StateViewModel
+import com.example.androidxmlbase.feature.demo.domain.usecase.FetchDemoMessageUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.IncrementCounterUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.ObserveDemoCountUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.SaveDemoCountUseCase
@@ -16,6 +17,7 @@ class DemoViewModel(
     private val incrementCounter: IncrementCounterUseCase,
     private val observeDemoCount: ObserveDemoCountUseCase,
     private val saveDemoCount: SaveDemoCountUseCase,
+    private val fetchDemoMessage: FetchDemoMessageUseCase,
 ) : StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>(DemoUiState()) {
 
     // Real DataStore's first read genuinely suspends, so currentState.count can still be the
@@ -29,6 +31,10 @@ class DemoViewModel(
             setState { copy(count = initialCount) }
             isInitialCountLoaded = true
             observeDemoCount().drop(1).collect { count -> setState { copy(count = count) } }
+        }
+        viewModelScope.launch {
+            val result = fetchDemoMessage(Unit)
+            setState { copy(message = result) }
         }
     }
 
