@@ -23,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".feature.demo.presentation.ui.DemoActivity"
+            android:exported="false"
+            android:label="@string/demo_title"
+            android:theme="@style/Theme.AndroidXmlBase" />
     </application>
 
 </manifest>

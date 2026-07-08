@@ -1,0 +1,60 @@
+package com.example.androidxmlbase.feature.demo.presentation.ui
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.androidxmlbase.databinding.ActivityDemoBinding
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
+import com.example.androidxmlbase.feature.demo.presentation.viewmodel.DemoViewModel
+import com.example.androidxmlbase.feature.demo.presentation.viewmodel.DemoViewModelFactory
+import kotlinx.coroutines.launch
+
+class DemoActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityDemoBinding
+
+    private val viewModel: DemoViewModel by lazy {
+        ViewModelProvider(this, DemoViewModelFactory()).get(DemoViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityDemoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.btnIncrement.setOnClickListener {
+            viewModel.onEvent(DemoUiEvent.IncrementClicked)
+        }
+
+        observeState()
+        observeEffects()
+    }
+
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    binding.tvCount.text = state.count.toString()
+                }
+            }
+        }
+    }
+
+    private fun observeEffects() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        is DemoUiEffect.ShowToast ->
+                            Toast.makeText(this@DemoActivity, effect.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+}
