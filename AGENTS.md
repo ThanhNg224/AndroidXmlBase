@@ -6,6 +6,21 @@ This file defines how AI assistants should contribute to any Android project. Co
 
 ---
 
+## Engineering Documents
+
+This repository is governed by multiple engineering documents. Every implementation must follow all relevant documents instead of relying on a single source.
+
+| Document | Responsibility |
+|----------|----------------|
+| AGENTS.md | AI workflow, engineering mindset, implementation strategy, decision making and review process. |
+| ARCHITECTURE.md | Clean Architecture, MVVM responsibilities, dependency rules, feature boundaries, module organization, repository patterns and data flow. |
+| STANDARD.md | Kotlin coding conventions, Android best practices, naming, formatting, implementation standards and code quality. |
+| GIT_FLOW.md | Branching strategy, commit conventions, pull request workflow and collaboration guidelines. |
+
+Treat these documents as the project's engineering source of truth.
+
+---
+
 ## Core Engineering Principles
 
 - Understand before implementing.
@@ -21,17 +36,59 @@ This file defines how AI assistants should contribute to any Android project. Co
 
 ## AI Workflow
 
-- Understand requirements thoroughly.
-- Explore the existing codebase.
-- Find similar implementations.
-- Follow existing patterns.
-- Implement the smallest complete solution.
-- Review the result carefully.
-- Explain important decisions clearly.
+For every request:
 
-AI must never immediately start coding without completing these steps.
+1. Understand the user's intent.
+2. Identify which engineering documents are relevant.
+3. Read the relevant documents before making architectural or implementation decisions.
+4. Explore the existing implementation.
+5. Search for similar implementations.
+6. Reuse existing patterns whenever possible.
+7. Implement the smallest complete solution.
+8. Perform a self-review before responding.
+
+Never start implementing immediately after reading a request. Understanding the project always comes before writing code.
 
 ---
+
+## Selecting the Right Guideline
+
+Need implementation strategy or AI behavior?  
+→ AGENTS.md
+
+Need architectural decisions?  
+→ ARCHITECTURE.md
+
+Need coding conventions or Kotlin guidelines?  
+→ STANDARD.md
+
+Need branching, commits or pull request workflow?  
+→ GIT_FLOW.md
+
+When multiple documents apply, consult every relevant document before implementing.
+
+---
+
+## Implementation Decision Tree
+
+Before creating any new implementation, evaluate the following in order:
+
+1. Does an implementation already exist?
+   → Reuse it.
+2. Does a similar implementation exist?
+   → Extend or adapt it.
+3. Is the solution reusable across multiple features?
+   → Move it to Shared/Core.
+4. Is it only needed by one feature?
+   → Keep it inside that feature.
+5. Does it introduce a new architectural decision?
+   → Verify against ARCHITECTURE.md.
+6. Does it follow the project's coding standards?
+   → Verify against STANDARD.md.
+7. Will it affect collaboration or Git history?
+   → Verify against GIT_FLOW.md.
+
+Only create a completely new implementation after the previous options have been evaluated.
 
 ## Decision Priority
 
@@ -154,36 +211,31 @@ Project-specific architecture details belong in ARCHITECTURE.md.
 
 ## Repository Exploration
 
-Before implementing any feature or bug fix, inspect the repository.
+Before implementing, inspect the repository in this order:
 
-Recommended search order:
+1. Similar feature.
+2. Shared/Core module.
+3. Existing architecture pattern.
+4. Existing utilities or extensions.
 
-1. Existing feature with similar behavior.
-2. Shared UI components.
-3. Shared domain logic.
-4. Existing utilities and extensions.
-5. Existing architecture patterns.
-
-Do not assume a component does not exist until it has been searched.
+Never assume something does not exist until you have searched for it.
 
 ---
 
 ## Pattern Matching
 
-Every new implementation should resemble the existing codebase.
+New code should match the existing project.
 
-Prefer matching:
-
-- Project structure
-- Naming convention
-- Dependency injection pattern
+Reuse existing:
+- Structure
+- Naming
+- Dependency Injection
+- State management
+- Navigation
 - Error handling
-- UI state management
-- Navigation style
 - Repository pattern
-- Testing approach
 
-Consistency is more valuable than introducing a different "better" solution.
+Consistency is preferred over introducing a different style.
 
 ---
 
@@ -260,15 +312,27 @@ Readable code is preferred over clever code.
 
 When responding:
 
-- Explain significant architectural decisions.
-- Mention trade-offs when multiple solutions exist.
-- State assumptions explicitly.
-- Suggest reuse before proposing new implementations.
-- Recommend refactoring only when it provides clear value.
+- Explain significant architectural decisions only when relevant.
+- Mention trade-offs when multiple valid solutions exist.
+- Recommend reuse before creating new implementations.
 - Keep explanations concise and actionable.
 
 ---
 
+---
+
+## Cross-Reference Requirement
+
+AI must never make architectural or implementation decisions using only one engineering document.
+
+Before implementing any change:
+
+- Cross-reference AGENTS.md for workflow and decision making.
+- Cross-reference ARCHITECTURE.md for architecture and dependency rules.
+- Cross-reference STANDARD.md for coding conventions and implementation details.
+- Cross-reference GIT_FLOW.md for collaboration workflow.
+
+If an implementation conflicts with another engineering document, stop and resolve the conflict instead of guessing.
 
 ## Guiding Principle
 
@@ -381,3 +445,24 @@ Good engineering is measured by how easily future developers can understand and 
 Every decision should reduce future maintenance cost, preserve architectural consistency, and improve long-term sustainability.
 
 If multiple solutions are technically correct, choose the one that best fits the existing project rather than the most sophisticated implementation.
+
+---
+
+## Rule Priority
+
+When multiple rules apply, follow this priority:
+
+1. Explicit user requirements.
+2. AGENTS.md
+3. ARCHITECTURE.md
+4. STANDARD.md
+5. GIT_FLOW.md
+6. Existing project conventions.
+
+If rules conflict and the correct decision cannot be determined, ask for clarification instead of making assumptions.
+
+---
+
+## Guiding Rule
+
+If a solution is technically correct but inconsistent with the existing project, prefer consistency unless the user explicitly requests otherwise.
