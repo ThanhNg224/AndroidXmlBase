@@ -7,6 +7,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.androidxmlbase.core.storage.DataStoreSettingsStore
+import com.example.androidxmlbase.core.storage.appSettingsDataStore
 import com.example.androidxmlbase.databinding.ActivityDemoBinding
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
@@ -19,7 +21,8 @@ class DemoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDemoBinding
 
     private val viewModel: DemoViewModel by lazy {
-        ViewModelProvider(this, DemoViewModelFactory()).get(DemoViewModel::class.java)
+        val settingsStore = DataStoreSettingsStore(applicationContext.appSettingsDataStore)
+        ViewModelProvider(this, DemoViewModelFactory(settingsStore)).get(DemoViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

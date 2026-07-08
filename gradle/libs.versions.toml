@@ -11,6 +11,7 @@ material = "1.14.0"
 constraintlayout = "2.2.1"
 kotlinxCoroutines = "1.10.2"
 turbine = "1.2.0"
+datastorePreferences = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,6 +27,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
