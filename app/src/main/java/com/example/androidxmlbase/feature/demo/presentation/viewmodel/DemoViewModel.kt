@@ -8,6 +8,8 @@ import com.example.androidxmlbase.feature.demo.domain.usecase.SaveDemoCountUseCa
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiState
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class DemoViewModel(
@@ -16,9 +18,17 @@ class DemoViewModel(
     private val saveDemoCount: SaveDemoCountUseCase,
 ) : StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>(DemoUiState()) {
 
+    // Real DataStore's first read genuinely suspends, so currentState.count can still be the
+    // constructor default while that read is in flight. Gate increments on it to avoid
+    // computing from the stale default and clobbering the real persisted value.
+    private var isInitialCountLoaded = false
+
     init {
         viewModelScope.launch {
-            observeDemoCount().collect { count -> setState { copy(count = count) } }
+            val initialCount = observeDemoCount().first()
+            setState { copy(count = initialCount) }
+            isInitialCountLoaded = true
+            observeDemoCount().drop(1).collect { count -> setState { copy(count = count) } }
         }
     }
 
@@ -29,6 +39,7 @@ class DemoViewModel(
     }
 
     private fun onIncrementClicked() {
+        if (!isInitialCountLoaded) return
         val result = incrementCounter(currentState.count)
         setState { copy(count = result.count) }
         viewModelScope.launch { saveDemoCount(result.count) }
