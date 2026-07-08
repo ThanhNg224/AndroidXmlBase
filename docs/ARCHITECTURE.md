@@ -1,0 +1,3 @@
+# ARCHITECTURE.md
+
+Placeholder generated.

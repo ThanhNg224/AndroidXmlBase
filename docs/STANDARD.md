@@ -1,0 +1,3 @@
+# STANDARD.md
+
+Placeholder generated.
