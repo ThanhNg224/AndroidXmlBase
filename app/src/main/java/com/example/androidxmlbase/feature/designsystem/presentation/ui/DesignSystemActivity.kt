@@ -30,7 +30,7 @@ class DesignSystemActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnShowToast.setOnClickListener {
-            CustomToast.show(this, getString(R.string.design_system_toast_message))
+            CustomToast.show(binding.root, getString(R.string.design_system_toast_message))
         }
         binding.btnShowLoading.setOnClickListener {
             viewModel.onEvent(DesignSystemUiEvent.ShowLoadingClicked)

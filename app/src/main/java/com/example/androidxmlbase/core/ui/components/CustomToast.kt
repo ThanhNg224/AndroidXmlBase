@@ -1,54 +1,35 @@
 package com.example.androidxmlbase.core.ui.components
 
-import android.content.Context
-import android.view.Gravity
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.ui.util.Shape
 import com.example.androidxmlbase.core.ui.util.ShapeUtils
+import com.google.android.material.snackbar.Snackbar
 
 /**
- * Drop-in replacement for `Toast.makeText(context, message, duration).show()` that renders the
- * message on this base's design tokens (surface background, on-surface text) instead of the
- * platform's default toast chrome. Kept as a static object API so any existing
- * `Toast.makeText(...).show()` call site (e.g. `DemoActivity`'s `ShowToast` effect handler) can
- * switch to [CustomToast.show] with the same call shape — that wiring itself is out of scope for
- * this task.
- *
- * Note: `Toast.setView` is deprecated from API 30 onward and custom toast views are suppressed
- * while the host app is backgrounded. That's an acceptable tradeoff for this base project's
- * foreground demo usage; a production app targeting background toasts would need a different
- * mechanism (e.g. a Snackbar anchored to a visible root view).
+ * Drop-in replacement for a custom-styled `Toast` that renders on this base's design tokens
+ * (surface background, on-surface text). Backed by [Snackbar] rather than a custom `Toast` view:
+ * `Toast.setView` is deprecated from API 30 onward and custom toast views are suppressed while
+ * the host app is backgrounded, whereas a [Snackbar] is anchored to a visible [View] and always
+ * renders reliably in the foreground — the modern, Android-recommended mechanism for this exact
+ * use case, and Material Components (already a dependency) ships it for free.
  */
 object CustomToast {
 
-    fun show(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
+    fun show(anchorView: View, message: String, duration: Int = Snackbar.LENGTH_SHORT) {
+        val context = anchorView.context
         val density = context.resources.displayMetrics.density
-        val paddingHorizontalPx = (PADDING_HORIZONTAL_DP * density).toInt()
-        val paddingVerticalPx = (PADDING_VERTICAL_DP * density).toInt()
 
-        val textView = TextView(context).apply {
-            text = message
-            gravity = Gravity.CENTER
-            setTextColor(ContextCompat.getColor(context, R.color.color_on_surface))
-            setPadding(paddingHorizontalPx, paddingVerticalPx, paddingHorizontalPx, paddingVerticalPx)
-            background = ShapeUtils.buildDrawable(
-                shape = Shape.RECTANGLE,
-                cornerRadiusPx = CORNER_RADIUS_DP * density,
-                fillColor = ContextCompat.getColor(context, R.color.color_surface),
-            )
-        }
-
-        @Suppress("DEPRECATION")
-        Toast(context).apply {
-            this.duration = duration
-            view = textView
-        }.show()
+        val snackbar = Snackbar.make(anchorView, message, duration)
+        snackbar.setTextColor(ContextCompat.getColor(context, R.color.color_on_surface))
+        snackbar.view.background = ShapeUtils.buildDrawable(
+            shape = Shape.RECTANGLE,
+            cornerRadiusPx = CORNER_RADIUS_DP * density,
+            fillColor = ContextCompat.getColor(context, R.color.color_surface),
+        )
+        snackbar.show()
     }
 
-    private const val PADDING_HORIZONTAL_DP = 16f
-    private const val PADDING_VERTICAL_DP = 12f
     private const val CORNER_RADIUS_DP = 8f
 }
