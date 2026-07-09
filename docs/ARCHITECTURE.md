@@ -266,8 +266,8 @@ app/src/main/java/com/example/androidxmlbase/
         ButtonStyleDelegate.kt               # shared shape/ripple background logic, framework-attribute-agnostic
         FrameButton.kt                       # FrameLayout-based button, the one ButtonStyleDelegate consumer ported so far
         ShadowLayout.kt                      # FrameLayout drawing an elevation+outline shadow (caller sets android:elevation)
-        CustomSwitch.kt                      # SwitchCompat wrapper tinted from the color tokens
-        CustomToast.kt                       # Toast.makeText drop-in replacement styled with the color tokens
+        CustomSwitch.kt                      # MaterialSwitch wrapper tinted from the color tokens
+        CustomToast.kt                       # Snackbar-based Toast replacement styled with the color tokens
   feature/
     demo/
       domain/
