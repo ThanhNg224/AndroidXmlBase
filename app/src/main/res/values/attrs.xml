@@ -14,15 +14,6 @@
         <enum name="oval" value="1" />
     </attr>
 
-    <!-- Shared styleable group future button variants (CardButton, LinearButton, ...) can reuse. -->
-    <declare-styleable name="ShapeStyle">
-        <attr name="buttonBackgroundColor" />
-        <attr name="buttonCornerRadius" />
-        <attr name="buttonStrokeWidth" />
-        <attr name="buttonStrokeColor" />
-        <attr name="buttonShape" />
-    </declare-styleable>
-
     <declare-styleable name="FrameButton">
         <attr name="buttonBackgroundColor" />
         <attr name="buttonCornerRadius" />
