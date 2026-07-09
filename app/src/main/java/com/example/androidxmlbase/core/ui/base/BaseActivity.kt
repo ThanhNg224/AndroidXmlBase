@@ -8,19 +8,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
-import com.example.androidxmlbase.core.localization.LocaleContextWrapper
-import com.example.androidxmlbase.core.storage.AppSettingsKeys
-import com.example.androidxmlbase.core.storage.DataStoreSettingsStore
-import com.example.androidxmlbase.core.storage.appSettingsDataStore
 import com.example.androidxmlbase.core.ui.responsive.ResponsiveConfig
 import com.example.androidxmlbase.core.ui.responsive.ResponsiveContextWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 /**
- * Common base for XML + ViewBinding activities: inflates [VB], applies the
- * locale + responsive `attachBaseContext` wrapping every screen needs, and offers
+ * Common base for XML + ViewBinding activities: inflates [VB], applies the responsive
+ * `attachBaseContext` wrapping every screen needs, and offers
  * [collectOnStarted] for lifecycle-safe Flow collection.
  */
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
@@ -33,11 +28,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected open val responsiveConfig: ResponsiveConfig = ResponsiveConfig()
 
     override fun attachBaseContext(newBase: Context) {
-        val settingsStore = DataStoreSettingsStore(newBase.applicationContext.appSettingsDataStore)
-        val languageCode = runBlocking { settingsStore.get(AppSettingsKeys.LANGUAGE_CODE) }
-        val localeWrapped = LocaleContextWrapper.wrap(newBase, languageCode)
-        // Locale first, then responsive clamp — clamp should act on the already-locale-resolved configuration.
-        super.attachBaseContext(ResponsiveContextWrapper.wrap(localeWrapped, responsiveConfig))
+        super.attachBaseContext(ResponsiveContextWrapper.wrap(newBase, responsiveConfig))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

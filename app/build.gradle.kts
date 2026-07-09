@@ -22,6 +22,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_BASE_URL", "\"https://example.com/\"")
+        buildConfigField("boolean", "API_ENABLE_LOGGING", "false")
     }
 
     buildTypes {
@@ -31,17 +33,13 @@ android {
             }
         }
     }
-    bundle {
-        language {
-            enableSplit = false
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

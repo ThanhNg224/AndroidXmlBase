@@ -6,6 +6,10 @@
     <string name="increment">Tăng</string>
     <string name="demo_count_format">%1$d</string>
     <string name="demo_message_loading">Đang tải…</string>
+    <string name="demo_message_error_server">Lỗi máy chủ</string>
+    <string name="demo_message_error_no_connection">Không có kết nối</string>
+    <string name="demo_message_error_unexpected_response">Phản hồi không hợp lệ</string>
+    <string name="demo_message_error_empty_response">Phản hồi rỗng</string>
     <string name="demo_max_count_reached">Đã đạt số tối đa</string>
     <string name="lang_en">EN</string>
     <string name="lang_vi">VI</string>

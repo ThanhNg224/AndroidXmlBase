@@ -10,14 +10,14 @@ A feature lives under `app/src/main/java/com/example/androidxmlbase/feature/<nam
 
 ```
 feature/demo/
-  domain/
+    domain/
     repository/
-      DemoRepository.kt              # interface: fun observeCount(): Flow<Int>, suspend fun saveCount(count: Int), suspend fun fetchMessage(): ResultState<String>
+      DemoRepository.kt              # interface: fun observeCount(): Flow<Int>, suspend fun saveCount(count: Int), suspend fun fetchMessage(): DomainResult<String>
     usecase/
       IncrementCounterUseCase.kt      # plain class, sync business rule, no I/O
       ObserveDemoCountUseCase.kt      # plain class, Flow-returning
       SaveDemoCountUseCase.kt         # implements UseCase<Int, Unit>
-      FetchDemoMessageUseCase.kt      # implements UseCase<Unit, ResultState<String>>
+      FetchDemoMessageUseCase.kt      # implements UseCase<Unit, DomainResult<String>>
   data/
     repository/
       DemoRepositoryImpl.kt           # implements DemoRepository, owns a feature-private SettingsKey
@@ -27,20 +27,20 @@ feature/demo/
     dto/
       DemoMessageDto.kt                # @Serializable wire model
     mapper/
-      DemoMessageMapper.kt             # ApiResult<DemoMessageDto>.toResultState(): ResultState<String>
+      DemoMessageMapper.kt             # ApiResult<DemoMessageDto>.toDomainResult(): DomainResult<String>
   presentation/
     state/
-      DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt
+      DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt, DemoMessageState.kt
     viewmodel/
       DemoViewModel.kt
     ui/
       DemoActivity.kt
   di/
-    DemoModule.kt                    # Hilt bindings for DemoRepository/DemoRemoteDataSource
+    DemoModule.kt                    # Hilt bindings and feature-local Retrofit service provider
 ```
 
 Notes on what's *not* here, on purpose:
-- No `domain/entity` (or `domain/model`) package. `DemoRepository`'s methods return primitives (`Int`, `String` wrapped in `ResultState`) — there is no feature-specific entity type yet that a mapper produces. Add one only when a feature's domain model is genuinely richer than what the DTO/primitive already expresses; don't create an empty passthrough entity for its own sake.
+- No `domain/entity` (or `domain/model`) package. `DemoRepository`'s methods return primitives (`Int`, `String` wrapped in `DomainResult`) — there is no feature-specific entity type yet that a mapper produces. Add one only when a feature's domain model is genuinely richer than what the DTO/primitive already expresses; don't create an empty passthrough entity for its own sake.
 - `feature/designsystem` has only `presentation/` — no `domain/`, no `data/`. It is a pure UI-state showcase (see `DesignSystemViewModel`): its `onEvent` sets state synchronously with no repository or use case involved at all. That's a valid shape for a feature that never reads or writes real data — don't force empty `domain/`/`data/` packages onto it just to match the folder template.
 
 ## 2. Wiring a screen end to end
@@ -52,7 +52,7 @@ DemoActivity (@AndroidEntryPoint, extends BaseActivity<ActivityDemoBinding>)
   -> DemoViewModel (@HiltViewModel, extends StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>)
     -> IncrementCounterUseCase          (plain sync class — no repository)
     -> SaveDemoCountUseCase             (implements UseCase<Int, Unit>)
-    -> FetchDemoMessageUseCase          (implements UseCase<Unit, ResultState<String>>)
+    -> FetchDemoMessageUseCase          (implements UseCase<Unit, DomainResult<String>>)
     -> ObserveDemoCountUseCase          (plain class, returns Flow<Int>)
       -> DemoRepository (domain interface) / DemoRepositoryImpl (data)
         -> SettingsStore                (persistence, via core/storage)
@@ -65,10 +65,10 @@ Concretely, in `DemoActivity.onBindingReady`:
 3. `viewModel.effect.collectOnStarted { ... }` handles one-shot effects such as `DemoUiEffect.ShowMaxCountReached`.
 
 In `DemoViewModel`:
-- `init` launches two coroutines: one reads the persisted count once (`observeDemoCount().first()`), sets `isInitialCountLoaded = true`, then keeps collecting (`.drop(1)`) for future external changes; the other calls `fetchDemoMessage(Unit)` once and stores the `ResultState<String>` into `DemoUiState.message`.
+- `init` launches two coroutines: one reads the persisted count once (`observeDemoCount().first()`), sets `isInitialCountLoaded = true`, then keeps collecting (`.drop(1)`) for future external changes; the other calls `fetchDemoMessage(Unit)` once and maps the returned `DomainResult<String>` into `DemoMessageState` for `DemoUiState.message`.
 - `onIncrementClicked()` guards on `isInitialCountLoaded` (see the comment in the real file — this exists specifically to avoid computing the next count from the constructor-default `0` while the real DataStore read is still in flight, which would clobber the persisted value with a stale increment), calls `incrementCounter(currentState.count)`, updates state, fires `saveDemoCount` async, and sends `ShowMaxCountReached` if the result is capped.
 
-Hilt is the composition root. Core app bindings live in `core/di`; feature bindings live beside the feature (`feature/demo/di/DemoModule`). Use constructor injection for repositories, data sources, use cases, and ViewModels. Add a feature Hilt module only when Hilt needs an interface binding (`@Binds`) or framework construction (`@Provides`).
+Hilt is the composition root. Core app bindings live in `core/di`; feature bindings and feature-specific Retrofit services live beside the feature (`feature/demo/di/DemoModule`). Use constructor injection for repositories, data sources, use cases, and ViewModels. Add a feature Hilt module only when Hilt needs an interface binding (`@Binds`) or framework construction (`@Provides`). Do not provide a feature API service from `core/di`.
 
 `DemoActivity` obtains its `ViewModel` via:
 ```kotlin
@@ -92,7 +92,7 @@ This is not a stylistic preference — it's this codebase's own precedent. `feat
 
 `UseCase<in P, R>` is a `suspend operator fun invoke(params: P): R` contract for **single-result, suspend operations**. Implement it only when that shape actually fits:
 
-- **Implement it** — `SaveDemoCountUseCase : UseCase<Int, Unit>` and `FetchDemoMessageUseCase : UseCase<Unit, ResultState<String>>` both do exactly one suspend operation and return exactly one result.
+- **Implement it** — `SaveDemoCountUseCase : UseCase<Int, Unit>` and `FetchDemoMessageUseCase : UseCase<Unit, DomainResult<String>>` both do exactly one suspend operation and return exactly one result.
 - **Don't implement it, stay a plain class** —
   - `ObserveDemoCountUseCase` returns a `Flow<Int>` (an ongoing stream, not a single suspend result); it's a plain class with `operator fun invoke(): Flow<Int> = repository.observeCount()`.
   - `IncrementCounterUseCase` is a pure synchronous business rule with no I/O at all (`operator fun invoke(currentCount: Int): IncrementResult`); forcing it into a `suspend` interface would add ceremony with zero benefit.
@@ -112,7 +112,7 @@ Don't force every use case in a feature onto the same interface just for consist
 - Need Activity navigation? Inject `ActivityNavigator` and navigate with `ActivityDestination`/`NavigationOptions`.
 - Buttons: use `core.ui.components.FrameButton` with design tokens from `docs/DESIGN_SYSTEM.md`, not a plain `<Button>` or hardcoded colors. Debounce the control most likely to be rapid-tapped with `View.setOnDebouncedClickListener` (not necessarily every control — one real usage per screen has been this codebase's bar so far).
 - Layout dimensions: use `@dimen/_<n>sdp` / `@dimen/_<n>ssp`, never a literal `16dp`/`14sp` (see `docs/DESIGN_SYSTEM.md` for the convention and its rationale).
-- Loading/success/error UI: model it with `ResultState<T>` in your `UiState` and either `ResultState.fold(...)` (for choosing *text*) or `core.ui.base`'s `.toRenderState()` (for toggling *visibility*) — see `DesignSystemActivity.render()`, which uses both in the same function (fold for the text, `toRenderState()` for the progress-bar visibility). `DemoActivity.toDisplayText()` uses only `toRenderState()`'s fields, not `fold` — it's a `toRenderState()`-only example, not a second `fold` example.
+- Loading/success/error UI: keep domain/data failures as `DomainResult<T>` + `AppError`, then map them in presentation to a feature UI state such as `DemoMessageState`. For pure UI demos or simple presentation-only state, `ResultState<T>` is still available; see `DesignSystemActivity.render()`, which uses `ResultState.fold(...)` for text and `.toRenderState()` for visibility.
 - All user-facing strings go through `strings.xml` (and get a `values-vi/strings.xml` translation — see `feature/demo`'s `demo_title`/`increment`).
 
 ## 6. Anti-patterns (do not do these)
@@ -121,11 +121,11 @@ These are drawn from real decisions made across this project's phases — not ge
 
 1. **Adding a repository/data source before there's real data to fetch or persist.** `feature/demo` deliberately shipped with zero `data/` files in Phase 1 for exactly this reason (quoted in full in section 3). If you're writing a `FooRepository` interface whose only implementation returns hardcoded/in-memory values with no real backing store, you're speculatively building the abstraction Phase 1's plan explicitly avoided.
 
-2. **Putting a feature-specific `SettingsKey` into `AppSettingsKeys`.** `core.storage.AppSettingsKeys` holds exactly 5 keys, and the Phase 2 plan is explicit: *"Do not add more base keys speculatively — feature-specific keys belong to the feature that owns them... not to `AppSettingsKeys`."* `DemoRepositoryImpl`'s counter key (`demo_counter_count`) is defined as a private constant inside the repository implementation itself, not in the shared keys object. Follow that pattern for any new per-feature persisted value.
+2. **Putting a feature-specific `SettingsKey` into `AppSettingsKeys`.** `core.storage.AppSettingsKeys` holds only app-wide keys, and the Phase 2 plan is explicit: *"Do not add more base keys speculatively — feature-specific keys belong to the feature that owns them... not to `AppSettingsKeys`."* `DemoRepositoryImpl`'s counter key (`demo_counter_count`) is defined as a private constant inside the repository implementation itself, not in the shared keys object. Follow that pattern for any new per-feature persisted value.
 
 3. **Forcing a `Flow`-returning use case to implement the suspend `UseCase<P,R>` contract.** `ObserveDemoCountUseCase` is a plain class precisely because `UseCase<in P, R>`'s `suspend operator fun invoke(params: P): R` shape doesn't fit an ongoing stream. Don't wrap a `Flow` in a suspend function just to satisfy an interface that doesn't apply.
 
-4. **Overriding `attachBaseContext` or hand-rolling ViewBinding inflate in a new `Activity` instead of extending `BaseActivity`.** `BaseActivity<VB>` centralizes exactly this (locale wrap, then responsive clamp, then binding inflate) so every screen gets it automatically and consistently. Before `BaseActivity` existed (Phase 6), `DemoActivity`/`DesignSystemActivity` had *no* locale/responsive wrapping at all — duplicating `MainActivity`'s override in every new Activity was the exact duplication `BaseActivity` was built to remove. Re-introducing a hand-rolled override in a new feature undoes that.
+4. **Overriding `attachBaseContext` or hand-rolling ViewBinding inflate in a new `Activity` instead of extending `BaseActivity`.** `BaseActivity<VB>` centralizes responsive context wrapping and binding inflate so every screen gets it automatically and consistently. Locale is handled by AppCompat per-app locales and the manifest `autoStoreLocales` service, not custom Activity context wrapping. Re-introducing a hand-rolled override in a new feature undoes that consistency.
 
 5. **Recreating manual ViewModel factories now that Hilt exists.** Use constructor injection, `@HiltViewModel`, `@AndroidEntryPoint`, and feature-local Hilt modules for bindings. A custom `ViewModelProvider.Factory` should be rare and justified.
 

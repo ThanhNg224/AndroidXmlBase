@@ -32,7 +32,7 @@ All 5 components live in `com.example.androidxmlbase.core.ui.components` (full A
 
 ### `FrameButton`
 
-A `FrameLayout`-based button — the **only** button shape this base has built. Attrs: `app:buttonBackgroundColor`, `app:buttonCornerRadius`, `app:buttonStrokeWidth`, `app:buttonStrokeColor`, `app:buttonShape` (`rectangle` | `oval`). It is a container, not a text widget — wrap a `TextView` inside it for the label:
+A `FrameLayout`-based button — the **only** button shape this base has built. Attrs: `app:buttonBackgroundColor`, `app:buttonCornerRadius`, `app:buttonStrokeWidth`, `app:buttonStrokeColor`, `app:buttonShape` (`rectangle` | `oval`). It is a container, not a text widget — wrap a `TextView` inside it for the label. The component marks itself as a button for accessibility and enforces a 48dp minimum touch target.
 
 ```xml
 <com.example.androidxmlbase.core.ui.components.FrameButton

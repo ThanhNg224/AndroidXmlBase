@@ -302,17 +302,14 @@ Target:
 core/localization/
   LocaleManager
   AppLocale
-  LocaleStore
-  LocaleContextWrapper
   LanguageOption
 ```
 
 Decision:
 
 - Split localization from responsive resource policy.
-- Store language through `SettingsStore`.
-- Use AppCompat/Android per-app language API where applicable.
-- Keep context wrapper as compatibility fallback for XML/activity resources.
+- Use AppCompat/Android per-app language API with manifest `localeConfig` and `autoStoreLocales`.
+- Do not store language through `SettingsStore` or wrap Activity context manually.
 
 Acceptance:
 
@@ -361,7 +358,7 @@ Decision:
 Acceptance:
 
 - XML docs require `@dimen/_<n>sdp` and `@dimen/_<n>ssp`.
-- BaseActivity applies locale wrapper and responsive wrapper in a defined order.
+- BaseActivity applies the responsive wrapper; AppCompat handles per-app locale persistence/application.
 - Demo screen validates common dimensions on phone and tablet emulator.
 
 ### 6. Design System / Custom Views
@@ -473,7 +470,7 @@ Decision:
 Acceptance:
 
 - Sample XML screen uses ViewBinding.
-- Base screen handles locale/responsive wrapping.
+- Base screen handles responsive wrapping; AppCompat handles locale.
 - One-shot effects are collected lifecycle-safely.
 
 ### 8. Analytics / Logging

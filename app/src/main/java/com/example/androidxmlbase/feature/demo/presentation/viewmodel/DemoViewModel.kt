@@ -1,11 +1,15 @@
 package com.example.androidxmlbase.feature.demo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.example.androidxmlbase.core.architecture.AppError
+import com.example.androidxmlbase.core.architecture.DomainResult
 import com.example.androidxmlbase.core.architecture.StateViewModel
 import com.example.androidxmlbase.feature.demo.domain.usecase.FetchDemoMessageUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.IncrementCounterUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.ObserveDemoCountUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.SaveDemoCountUseCase
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoMessageError
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoMessageState
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiState
@@ -38,7 +42,7 @@ class DemoViewModel
             }
             viewModelScope.launch {
                 val result = fetchDemoMessage(Unit)
-                setState { copy(message = result) }
+                setState { copy(message = result.toMessageState()) }
             }
         }
 
@@ -57,4 +61,18 @@ class DemoViewModel
                 sendEffect(DemoUiEffect.ShowMaxCountReached)
             }
         }
+
+        private fun DomainResult<String>.toMessageState(): DemoMessageState =
+            when (this) {
+                is DomainResult.Success -> DemoMessageState.Success(data)
+                is DomainResult.Error -> DemoMessageState.Error(error.toMessageError())
+            }
+
+        private fun AppError.toMessageError(): DemoMessageError =
+            when (this) {
+                is AppError.Http -> DemoMessageError.SERVER
+                is AppError.Network -> DemoMessageError.NO_CONNECTION
+                is AppError.Parse -> DemoMessageError.UNEXPECTED_RESPONSE
+                AppError.EmptyBody -> DemoMessageError.EMPTY_RESPONSE
+            }
     }

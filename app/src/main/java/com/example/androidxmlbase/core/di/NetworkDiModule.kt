@@ -1,6 +1,7 @@
 package com.example.androidxmlbase.core.di
 
 import android.content.Context
+import com.example.androidxmlbase.BuildConfig
 import com.example.androidxmlbase.core.network.AndroidConnectivityChecker
 import com.example.androidxmlbase.core.network.ApiClient
 import com.example.androidxmlbase.core.network.ApiConfig
@@ -11,7 +12,6 @@ import com.example.androidxmlbase.core.network.NetworkModule
 import com.example.androidxmlbase.core.network.OkHttpFileTransferClient
 import com.example.androidxmlbase.core.network.RetrofitApiClient
 import com.example.androidxmlbase.core.network.SecureStoreAuthTokenProvider
-import com.example.androidxmlbase.feature.demo.data.datasource.DemoApiService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,8 +45,8 @@ object NetworkDiModule {
     @Singleton
     fun provideApiConfig(): ApiConfig =
         ApiConfig(
-            baseUrl = "https://example.com/",
-            enableLogging = false,
+            baseUrl = BuildConfig.API_BASE_URL,
+            enableLogging = BuildConfig.API_ENABLE_LOGGING,
         )
 
     @Provides
@@ -78,8 +78,4 @@ object NetworkDiModule {
             config = config,
             okHttpClient = okHttpClient,
         )
-
-    @Provides
-    @Singleton
-    fun provideDemoApiService(retrofit: Retrofit): DemoApiService = retrofit.create(DemoApiService::class.java)
 }

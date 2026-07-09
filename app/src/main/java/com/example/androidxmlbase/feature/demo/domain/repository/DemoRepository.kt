@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.feature.demo.domain.repository
 
-import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.DomainResult
 import kotlinx.coroutines.flow.Flow
 
 interface DemoRepository {
@@ -8,5 +8,5 @@ interface DemoRepository {
 
     suspend fun saveCount(count: Int)
 
-    suspend fun fetchMessage(): ResultState<String>
+    suspend fun fetchMessage(): DomainResult<String>
 }

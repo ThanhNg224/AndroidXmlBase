@@ -226,6 +226,7 @@ app/src/main/java/com/example/androidxmlbase/
       UiEvent.kt
       UiEffect.kt
       ResultState.kt
+      DomainResult.kt
       AppDispatchers.kt
       UseCase.kt
       StateViewModel.kt
@@ -234,7 +235,7 @@ app/src/main/java/com/example/androidxmlbase/
       SettingsStore.kt                       # observe/get/set/remove contract
       DataStoreSettingsStore.kt              # DataStore<Preferences>-backed implementation
       AppDataStore.kt                        # Context.appSettingsDataStore delegate
-      AppSettingsKeys.kt                     # the 5 base app-wide keys
+      AppSettingsKeys.kt                     # app-wide keys only; feature keys stay feature-private
     network/
       ApiResult.kt                           # Success/HttpError/NetworkError/ParseError/EmptyBody
       ApiConfig.kt
@@ -248,13 +249,11 @@ app/src/main/java/com/example/androidxmlbase/
         ConnectivityInterceptor.kt
     localization/
       LocaleTagMapper.kt                     # regional tag overrides (vi->vi-VN, ko->ko-KR, zh-TW->zh-TW), passthrough otherwise
-      LocaleStore.kt                         # LocaleStore interface + SettingsStoreLocaleStore (backed by SettingsStore/AppSettingsKeys.LANGUAGE_CODE)
       LocaleManager.kt                       # AppLocaleApplier interface + AppCompatLocaleApplier (real) + LocaleManager (injected applier, unit-testable)
-      LocaleContextWrapper.kt                # wraps a Context with a per-app Configuration locale, for attachBaseContext
       LanguageOption.kt                      # LanguageOption + SUPPORTED_LANGUAGES sample data (en, vi)
     ui/
       base/
-        BaseActivity.kt                      # ViewBinding inflate + attachBaseContext (locale, then responsive clamp) + collectOnStarted; subclasses wire up in onBindingReady
+        BaseActivity.kt                      # ViewBinding inflate + responsive attachBaseContext + collectOnStarted; subclasses wire up in onBindingReady
         BaseFragment.kt
         BaseDialogFragment.kt
         BaseBottomSheetDialogFragment.kt
@@ -287,9 +286,9 @@ app/src/main/java/com/example/androidxmlbase/
         repository/DemoRepositoryImpl.kt     # SettingsStore- and remote-data-source-backed
         dto/DemoMessageDto.kt
         datasource/DemoApiService.kt, DemoRemoteDataSource.kt (+ DemoRemoteDataSourceImpl)
-        mapper/DemoMessageMapper.kt          # ApiResult<DemoMessageDto> -> ResultState<String>
+        mapper/DemoMessageMapper.kt          # ApiResult<DemoMessageDto> -> DomainResult<String>
       presentation/
-        state/DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt
+        state/DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt, DemoMessageState.kt
         viewmodel/DemoViewModel.kt
         ui/DemoActivity.kt
       di/DemoModule.kt
@@ -299,6 +298,6 @@ app/src/main/java/com/example/androidxmlbase/
         viewmodel/DesignSystemViewModel.kt   # StateViewModel<DesignSystemUiState, DesignSystemUiEvent, UiEffect>, synchronous setState, no data/domain layers
         ui/DesignSystemActivity.kt           # showcases FrameButton, ShadowLayout, CustomSwitch, CustomToast, and the ResultState demo
 
-`feature/demo` now has a `data` package and Hilt bindings: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` provided by Hilt. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. Hilt wires the full chain through `core/di` and `feature/demo/di/DemoModule`, using `NetworkModule` factory functions against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) now have their first real consumer: `LocaleStore` reads/writes `AppSettingsKeys.LANGUAGE_CODE` (default changed from `"en"` to `""`, meaning "no override, use system default"). `SecureStore` handles auth/refresh tokens separately from normal settings. `MainActivity`'s two EN/VI buttons drive `LocaleManager.setLanguage(...)` to prove the per-app language switch works end to end. `THEME_MODE` remains reserved for a future logging/theming core.
+`feature/demo` now has a `data` package and Hilt bindings: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` provided by Hilt. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, returning `DomainResult<String>` from data/domain and mapping that into `DemoMessageState` in presentation. Hilt wires the full chain through `core/di` and `feature/demo/di/DemoModule`; feature-specific Retrofit service providers stay in the feature module, while `core/di` only provides reusable Retrofit/OkHttp infrastructure. `SecureStore` handles auth/refresh tokens separately from normal settings, and backup/data-extraction rules exclude the secure store shared-preferences file. `MainActivity`'s two EN/VI buttons drive `LocaleManager.setLanguage(...)` through AppCompat per-app locales; the manifest declares `@xml/locales_config` and opts into AppCompat `autoStoreLocales`, so no Activity blocks on DataStore during `attachBaseContext`.
 
-`MainActivity`, `DemoActivity`, and `DesignSystemActivity` all extend `core/ui/base/BaseActivity`, which owns `attachBaseContext` (locale wrap, then responsive clamp) and ViewBinding inflation; subclasses implement `inflateBinding` and do their view/ViewModel wiring in `onBindingReady` instead of `onCreate`. `DemoActivity` and `DesignSystemActivity` gained the locale/responsive wrapping for the first time as a result (they didn't have it before). Both also use `BaseActivity.collectOnStarted` for lifecycle-safe `Flow` collection, and both `DemoActivity.toDisplayText()`/`DesignSystemActivity.render()` consume `ResultState<T>.toRenderState()`. `DemoActivity`'s increment button uses `View.setOnDebouncedClickListener`, the button most likely to be rapid-tapped.
+`MainActivity`, `DemoActivity`, and `DesignSystemActivity` all extend `core/ui/base/BaseActivity`, which owns responsive `attachBaseContext` wrapping and ViewBinding inflation; subclasses implement `inflateBinding` and do their view/ViewModel wiring in `onBindingReady` instead of `onCreate`. Both feature Activities use `BaseActivity.collectOnStarted` for lifecycle-safe `Flow` collection. `DesignSystemActivity.render()` consumes `ResultState<T>.toRenderState()`, while `DemoActivity` resolves `DemoMessageState` into localized string resources. `DemoActivity`'s increment button uses `View.setOnDebouncedClickListener`, the button most likely to be rapid-tapped.

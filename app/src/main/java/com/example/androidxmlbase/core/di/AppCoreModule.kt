@@ -4,8 +4,6 @@ import android.content.Context
 import com.example.androidxmlbase.core.architecture.AppDispatchers
 import com.example.androidxmlbase.core.architecture.DefaultAppDispatchers
 import com.example.androidxmlbase.core.localization.LocaleManager
-import com.example.androidxmlbase.core.localization.LocaleStore
-import com.example.androidxmlbase.core.localization.SettingsStoreLocaleStore
 import com.example.androidxmlbase.core.storage.DataStoreSettingsStore
 import com.example.androidxmlbase.core.storage.EncryptedSecureStore
 import com.example.androidxmlbase.core.storage.SecureStore
@@ -42,9 +40,5 @@ object AppCoreModule {
 
     @Provides
     @Singleton
-    fun provideLocaleStore(settingsStore: SettingsStore): LocaleStore = SettingsStoreLocaleStore(settingsStore)
-
-    @Provides
-    @Singleton
-    fun provideLocaleManager(localeStore: LocaleStore): LocaleManager = LocaleManager(localeStore)
+    fun provideLocaleManager(): LocaleManager = LocaleManager()
 }

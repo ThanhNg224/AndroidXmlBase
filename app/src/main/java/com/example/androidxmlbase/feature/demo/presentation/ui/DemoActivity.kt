@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.architecture.ResultState
 import com.example.androidxmlbase.core.ui.base.BaseActivity
 import com.example.androidxmlbase.core.ui.base.setOnDebouncedClickListener
-import com.example.androidxmlbase.core.ui.base.toRenderState
 import com.example.androidxmlbase.databinding.ActivityDemoBinding
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoMessageError
+import com.example.androidxmlbase.feature.demo.presentation.state.DemoMessageState
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.feature.demo.presentation.viewmodel.DemoViewModel
@@ -38,18 +38,20 @@ class DemoActivity : BaseActivity<ActivityDemoBinding>() {
         }
     }
 
-    // No dedicated loading/error View exists here (single tvMessage does triple duty), so
-    // toRenderState() is used for its isLoadingVisible/errorMessage fields instead of a
-    // visibility toggle — same output as the previous ResultState.fold-based text, no fold left
-    // unused/unreachable.
-    private fun ResultState<String>.toDisplayText(): String {
-        val renderState = toRenderState()
-        return when {
-            renderState.isLoadingVisible -> getString(R.string.demo_message_loading)
-            this is ResultState.Success -> data
-            else -> renderState.errorMessage.orEmpty()
+    private fun DemoMessageState.toDisplayText(): String =
+        when (this) {
+            DemoMessageState.Loading -> getString(R.string.demo_message_loading)
+            is DemoMessageState.Success -> message
+            is DemoMessageState.Error -> reason.toDisplayText()
         }
-    }
+
+    private fun DemoMessageError.toDisplayText(): String =
+        when (this) {
+            DemoMessageError.SERVER -> getString(R.string.demo_message_error_server)
+            DemoMessageError.NO_CONNECTION -> getString(R.string.demo_message_error_no_connection)
+            DemoMessageError.UNEXPECTED_RESPONSE -> getString(R.string.demo_message_error_unexpected_response)
+            DemoMessageError.EMPTY_RESPONSE -> getString(R.string.demo_message_error_empty_response)
+        }
 
     private fun observeEffects() {
         viewModel.effect.collectOnStarted { effect ->

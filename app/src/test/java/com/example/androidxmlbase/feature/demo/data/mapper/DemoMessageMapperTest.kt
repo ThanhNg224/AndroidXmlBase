@@ -1,6 +1,7 @@
 package com.example.androidxmlbase.feature.demo.data.mapper
 
-import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.AppError
+import com.example.androidxmlbase.core.architecture.DomainResult
 import com.example.androidxmlbase.core.network.ApiResult
 import com.example.androidxmlbase.feature.demo.data.dto.DemoMessageDto
 import org.junit.Assert.assertEquals
@@ -13,7 +14,7 @@ class DemoMessageMapperTest {
     private data class Case(
         val name: String,
         val input: ApiResult<DemoMessageDto>,
-        val expected: ResultState<String>,
+        val expected: DomainResult<String>,
     )
 
     private val cases =
@@ -21,34 +22,34 @@ class DemoMessageMapperTest {
             Case(
                 name = "success maps to Success with the message",
                 input = ApiResult.Success(DemoMessageDto(message = "hello")),
-                expected = ResultState.Success("hello"),
+                expected = DomainResult.Success("hello"),
             ),
             Case(
-                name = "http error maps to Error with the status code in the message",
+                name = "http error maps to Http app error",
                 input = ApiResult.HttpError(code = 404, message = "Not Found"),
-                expected = ResultState.Error("Server error (404)"),
+                expected = DomainResult.Error(AppError.Http(code = 404, serverMessage = "Not Found")),
             ),
             Case(
-                name = "network error maps to Error carrying the cause",
+                name = "network error maps to Network app error carrying the cause",
                 input = ApiResult.NetworkError(networkCause),
-                expected = ResultState.Error("No connection", networkCause),
+                expected = DomainResult.Error(AppError.Network(networkCause)),
             ),
             Case(
-                name = "parse error maps to Error carrying the cause",
+                name = "parse error maps to Parse app error carrying the cause",
                 input = ApiResult.ParseError(parseCause),
-                expected = ResultState.Error("Unexpected response", parseCause),
+                expected = DomainResult.Error(AppError.Parse(parseCause)),
             ),
             Case(
-                name = "empty body maps to Error",
+                name = "empty body maps to EmptyBody app error",
                 input = ApiResult.EmptyBody,
-                expected = ResultState.Error("Empty response"),
+                expected = DomainResult.Error(AppError.EmptyBody),
             ),
         )
 
     @Test
-    fun `toResultState maps every ApiResult branch to the expected ResultState`() {
+    fun `toDomainResult maps every ApiResult branch to the expected DomainResult`() {
         cases.forEach { case ->
-            assertEquals(case.name, case.expected, case.input.toResultState())
+            assertEquals(case.name, case.expected, case.input.toDomainResult())
         }
     }
 }

@@ -3,9 +3,15 @@ package com.example.androidxmlbase.core.ui.components
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.widget.Button
 import android.widget.FrameLayout
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.ui.util.Shape
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * `FrameLayout`-based button. The only concrete [ButtonStyleDelegate] consumer ported in this
@@ -41,9 +47,25 @@ class FrameButton
 
             isClickable = true
             isFocusable = true
+            minimumHeight = max(minimumHeight, resources.displayMetrics.density.times(MIN_TOUCH_TARGET_DP).roundToInt())
+            ViewCompat.setAccessibilityDelegate(
+                this,
+                object : AccessibilityDelegateCompat() {
+                    override fun onInitializeAccessibilityNodeInfo(
+                        host: android.view.View,
+                        info: AccessibilityNodeInfoCompat,
+                    ) {
+                        super.onInitializeAccessibilityNodeInfo(host, info)
+                        info.className = Button::class.java.name
+                        info.isClickable = host.isClickable
+                        info.isEnabled = host.isEnabled
+                    }
+                },
+            )
         }
 
         private companion object {
             const val SHAPE_OVAL_ORDINAL = 1
+            const val MIN_TOUCH_TARGET_DP = 48
         }
     }
