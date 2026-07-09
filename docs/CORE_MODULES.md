@@ -14,7 +14,7 @@ The MVVM primitives every feature is built on. Framework-light: only `StateViewM
 - `UseCase<in P, R>` — `suspend operator fun invoke(params: P): R`. Implementers: `SaveDemoCountUseCase`, `FetchDemoMessageUseCase`. See `docs/FEATURE_TEMPLATE.md` section 4 for when to implement it vs. stay a plain class.
 - `StateViewModel<S : UiState, E : UiEvent, F : UiEffect>(initialState: S)` (abstract, extends `ViewModel`) — exposes `state: StateFlow<S>`, `effect: Flow<F>` (buffered `Channel`-backed), `protected val currentState: S`, `abstract fun onEvent(event: E)`, `protected fun setState(reducer: S.() -> S)` (implemented via `MutableStateFlow.update {}`, atomic under concurrent calls), `protected fun sendEffect(effect: F)`.
 
-**Consumers:** `DemoViewModel`, `DesignSystemViewModel` (both extend `StateViewModel`); `ResultState`/`fold` used by `feature/demo` (`DemoMessageMapper`, `DemoActivity`) and `feature/designsystem` (`DesignSystemUiState`, `DesignSystemActivity`); `UseCase<in P, R>` implemented by `feature/demo`'s `SaveDemoCountUseCase`/`FetchDemoMessageUseCase`.
+**Consumers:** `DemoViewModel`, `DesignSystemViewModel` (both extend `StateViewModel`); `ResultState` itself is used by `feature/demo` (`DemoMessageMapper.toResultState()`, `DemoUiState.message`) and `feature/designsystem` (`DesignSystemUiState.demoResult`) — but the `fold` extension specifically has exactly one real call site, `DesignSystemActivity.render()` (for picking display text); `DemoActivity.toDisplayText()` uses the `core/ui/base` `toRenderState()` extension instead (see `core/ui/base` below), not `fold`. `UseCase<in P, R>` implemented by `feature/demo`'s `SaveDemoCountUseCase`/`FetchDemoMessageUseCase`.
 
 ## `core/storage`
 
@@ -54,7 +54,7 @@ A Retrofit/OkHttp facade that classifies every call into a uniform `ApiResult<T>
 
 Per-app language switching, backed by AndroidX's per-app language API (`AppCompatDelegate.setApplicationLocales`) and `core/storage`.
 
-- `LanguageOption(code: String, displayName: String)` + `val SUPPORTED_LANGUAGES = listOf(LanguageOption("en", "English"), LanguageOption("vi", "Tiếng Việt"))` — sample data; `MainActivity`'s two hardcoded EN/VI buttons are the only consumer (no dynamic selector UI built yet).
+- `LanguageOption(code: String, displayName: String)` + `val SUPPORTED_LANGUAGES = listOf(LanguageOption("en", "English"), LanguageOption("vi", "Tiếng Việt"))` — forward-looking sample data with **no real consumer yet**: `MainActivity`'s two EN/VI buttons call `localeManager.setLanguage("en")`/`setLanguage("vi")` with raw string literals, not `SUPPORTED_LANGUAGES`. Wire an actual dynamic selector through this list (instead of hand-adding more hardcoded buttons) the next time a 3rd language is needed.
 - `LocaleTagMapper` (object) — `toRegionalTag(languageCode): String`, mapping `vi`→`vi-VN`, `ko`→`ko-KR`, `zh-TW`→`zh-TW` (passthrough otherwise).
 - `LocaleStore` (interface, `observeLanguageCode(): Flow<String>` / `suspend fun setLanguageCode(code)`) + `SettingsStoreLocaleStore` — the only implementation, backed by `SettingsStore` + `AppSettingsKeys.LANGUAGE_CODE`.
 - `AppLocaleApplier` (interface, `fun applyLocales(tag: String)`) + `AppCompatLocaleApplier` (real impl, calls `AppCompatDelegate.setApplicationLocales`) — injected as an interface specifically so `LocaleManager` stays JVM-unit-testable (no Robolectric in this project; calling the real AndroidX API directly from a unit test would crash).
