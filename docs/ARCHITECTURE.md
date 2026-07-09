@@ -212,12 +212,12 @@ Improve architecture incrementally by making small, safe refactors that preserve
 - [ ] Is the architecture scalable and maintainable for future growth?  
 - [ ] Are tests easily written for UseCases, repositories, and ViewModels?
 
-## Current Package Layout (Phase 0-3)
+## Current Package Layout (Phase 0-4)
 
 Everything above this section describes the target architecture. The folders below are what actually exists in the codebase today; check here (or the source tree) before assuming a core module already exists.
 
 app/src/main/java/com/example/androidxmlbase/
-  MainActivity.kt                            # launcher screen, XML + ViewBinding
+  MainActivity.kt                            # launcher screen, XML + ViewBinding; overrides attachBaseContext (locale, then responsive clamp)
   core/
     architecture/
       UiState.kt
@@ -244,6 +244,16 @@ app/src/main/java/com/example/androidxmlbase/
       interceptor/
         AuthTokenInterceptor.kt
         ConnectivityInterceptor.kt
+    localization/
+      LocaleTagMapper.kt                     # regional tag overrides (vi->vi-VN, ko->ko-KR, zh-TW->zh-TW), passthrough otherwise
+      LocaleStore.kt                         # LocaleStore interface + SettingsStoreLocaleStore (backed by SettingsStore/AppSettingsKeys.LANGUAGE_CODE)
+      LocaleManager.kt                       # AppLocaleApplier interface + AppCompatLocaleApplier (real) + LocaleManager (injected applier, unit-testable)
+      LocaleContextWrapper.kt                # wraps a Context with a per-app Configuration locale, for attachBaseContext
+      LanguageOption.kt                      # LanguageOption + SUPPORTED_LANGUAGES sample data (en, vi)
+    ui/
+      responsive/
+        ResponsiveConfig.kt                  # enabled + min/max smallestScreenWidthDp
+        ResponsiveContextWrapper.kt          # clamps Configuration.smallestScreenWidthDp into the configured range
   feature/
     demo/
       domain/
@@ -260,4 +270,4 @@ app/src/main/java/com/example/androidxmlbase/
         viewmodel/DemoViewModel.kt, DemoViewModelFactory.kt
         ui/DemoActivity.kt
 
-`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) are not yet consumed by any screen — they're reserved for Phase 4 (language/theme) and a future logging core.
+`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) now have their first real consumer: `LocaleStore` reads/writes `AppSettingsKeys.LANGUAGE_CODE` (default changed from `"en"` to `""`, meaning "no override, use system default"). `MainActivity` wraps its base `Context` with `LocaleContextWrapper` then `ResponsiveContextWrapper` in `attachBaseContext`, and its two EN/VI buttons drive `LocaleManager.setLanguage(...)` to prove the per-app language switch works end to end. `THEME_MODE` remains reserved for a future logging/theming core.
