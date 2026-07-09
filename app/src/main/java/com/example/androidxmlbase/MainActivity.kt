@@ -16,6 +16,7 @@ import com.example.androidxmlbase.core.ui.responsive.ResponsiveConfig
 import com.example.androidxmlbase.core.ui.responsive.ResponsiveContextWrapper
 import com.example.androidxmlbase.databinding.ActivityMainBinding
 import com.example.androidxmlbase.feature.demo.presentation.ui.DemoActivity
+import com.example.androidxmlbase.feature.designsystem.presentation.ui.DesignSystemActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -48,6 +49,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.btnLangVi.setOnClickListener {
             lifecycleScope.launch { localeManager.setLanguage("vi") }
+        }
+        binding.btnDesignSystem.setOnClickListener {
+            startActivity(Intent(this, DesignSystemActivity::class.java))
         }
     }
 }

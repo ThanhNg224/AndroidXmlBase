@@ -6,4 +6,21 @@
     <string name="increment">Increment</string>
     <string name="lang_en">EN</string>
     <string name="lang_vi">VI</string>
+    <string name="design_system_button">Design System</string>
+    <string name="design_system_title">Design System</string>
+    <string name="design_system_headline_sample">Headline sample</string>
+    <string name="design_system_body_sample">Body text sample, showing the base Body text appearance.</string>
+    <string name="design_system_caption_sample">Caption sample</string>
+    <string name="design_system_primary_button">Primary</string>
+    <string name="design_system_outlined_button">Outlined</string>
+    <string name="design_system_shadow_card_text">This card is a ShadowLayout.</string>
+    <string name="design_system_switch_label">Custom switch</string>
+    <string name="design_system_show_toast">Show Toast</string>
+    <string name="design_system_toast_message">Hello from CustomToast!</string>
+    <string name="design_system_result_demo_title">ResultState demo</string>
+    <string name="design_system_loading_button">Loading</string>
+    <string name="design_system_success_button">Success</string>
+    <string name="design_system_error_button">Error</string>
+    <string name="design_system_result_loading">Loading…</string>
+    <string name="design_system_result_success">Success!</string>
 </resources>

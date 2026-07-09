@@ -212,7 +212,7 @@ Improve architecture incrementally by making small, safe refactors that preserve
 - [ ] Is the architecture scalable and maintainable for future growth?  
 - [ ] Are tests easily written for UseCases, repositories, and ViewModels?
 
-## Current Package Layout (Phase 0-4)
+## Current Package Layout (Phase 0-5)
 
 Everything above this section describes the target architecture. The folders below are what actually exists in the codebase today; check here (or the source tree) before assuming a core module already exists.
 
@@ -254,6 +254,14 @@ app/src/main/java/com/example/androidxmlbase/
       responsive/
         ResponsiveConfig.kt                  # enabled + min/max smallestScreenWidthDp
         ResponsiveContextWrapper.kt          # clamps Configuration.smallestScreenWidthDp into the configured range
+      util/
+        ShapeUtils.kt                        # builds runtime GradientDrawables (RECTANGLE/OVAL) shared by the components below
+      components/
+        ButtonStyleDelegate.kt               # shared shape/ripple background logic, framework-attribute-agnostic
+        FrameButton.kt                       # FrameLayout-based button, the one ButtonStyleDelegate consumer ported so far
+        ShadowLayout.kt                      # FrameLayout drawing an elevation+outline shadow (caller sets android:elevation)
+        CustomSwitch.kt                      # SwitchCompat wrapper tinted from the color tokens
+        CustomToast.kt                       # Toast.makeText drop-in replacement styled with the color tokens
   feature/
     demo/
       domain/
@@ -269,5 +277,10 @@ app/src/main/java/com/example/androidxmlbase/
         state/DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt
         viewmodel/DemoViewModel.kt, DemoViewModelFactory.kt
         ui/DemoActivity.kt
+    designsystem/
+      presentation/
+        state/DesignSystemUiState.kt, DesignSystemUiEvent.kt
+        viewmodel/DesignSystemViewModel.kt   # StateViewModel<DesignSystemUiState, DesignSystemUiEvent, UiEffect>, synchronous setState, no data/domain layers
+        ui/DesignSystemActivity.kt           # showcases FrameButton, ShadowLayout, CustomSwitch, CustomToast, and the ResultState demo
 
 `feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) now have their first real consumer: `LocaleStore` reads/writes `AppSettingsKeys.LANGUAGE_CODE` (default changed from `"en"` to `""`, meaning "no override, use system default"). `MainActivity` wraps its base `Context` with `LocaleContextWrapper` then `ResponsiveContextWrapper` in `attachBaseContext`, and its two EN/VI buttons drive `LocaleManager.setLanguage(...)` to prove the per-app language switch works end to end. `THEME_MODE` remains reserved for a future logging/theming core.

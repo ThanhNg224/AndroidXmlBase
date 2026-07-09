@@ -21,7 +21,7 @@
         android:id="@+id/btnOpenDemo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_16sdp"
         android:text="@string/view_demo"
         app:layout_constraintBottom_toTopOf="@id/btnLangEn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,9 +32,9 @@
         android:id="@+id/btnLangEn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_16sdp"
         android:text="@string/lang_en"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnDesignSystem"
         app:layout_constraintEnd_toStartOf="@id/btnLangVi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnOpenDemo" />
@@ -43,12 +43,23 @@
         android:id="@+id/btnLangVi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_16sdp"
         android:text="@string/lang_vi"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnDesignSystem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btnLangEn"
         app:layout_constraintTop_toBottomOf="@id/btnOpenDemo" />
+
+    <Button
+        android:id="@+id/btnDesignSystem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:text="@string/design_system_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLangEn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
