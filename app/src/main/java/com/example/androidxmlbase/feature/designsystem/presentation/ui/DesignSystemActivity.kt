@@ -1,34 +1,29 @@
 package com.example.androidxmlbase.feature.designsystem.presentation.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.architecture.ResultState
 import com.example.androidxmlbase.core.architecture.fold
+import com.example.androidxmlbase.core.ui.base.BaseActivity
+import com.example.androidxmlbase.core.ui.base.toRenderState
 import com.example.androidxmlbase.core.ui.components.CustomToast
 import com.example.androidxmlbase.databinding.ActivityDesignSystemBinding
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.feature.designsystem.presentation.viewmodel.DesignSystemViewModel
-import kotlinx.coroutines.launch
 
-class DesignSystemActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityDesignSystemBinding
+class DesignSystemActivity : BaseActivity<ActivityDesignSystemBinding>() {
 
     private val viewModel: DesignSystemViewModel by lazy {
         ViewModelProvider(this)[DesignSystemViewModel::class.java]
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDesignSystemBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun inflateBinding(inflater: LayoutInflater): ActivityDesignSystemBinding =
+        ActivityDesignSystemBinding.inflate(inflater)
 
+    override fun onBindingReady(savedInstanceState: Bundle?) {
         binding.btnShowToast.setOnClickListener {
             CustomToast.show(binding.root, getString(R.string.design_system_toast_message))
         }
@@ -46,15 +41,12 @@ class DesignSystemActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state -> render(state.demoResult) }
-            }
-        }
+        viewModel.state.collectOnStarted { state -> render(state.demoResult) }
     }
 
     private fun render(result: ResultState<Unit>) {
-        binding.progressDemoResult.visibility = if (result is ResultState.Loading) View.VISIBLE else View.GONE
+        val renderState = result.toRenderState()
+        binding.progressDemoResult.visibility = if (renderState.isLoadingVisible) View.VISIBLE else View.GONE
         binding.tvDemoResult.text = result.fold(
             onLoading = { getString(R.string.design_system_result_loading) },
             onSuccess = { getString(R.string.design_system_result_success) },

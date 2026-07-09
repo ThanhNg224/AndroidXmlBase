@@ -1,26 +1,22 @@
 package com.example.androidxmlbase.feature.demo.presentation.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.androidxmlbase.core.architecture.ResultState
-import com.example.androidxmlbase.core.architecture.fold
 import com.example.androidxmlbase.core.storage.DataStoreSettingsStore
 import com.example.androidxmlbase.core.storage.appSettingsDataStore
+import com.example.androidxmlbase.core.ui.base.BaseActivity
+import com.example.androidxmlbase.core.ui.base.setOnDebouncedClickListener
+import com.example.androidxmlbase.core.ui.base.toRenderState
 import com.example.androidxmlbase.databinding.ActivityDemoBinding
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEffect
 import com.example.androidxmlbase.feature.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.feature.demo.presentation.viewmodel.DemoViewModel
 import com.example.androidxmlbase.feature.demo.presentation.viewmodel.DemoViewModelFactory
-import kotlinx.coroutines.launch
 
-class DemoActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityDemoBinding
+class DemoActivity : BaseActivity<ActivityDemoBinding>() {
 
     private val viewModel: DemoViewModel by lazy {
         val settingsStore = DataStoreSettingsStore(applicationContext.appSettingsDataStore)
@@ -28,12 +24,12 @@ class DemoActivity : AppCompatActivity() {
         ViewModelProvider(this, factory).get(DemoViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun inflateBinding(inflater: LayoutInflater): ActivityDemoBinding =
+        ActivityDemoBinding.inflate(inflater)
 
-        binding.btnIncrement.setOnClickListener {
+    override fun onBindingReady(savedInstanceState: Bundle?) {
+        // Increment is the button most likely to be rapid-tapped, so it's the one debounced.
+        binding.btnIncrement.setOnDebouncedClickListener {
             viewModel.onEvent(DemoUiEvent.IncrementClicked)
         }
 
@@ -42,31 +38,30 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state ->
-                    binding.tvCount.text = state.count.toString()
-                    binding.tvMessage.text = state.message.toDisplayText()
-                }
-            }
+        viewModel.state.collectOnStarted { state ->
+            binding.tvCount.text = state.count.toString()
+            binding.tvMessage.text = state.message.toDisplayText()
         }
     }
 
-    private fun ResultState<String>.toDisplayText(): String = fold(
-        onLoading = { "Loading…" },
-        onSuccess = { message -> message },
-        onError = { message, _ -> message },
-    )
+    // No dedicated loading/error View exists here (single tvMessage does triple duty), so
+    // toRenderState() is used for its isLoadingVisible/errorMessage fields instead of a
+    // visibility toggle — same output as the previous ResultState.fold-based text, no fold left
+    // unused/unreachable.
+    private fun ResultState<String>.toDisplayText(): String {
+        val renderState = toRenderState()
+        return when {
+            renderState.isLoadingVisible -> "Loading…"
+            this is ResultState.Success -> data
+            else -> renderState.errorMessage.orEmpty()
+        }
+    }
 
     private fun observeEffects() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.effect.collect { effect ->
-                    when (effect) {
-                        is DemoUiEffect.ShowToast ->
-                            Toast.makeText(this@DemoActivity, effect.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
+        viewModel.effect.collectOnStarted { effect ->
+            when (effect) {
+                is DemoUiEffect.ShowToast ->
+                    Toast.makeText(this@DemoActivity, effect.message, Toast.LENGTH_SHORT).show()
             }
         }
     }

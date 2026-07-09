@@ -212,12 +212,12 @@ Improve architecture incrementally by making small, safe refactors that preserve
 - [ ] Is the architecture scalable and maintainable for future growth?  
 - [ ] Are tests easily written for UseCases, repositories, and ViewModels?
 
-## Current Package Layout (Phase 0-5)
+## Current Package Layout (Phase 0-6)
 
 Everything above this section describes the target architecture. The folders below are what actually exists in the codebase today; check here (or the source tree) before assuming a core module already exists.
 
 app/src/main/java/com/example/androidxmlbase/
-  MainActivity.kt                            # launcher screen, XML + ViewBinding; overrides attachBaseContext (locale, then responsive clamp)
+  MainActivity.kt                            # launcher screen, XML + ViewBinding; extends BaseActivity, no attachBaseContext override of its own
   core/
     architecture/
       UiState.kt
@@ -251,6 +251,10 @@ app/src/main/java/com/example/androidxmlbase/
       LocaleContextWrapper.kt                # wraps a Context with a per-app Configuration locale, for attachBaseContext
       LanguageOption.kt                      # LanguageOption + SUPPORTED_LANGUAGES sample data (en, vi)
     ui/
+      base/
+        BaseActivity.kt                      # ViewBinding inflate + attachBaseContext (locale, then responsive clamp) + collectOnStarted; final onCreate, subclasses wire up in onBindingReady
+        Debouncer.kt                          # pure shouldAllow(nowMs) rate limiter + View.setOnDebouncedClickListener glue
+        ResultRenderState.kt                  # ResultState<T>.toRenderState() (loading/content/error visibility + error message) + View.applyVisibilityTo glue
       responsive/
         ResponsiveConfig.kt                  # enabled + min/max smallestScreenWidthDp
         ResponsiveContextWrapper.kt          # clamps Configuration.smallestScreenWidthDp into the configured range
@@ -283,4 +287,6 @@ app/src/main/java/com/example/androidxmlbase/
         viewmodel/DesignSystemViewModel.kt   # StateViewModel<DesignSystemUiState, DesignSystemUiEvent, UiEffect>, synchronous setState, no data/domain layers
         ui/DesignSystemActivity.kt           # showcases FrameButton, ShadowLayout, CustomSwitch, CustomToast, and the ResultState demo
 
-`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) now have their first real consumer: `LocaleStore` reads/writes `AppSettingsKeys.LANGUAGE_CODE` (default changed from `"en"` to `""`, meaning "no override, use system default"). `MainActivity` wraps its base `Context` with `LocaleContextWrapper` then `ResponsiveContextWrapper` in `attachBaseContext`, and its two EN/VI buttons drive `LocaleManager.setLanguage(...)` to prove the per-app language switch works end to end. `THEME_MODE` remains reserved for a future logging/theming core.
+`feature/demo` now has a `data/` package: its counter persists through `DemoRepositoryImpl`, backed by the real `DataStoreSettingsStore` wired in `DemoActivity`. It also performs a real (fake-endpoint) network call through `DemoRemoteDataSourceImpl` -> `DemoRepositoryImpl.fetchMessage()` -> `FetchDemoMessageUseCase`, rendered via `ResultState<String>` in `DemoViewModel`/`DemoActivity`. `DemoViewModelFactory` wires the full chain by hand using `NetworkModule.createRetrofit(...)` against a placeholder base URL. `core/storage`'s 5 base keys (`AppSettingsKeys`) now have their first real consumer: `LocaleStore` reads/writes `AppSettingsKeys.LANGUAGE_CODE` (default changed from `"en"` to `""`, meaning "no override, use system default"). `MainActivity`'s two EN/VI buttons drive `LocaleManager.setLanguage(...)` to prove the per-app language switch works end to end. `THEME_MODE` remains reserved for a future logging/theming core.
+
+`MainActivity`, `DemoActivity`, and `DesignSystemActivity` all extend `core/ui/base/BaseActivity`, which owns `attachBaseContext` (locale wrap, then responsive clamp) and ViewBinding inflation; subclasses implement `inflateBinding` and do their view/ViewModel wiring in `onBindingReady` instead of `onCreate`. `DemoActivity` and `DesignSystemActivity` gained the locale/responsive wrapping for the first time as a result (they didn't have it before). Both also use `BaseActivity.collectOnStarted` for lifecycle-safe `Flow` collection, and both `DemoActivity.toDisplayText()`/`DesignSystemActivity.render()` consume `ResultState<T>.toRenderState()`. `DemoActivity`'s increment button uses `View.setOnDebouncedClickListener`, the button most likely to be rapid-tapped.
