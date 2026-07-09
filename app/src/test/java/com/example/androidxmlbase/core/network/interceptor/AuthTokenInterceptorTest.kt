@@ -11,12 +11,13 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-private class FakeAuthTokenProvider(private val token: String?) : AuthTokenProvider {
+private class FakeAuthTokenProvider(
+    private val token: String?,
+) : AuthTokenProvider {
     override suspend fun getToken(): String? = token
 }
 
 class AuthTokenInterceptorTest {
-
     private lateinit var server: MockWebServer
 
     @Before
@@ -31,7 +32,8 @@ class AuthTokenInterceptorTest {
     }
 
     private fun clientWith(token: String?): OkHttpClient =
-        OkHttpClient.Builder()
+        OkHttpClient
+            .Builder()
             .addInterceptor(AuthTokenInterceptor(FakeAuthTokenProvider(token)))
             .build()
 

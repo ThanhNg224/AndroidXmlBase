@@ -24,10 +24,9 @@ import kotlinx.coroutines.runBlocking
  * [collectOnStarted] for lifecycle-safe Flow collection.
  */
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
-
-    private var _binding: VB? = null
+    private var bindingOrNull: VB? = null
     protected val binding: VB
-        get() = requireNotNull(_binding) { "binding accessed before onCreate() completed" }
+        get() = requireNotNull(bindingOrNull) { "binding accessed before onCreate() completed" }
 
     protected abstract fun inflateBinding(inflater: LayoutInflater): VB
 
@@ -41,9 +40,9 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         super.attachBaseContext(ResponsiveContextWrapper.wrap(localeWrapped, responsiveConfig))
     }
 
-    final override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = inflateBinding(layoutInflater)
+        bindingOrNull = inflateBinding(layoutInflater)
         setContentView(binding.root)
         onBindingReady(savedInstanceState)
     }
@@ -53,7 +52,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
+        bindingOrNull = null
     }
 
     protected fun <T> Flow<T>.collectOnStarted(action: suspend (T) -> Unit) {

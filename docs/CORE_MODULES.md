@@ -10,7 +10,7 @@ The MVVM primitives every feature is built on. Framework-light: only `StateViewM
 - `UiEvent` — empty marker interface. Feature event sealed interfaces implement it (e.g. `DemoUiEvent`).
 - `UiEffect` — empty marker interface for one-shot effects (e.g. `DemoUiEffect`). `DesignSystemViewModel` uses the bare `UiEffect` interface directly (no dedicated effect type) since it never emits one.
 - `ResultState<out T>` (sealed interface) — `Loading`, `Success<T>(val data: T)`, `Error(val message: String, val cause: Throwable? = null)`. Plus `inline fun <T, R> ResultState<T>.fold(onLoading, onSuccess, onError): R`.
-- `AppDispatchers` (`main`/`io`/`default` `CoroutineDispatcher`s) + `DefaultAppDispatchers` implementation. **Not currently injected anywhere** — no ViewModel or repository takes an `AppDispatchers` parameter yet; all existing coroutine code uses `viewModelScope`/structured concurrency directly. It exists as a seam for tests that need dispatcher control, unused until a feature actually needs to inject one.
+- `AppDispatchers` (`main`/`io`/`default` `CoroutineDispatcher`s) + `DefaultAppDispatchers` implementation. Bound in Hilt and used by blocking/IO-heavy adapters such as `EncryptedSecureStore` and `OkHttpFileTransferClient`.
 - `UseCase<in P, R>` — `suspend operator fun invoke(params: P): R`. Implementers: `SaveDemoCountUseCase`, `FetchDemoMessageUseCase`. See `docs/FEATURE_TEMPLATE.md` section 4 for when to implement it vs. stay a plain class.
 - `StateViewModel<S : UiState, E : UiEvent, F : UiEffect>(initialState: S)` (abstract, extends `ViewModel`) — exposes `state: StateFlow<S>`, `effect: Flow<F>` (buffered `Channel`-backed), `protected val currentState: S`, `abstract fun onEvent(event: E)`, `protected fun setState(reducer: S.() -> S)` (implemented via `MutableStateFlow.update {}`, atomic under concurrent calls), `protected fun sendEffect(effect: F)`.
 
@@ -25,12 +25,14 @@ A typed, testable settings store backed by Jetpack DataStore (`androidx.datastor
 - `DataStoreSettingsStore(dataStore: DataStore<Preferences>)` — the only implementation. Takes a `DataStore<Preferences>` directly (never a `Context`) so it stays unit-testable on the JVM.
 - `Context.appSettingsDataStore` — the `preferencesDataStore(name = "app_settings")` delegate; the one place a `Context` is involved, kept out of the testable class.
 - `AppSettingsKeys` — exactly 5 app-wide keys: `LANGUAGE_CODE` (String, default `""` = "use system default"), `THEME_MODE` (String, default `"system"`), `FIRST_OPEN_AT` (Long, default `0L`), `OPEN_COUNT` (Int, default `0`), `DEBUG_LOGGING_ENABLED` (Boolean, default `false`).
+- `SecureStoreKey`, `SecureStore`, `SecureStoreKeys` — string-secret storage contract for tokens/secrets. Built-in keys: `AUTH_TOKEN`, `REFRESH_TOKEN`.
+- `EncryptedSecureStore` — AndroidX Security-backed implementation using encrypted SharedPreferences behind the `SecureStore` interface. It is provided as the app-wide `SecureStore` by Hilt.
 
-**Deferred, and why:** No `SecureStore` and no SharedPreferences-to-DataStore migration helper exist. Per the Phase 2 plan: *"Scope is deliberately smaller than that section's full acceptance list: no `SecureStore`, no SharedPreferences migration (both explicitly 'optional' in the plan and nothing in this codebase needs them yet — YAGNI)."*
+**Deferred, and why:** No SharedPreferences-to-DataStore migration helper exists. It remains optional for apps migrating from an existing legacy project; brand-new apps on this base should start with `SettingsStore`/`SecureStore` directly.
 
 **Feature-specific keys do not belong in `AppSettingsKeys`.** `feature/demo`'s counter key (`demo_counter_count`, an `IntKey`) is a private constant inside `DemoRepositoryImpl`, not in this object — see `docs/FEATURE_TEMPLATE.md` anti-pattern 2.
 
-**Consumers:** `LocaleStore` (via `AppSettingsKeys.LANGUAGE_CODE`); `BaseActivity.attachBaseContext` (reads `LANGUAGE_CODE` on every screen); `DemoRepositoryImpl` (feature-private counter key + `SettingsStore`). `THEME_MODE`, `FIRST_OPEN_AT`, `OPEN_COUNT`, `DEBUG_LOGGING_ENABLED` have no consumer yet — reserved for a future theming/analytics/logging core.
+**Consumers:** `LocaleStore` (via `AppSettingsKeys.LANGUAGE_CODE`); `BaseActivity.attachBaseContext` (reads `LANGUAGE_CODE` on every screen); `DemoRepositoryImpl` (feature-private counter key + `SettingsStore`); `SecureStoreAuthTokenProvider` (reads `SecureStoreKeys.AUTH_TOKEN`). `THEME_MODE`, `FIRST_OPEN_AT`, `OPEN_COUNT`, `DEBUG_LOGGING_ENABLED` have no consumer yet — reserved for a future theming/analytics/logging core.
 
 ## `core/network`
 
@@ -38,17 +40,31 @@ A Retrofit/OkHttp facade that classifies every call into a uniform `ApiResult<T>
 
 - `ApiResult<out T>` (sealed interface) — `Success<T>(data)`, `HttpError(code, message)`, `NetworkError(cause)`, `ParseError(cause)`, `EmptyBody`.
 - `ApiConfig(baseUrl: String, enableLogging: Boolean)`.
-- `AuthTokenProvider` (interface, `suspend fun getToken(): String?`) + `NoOpAuthTokenProvider` (returns `null`, used until a feature needs real auth).
+- `AuthTokenProvider` (interface, `suspend fun getToken(): String?`) + `SecureStoreAuthTokenProvider` (reads `SecureStoreKeys.AUTH_TOKEN`) + `NoOpAuthTokenProvider` for tests/demo overrides.
 - `ConnectivityChecker` (interface, `fun isConnected(): Boolean`) + `AndroidConnectivityChecker(context)` (real impl via `ConnectivityManager`).
 - `ApiClient` (interface) — `suspend fun <T> execute(call: suspend () -> retrofit2.Response<T>): ApiResult<T>`.
-- `RetrofitApiClient` — the only `ApiClient` implementation; classifies success/HTTP error/empty body, catches `IOException` as `NetworkError`, any other `Exception` as `ParseError`, and always rethrows `CancellationException` before those catches.
-- `NetworkModule` (object) — `createRetrofit(config, authTokenProvider, connectivityChecker): Retrofit`, the hand-wired composition root: builds an `OkHttpClient` with `ConnectivityInterceptor` → `AuthTokenInterceptor` → `HttpLoggingInterceptor` (in that order), a `kotlinx.serialization.json.Json { ignoreUnknownKeys = true }` converter, no DI framework.
+- `RetrofitApiClient` — the `ApiClient` implementation; classifies success/HTTP error/empty body, catches `IOException` as `NetworkError`, any other `Exception` as `ParseError`, and always rethrows `CancellationException` before those catches.
+- `NetworkModule` (object) — reusable factory functions for `OkHttpClient` and `Retrofit`; Hilt calls these from `core/di/NetworkDiModule`.
 - `interceptor/AuthTokenInterceptor` — adds `Authorization: Bearer <token>` via `runBlocking { authTokenProvider.getToken() }` when a token is present.
 - `interceptor/ConnectivityInterceptor` — throws `NoConnectivityException` (an `IOException`) before any request leaves the device if `ConnectivityChecker.isConnected()` is false.
+- `FileTransferClient` + `OkHttpFileTransferClient` — download, upload, and streaming support over OkHttp `Request`.
+- `TransferResult<T>` — `Progress`, `Success<T>`, `Failure`; transfer-specific aliases: `DownloadResult`, `UploadResult`, `StreamResult`.
+- `HttpTransferResponse`, `StreamChunk`, `ProgressRequestBody` — upload/stream/download support types.
 
-**Deferred, and why:** No streaming/upload/download support. Per the Phase 3 plan: *"Do not add streaming/upload/download support — explicitly deferred per the port plan; nothing in this base needs it yet (YAGNI)."* Serializer is kotlinx.serialization, not Gson, by explicit decision (no reflection, already idiomatic-Kotlin codebase) — do not introduce Gson alongside it.
+Serializer is kotlinx.serialization, not Gson, by explicit decision (no reflection, already idiomatic-Kotlin codebase) — do not introduce Gson alongside it.
 
-**Consumers:** `feature/demo`'s `DemoApiService`/`DemoRemoteDataSourceImpl`, wired by hand in `DemoViewModelFactory` via `NetworkModule.createRetrofit(...)` against a placeholder base URL (`https://example.com/`) — replace that URL before shipping a real product on this base. `NoOpAuthTokenProvider`/real `AndroidConnectivityChecker` are both used in that wiring; no feature has swapped in a real `AuthTokenProvider` yet.
+**Consumers:** `feature/demo`'s `DemoApiService`/`DemoRemoteDataSourceImpl`, wired by Hilt through `NetworkDiModule` against a placeholder base URL (`https://example.com/`) — replace that URL before shipping a real product on this base. `SecureStoreAuthTokenProvider` is the default auth provider; write `SecureStoreKeys.AUTH_TOKEN` to attach a bearer token.
+
+## `core/di`
+
+Hilt modules for app-wide wiring.
+
+- `AppCoreBindingsModule` — binds `DefaultAppDispatchers` to `AppDispatchers` and `EncryptedSecureStore` to `SecureStore`.
+- `AppCoreModule` — provides `SettingsStore`, `LocaleStore`, and `LocaleManager`.
+- `NetworkBindingsModule` — binds `RetrofitApiClient`, `SecureStoreAuthTokenProvider`, and `OkHttpFileTransferClient`.
+- `NetworkDiModule` — provides `ApiConfig`, `ConnectivityChecker`, `OkHttpClient`, `Retrofit`, and `DemoApiService`.
+
+Concrete Activities use `@AndroidEntryPoint`; ViewModels use `@HiltViewModel`; feature interface bindings live beside the feature, e.g. `feature/demo/di/DemoModule`.
 
 ## `core/localization`
 
@@ -76,13 +92,23 @@ A `smallestScreenWidthDp` clamp to avoid a tablet/wide-screen resource explosion
 
 Shared `Activity` infrastructure, extracted once real duplication existed across `MainActivity`/`DemoActivity`/`DesignSystemActivity` (Phase 6).
 
-- `BaseActivity<VB : ViewBinding>` (abstract, extends `AppCompatActivity`) — owns `attachBaseContext` (locale wrap, then responsive clamp — see above) and ViewBinding lifecycle. Subclasses implement `protected abstract fun inflateBinding(inflater: LayoutInflater): VB` and `protected abstract fun onBindingReady(savedInstanceState: Bundle?)`; `onCreate` is `final` (it inflates the binding, calls `setContentView`, then delegates to `onBindingReady` — subclasses cannot override `onCreate` itself). Also exposes `protected fun <T> Flow<T>.collectOnStarted(action: suspend (T) -> Unit)` for lifecycle-safe collection (`repeatOnLifecycle(STARTED)` under the hood).
+- `BaseActivity<VB : ViewBinding>` (abstract, extends `AppCompatActivity`) — owns `attachBaseContext` (locale wrap, then responsive clamp — see above) and ViewBinding lifecycle. Subclasses implement `protected abstract fun inflateBinding(inflater: LayoutInflater): VB` and `protected abstract fun onBindingReady(savedInstanceState: Bundle?)`. `onCreate` is intentionally overridable because Hilt needs to subclass Activities for injection; app screens should still use `onBindingReady`.
+- `BaseFragment<VB : ViewBinding>` — ViewBinding lifecycle + `onBindingReady(view, savedInstanceState)` + lifecycle-safe `collectOnStarted`.
+- `BaseDialogFragment<VB : ViewBinding>` — AlertDialog-backed ViewBinding dialog base.
+- `BaseBottomSheetDialogFragment<VB : ViewBinding>` — Material bottom-sheet ViewBinding base.
 - `Debouncer(intervalMs: Long = 600L)` — pure, JVM-testable rate limiter: `fun shouldAllow(nowMs: Long): Boolean`. Plus `View.setOnDebouncedClickListener(intervalMs, action)`, the Android-only glue that ignores clicks arriving within `intervalMs` of the last accepted one (uses `System.currentTimeMillis()`, not `SystemClock`, specifically so the pure `Debouncer` core stays testable without Robolectric).
 - `ResultRenderState(isLoadingVisible, isContentVisible, isErrorVisible, errorMessage: String?)` — a visibility-only projection of a `ResultState<T>`. Plus `fun <T> ResultState<T>.toRenderState(): ResultRenderState` and the Android-only `fun ResultRenderState.applyVisibilityTo(loadingView, contentView, errorView)`.
 
-**Deferred, and why:** No `BaseFragment`/`BaseBottomSheetDialogFragment`/`BaseDialog`. Per the Phase 6 plan: *"There are zero Fragments or Dialogs anywhere in this codebase; building those base classes now would be speculative, unused code (same reasoning already applied to deferred button variants in Phase 5). Add them when a real Fragment/Dialog exists."*
-
 **Consumers:** `MainActivity`, `DemoActivity`, `DesignSystemActivity` all extend `BaseActivity`. `DemoActivity`'s increment button (`FrameButton`) uses `setOnDebouncedClickListener` — the one real usage so far, chosen because it's the control most likely to be rapid-tapped. `DemoActivity.toDisplayText()` and `DesignSystemActivity.render()` both consume `toRenderState()`.
+
+## `core/navigation`
+
+Small Activity-navigation helper layer, intentionally lighter than Jetpack Navigation until the app has fragment graphs.
+
+- `NavigationOptions(clearTask, singleTop, noAnimation)` — pure option model with `toIntentFlags()`.
+- `ActivityDestination(activityClass, extras, options)` — typed Activity destination.
+- `ActivityNavigator` — `navigate(context, destination)` and `finish(activity)`, injectable by Hilt.
+- `BundleCompat` — internal defensive copy helper for extras.
 
 ## `core/ui/components`
 
@@ -107,4 +133,4 @@ The custom Views this base ships today.
 
 ---
 
-No `core/common`, `core/designsystem`, `core/analytics`, `core/navigation`, or `core/logging` package exists yet, despite being named as target folders in `CLAUDE.md`'s architecture overview — those are aspirational target-state names, not built. Do not assume any of them exist; check the source tree first.
+No `core/common`, `core/designsystem`, `core/analytics`, or `core/logging` package exists yet. Do not assume any of them exist; check the source tree first.

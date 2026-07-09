@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 abstract class StateViewModel<S : UiState, E : UiEvent, F : UiEffect>(
     initialState: S,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<S> = _state.asStateFlow()
 

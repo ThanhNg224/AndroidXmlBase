@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class LocaleTagMapperTest {
-
     @Test
     fun `vi maps to vi-VN`() {
         assertEquals("vi-VN", LocaleTagMapper.toRegionalTag("vi"))

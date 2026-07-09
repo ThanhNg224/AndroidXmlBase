@@ -6,10 +6,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocaleStore {
     fun observeLanguageCode(): Flow<String>
+
     suspend fun setLanguageCode(code: String)
 }
 
-class SettingsStoreLocaleStore(private val settingsStore: SettingsStore) : LocaleStore {
+class SettingsStoreLocaleStore(
+    private val settingsStore: SettingsStore,
+) : LocaleStore {
     override fun observeLanguageCode(): Flow<String> = settingsStore.observe(AppSettingsKeys.LANGUAGE_CODE)
+
     override suspend fun setLanguageCode(code: String) = settingsStore.set(AppSettingsKeys.LANGUAGE_CODE, code)
 }

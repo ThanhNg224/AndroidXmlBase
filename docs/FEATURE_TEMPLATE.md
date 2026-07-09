@@ -32,9 +32,11 @@ feature/demo/
     state/
       DemoUiState.kt, DemoUiEvent.kt, DemoUiEffect.kt
     viewmodel/
-      DemoViewModel.kt, DemoViewModelFactory.kt
+      DemoViewModel.kt
     ui/
       DemoActivity.kt
+  di/
+    DemoModule.kt                    # Hilt bindings for DemoRepository/DemoRemoteDataSource
 ```
 
 Notes on what's *not* here, on purpose:
@@ -46,8 +48,8 @@ Notes on what's *not* here, on purpose:
 The real call chain in `feature/demo`, read bottom-to-top from where a tap originates to where data comes back:
 
 ```
-DemoActivity (extends BaseActivity<ActivityDemoBinding>)
-  -> DemoViewModel (extends StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>)
+DemoActivity (@AndroidEntryPoint, extends BaseActivity<ActivityDemoBinding>)
+  -> DemoViewModel (@HiltViewModel, extends StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>)
     -> IncrementCounterUseCase          (plain sync class — no repository)
     -> SaveDemoCountUseCase             (implements UseCase<Int, Unit>)
     -> FetchDemoMessageUseCase          (implements UseCase<Unit, ResultState<String>>)
@@ -60,20 +62,19 @@ DemoActivity (extends BaseActivity<ActivityDemoBinding>)
 Concretely, in `DemoActivity.onBindingReady`:
 1. `binding.btnIncrement.setOnDebouncedClickListener { viewModel.onEvent(DemoUiEvent.IncrementClicked) }` — a `FrameButton` (see `docs/DESIGN_SYSTEM.md`), debounced via `core.ui.base.setOnDebouncedClickListener` since it's the control most likely to be rapid-tapped.
 2. `viewModel.state.collectOnStarted { ... }` renders `count` and `message` into `tvCount`/`tvMessage`.
-3. `viewModel.effect.collectOnStarted { ... }` handles the one-shot `DemoUiEffect.ShowToast`.
+3. `viewModel.effect.collectOnStarted { ... }` handles one-shot effects such as `DemoUiEffect.ShowMaxCountReached`.
 
 In `DemoViewModel`:
 - `init` launches two coroutines: one reads the persisted count once (`observeDemoCount().first()`), sets `isInitialCountLoaded = true`, then keeps collecting (`.drop(1)`) for future external changes; the other calls `fetchDemoMessage(Unit)` once and stores the `ResultState<String>` into `DemoUiState.message`.
-- `onIncrementClicked()` guards on `isInitialCountLoaded` (see the comment in the real file — this exists specifically to avoid computing the next count from the constructor-default `0` while the real DataStore read is still in flight, which would clobber the persisted value with a stale increment), calls `incrementCounter(currentState.count)`, updates state, fires `saveDemoCount` async, and sends `ShowToast` if the result is capped.
+- `onIncrementClicked()` guards on `isInitialCountLoaded` (see the comment in the real file — this exists specifically to avoid computing the next count from the constructor-default `0` while the real DataStore read is still in flight, which would clobber the persisted value with a stale increment), calls `incrementCounter(currentState.count)`, updates state, fires `saveDemoCount` async, and sends `ShowMaxCountReached` if the result is capped.
 
-`DemoViewModelFactory` is the composition root: it hand-builds `NetworkModule.createRetrofit(...)` -> `DemoApiService` -> `DemoRemoteDataSourceImpl` (+ `RetrofitApiClient`) -> `DemoRepositoryImpl` (also given the `SettingsStore` passed in from `DemoActivity`) -> the four use cases -> `DemoViewModel`. There is no DI framework in this codebase — every new feature wires its dependency graph by hand in its own `<Feature>ViewModelFactory`, following this exact pattern.
+Hilt is the composition root. Core app bindings live in `core/di`; feature bindings live beside the feature (`feature/demo/di/DemoModule`). Use constructor injection for repositories, data sources, use cases, and ViewModels. Add a feature Hilt module only when Hilt needs an interface binding (`@Binds`) or framework construction (`@Provides`).
 
 `DemoActivity` obtains its `ViewModel` via:
 ```kotlin
-private val viewModel: DemoViewModel by lazy {
-    val settingsStore = DataStoreSettingsStore(applicationContext.appSettingsDataStore)
-    val factory = DemoViewModelFactory(applicationContext, settingsStore)
-    ViewModelProvider(this, factory).get(DemoViewModel::class.java)
+@AndroidEntryPoint
+class DemoActivity : BaseActivity<ActivityDemoBinding>() {
+    private val viewModel: DemoViewModel by viewModels()
 }
 ```
 
@@ -104,7 +105,11 @@ Don't force every use case in a feature onto the same interface just for consist
 - Does it read or write data? If not, skip `data/` (and `domain/repository`) entirely — see section 3.
 - Does it need a new setting? Define a feature-private `SettingsKey` inside the feature's own repository implementation (see `DemoRepositoryImpl`'s private `DEMO_COUNTER_COUNT` key), not in `core.storage.AppSettingsKeys` — that object is reserved for genuinely app-wide keys (language, theme, first-open timestamp, debug logging). See section 6, anti-pattern 2.
 - Does a use case return a `Flow` or do pure sync work with no I/O? Keep it a plain callable class. Does it do exactly one suspend operation with one result? Implement `UseCase<in P, R>`. See section 4.
-- New `Activity`? Extend `core.ui.base.BaseActivity<VB>`, implement `inflateBinding(inflater)`, and do all view/ViewModel wiring in `onBindingReady(savedInstanceState)` — `onCreate` is `final` in `BaseActivity`, so there is nothing to override there.
+- New `Activity`? Annotate with `@AndroidEntryPoint`, extend `core.ui.base.BaseActivity<VB>`, implement `inflateBinding(inflater)`, and do all view/ViewModel wiring in `onBindingReady(savedInstanceState)`. Do not hand-wire ViewModel factories; use Hilt + `by viewModels()`.
+- New Fragment/Dialog? Prefer `BaseFragment<VB>`, `BaseDialogFragment<VB>`, or `BaseBottomSheetDialogFragment<VB>` and annotate concrete classes with `@AndroidEntryPoint` when they inject dependencies.
+- Need a secret/token? Use `SecureStore`/`SecureStoreKeys`, not `SettingsStore`.
+- Need upload/download/streaming? Inject `FileTransferClient`; do not hand-roll OkHttp calls in a feature.
+- Need Activity navigation? Inject `ActivityNavigator` and navigate with `ActivityDestination`/`NavigationOptions`.
 - Buttons: use `core.ui.components.FrameButton` with design tokens from `docs/DESIGN_SYSTEM.md`, not a plain `<Button>` or hardcoded colors. Debounce the control most likely to be rapid-tapped with `View.setOnDebouncedClickListener` (not necessarily every control — one real usage per screen has been this codebase's bar so far).
 - Layout dimensions: use `@dimen/_<n>sdp` / `@dimen/_<n>ssp`, never a literal `16dp`/`14sp` (see `docs/DESIGN_SYSTEM.md` for the convention and its rationale).
 - Loading/success/error UI: model it with `ResultState<T>` in your `UiState` and either `ResultState.fold(...)` (for choosing *text*) or `core.ui.base`'s `.toRenderState()` (for toggling *visibility*) — see `DesignSystemActivity.render()`, which uses both in the same function (fold for the text, `toRenderState()` for the progress-bar visibility). `DemoActivity.toDisplayText()` uses only `toRenderState()`'s fields, not `fold` — it's a `toRenderState()`-only example, not a second `fold` example.
@@ -122,4 +127,6 @@ These are drawn from real decisions made across this project's phases — not ge
 
 4. **Overriding `attachBaseContext` or hand-rolling ViewBinding inflate in a new `Activity` instead of extending `BaseActivity`.** `BaseActivity<VB>` centralizes exactly this (locale wrap, then responsive clamp, then binding inflate) so every screen gets it automatically and consistently. Before `BaseActivity` existed (Phase 6), `DemoActivity`/`DesignSystemActivity` had *no* locale/responsive wrapping at all — duplicating `MainActivity`'s override in every new Activity was the exact duplication `BaseActivity` was built to remove. Re-introducing a hand-rolled override in a new feature undoes that.
 
-5. **Adding a new custom button variant (`CardButton`, `LinearButton`, `ConstraintButton`, etc.) before a real screen needs that specific shape.** The Phase 5 plan explicitly scoped this codebase to `ButtonStyleDelegate` + one concrete variant (`FrameButton`) out of the reference project's 9, stating: *"Porting all 9 with zero real screens needing more than one shape would be speculative, unused code... Adding `LinearButton`/`CardButton`/etc. is a follow-up whenever a real screen needs that specific shape — do not add them speculatively now."* The same reasoning blocked a `BaseFragment` in Phase 6 (*"There are zero Fragments or Dialogs anywhere in this codebase; building those base classes now would be speculative, unused code... Add them when a real Fragment/Dialog exists."*) — apply it to any new base class or component you're tempted to add "for completeness."
+5. **Recreating manual ViewModel factories now that Hilt exists.** Use constructor injection, `@HiltViewModel`, `@AndroidEntryPoint`, and feature-local Hilt modules for bindings. A custom `ViewModelProvider.Factory` should be rare and justified.
+
+6. **Adding a new custom button variant (`CardButton`, `LinearButton`, `ConstraintButton`, etc.) before a real screen needs that specific shape.** The Phase 5 plan explicitly scoped this codebase to `ButtonStyleDelegate` + one concrete variant (`FrameButton`) out of the reference project's 9, stating: *"Porting all 9 with zero real screens needing more than one shape would be speculative, unused code... Adding `LinearButton`/`CardButton`/etc. is a follow-up whenever a real screen needs that specific shape — do not add them speculatively now."*

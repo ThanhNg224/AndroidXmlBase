@@ -16,18 +16,22 @@ import com.google.android.material.snackbar.Snackbar
  * use case, and Material Components (already a dependency) ships it for free.
  */
 object CustomToast {
-
-    fun show(anchorView: View, message: String, duration: Int = Snackbar.LENGTH_SHORT) {
+    fun show(
+        anchorView: View,
+        message: String,
+        duration: Int = Snackbar.LENGTH_SHORT,
+    ) {
         val context = anchorView.context
         val density = context.resources.displayMetrics.density
 
         val snackbar = Snackbar.make(anchorView, message, duration)
         snackbar.setTextColor(ContextCompat.getColor(context, R.color.color_on_surface))
-        snackbar.view.background = ShapeUtils.buildDrawable(
-            shape = Shape.RECTANGLE,
-            cornerRadiusPx = CORNER_RADIUS_DP * density,
-            fillColor = ContextCompat.getColor(context, R.color.color_surface),
-        )
+        snackbar.view.background =
+            ShapeUtils.buildDrawable(
+                shape = Shape.RECTANGLE,
+                cornerRadiusPx = CORNER_RADIUS_DP * density,
+                fillColor = ContextCompat.getColor(context, R.color.color_surface),
+            )
         snackbar.show()
     }
 

@@ -6,7 +6,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-private class FakeLocaleStore(initial: String = "") : LocaleStore {
+private class FakeLocaleStore(
+    initial: String = "",
+) : LocaleStore {
     private val state = MutableStateFlow(initial)
 
     override fun observeLanguageCode(): Flow<String> = state
@@ -27,28 +29,29 @@ private class FakeAppLocaleApplier : AppLocaleApplier {
 }
 
 class LocaleManagerTest {
+    @Test
+    fun `setLanguage vi persists code and applies mapped regional tag`() =
+        runTest {
+            val store = FakeLocaleStore()
+            val applier = FakeAppLocaleApplier()
+            val manager = LocaleManager(store, applier)
+
+            manager.setLanguage("vi")
+
+            assertEquals("vi", store.current())
+            assertEquals(listOf("vi-VN"), applier.appliedTags)
+        }
 
     @Test
-    fun `setLanguage vi persists code and applies mapped regional tag`() = runTest {
-        val store = FakeLocaleStore()
-        val applier = FakeAppLocaleApplier()
-        val manager = LocaleManager(store, applier)
+    fun `setLanguage blank persists blank code and applies blank passthrough`() =
+        runTest {
+            val store = FakeLocaleStore(initial = "vi")
+            val applier = FakeAppLocaleApplier()
+            val manager = LocaleManager(store, applier)
 
-        manager.setLanguage("vi")
+            manager.setLanguage("")
 
-        assertEquals("vi", store.current())
-        assertEquals(listOf("vi-VN"), applier.appliedTags)
-    }
-
-    @Test
-    fun `setLanguage blank persists blank code and applies blank passthrough`() = runTest {
-        val store = FakeLocaleStore(initial = "vi")
-        val applier = FakeAppLocaleApplier()
-        val manager = LocaleManager(store, applier)
-
-        manager.setLanguage("")
-
-        assertEquals("", store.current())
-        assertEquals(listOf(""), applier.appliedTags)
-    }
+            assertEquals("", store.current())
+            assertEquals(listOf(""), applier.appliedTags)
+        }
 }

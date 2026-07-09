@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DefaultAppDispatchersTest {
-
     private val dispatchers: AppDispatchers = DefaultAppDispatchers()
 
     @Test

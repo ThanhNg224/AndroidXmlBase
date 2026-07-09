@@ -5,7 +5,10 @@ import android.content.res.Configuration
 import java.util.Locale
 
 object LocaleContextWrapper {
-    fun wrap(context: Context, languageCode: String): Context {
+    fun wrap(
+        context: Context,
+        languageCode: String,
+    ): Context {
         if (languageCode.isBlank()) return context
         val tag = LocaleTagMapper.toRegionalTag(languageCode)
         val locale = Locale.forLanguageTag(tag)

@@ -17,36 +17,47 @@ import com.example.androidxmlbase.R
  * than merely clever. Depth is controlled with the standard `android:elevation` attribute — no
  * custom attr is added for it.
  */
-class ShadowLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : FrameLayout(context, attrs, defStyleAttr) {
+class ShadowLayout
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : FrameLayout(context, attrs, defStyleAttr) {
+        private val cornerRadiusPx: Float
 
-    private val cornerRadiusPx: Float
+        init {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowLayout, defStyleAttr, 0)
+            cornerRadiusPx = typedArray.getDimension(R.styleable.ShadowLayout_shadowCornerRadius, 0f)
+            val backgroundColor =
+                typedArray.getColor(
+                    R.styleable.ShadowLayout_shadowBackgroundColor,
+                    ContextCompat.getColor(context, R.color.color_surface),
+                )
+            typedArray.recycle()
 
-    init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowLayout, defStyleAttr, 0)
-        cornerRadiusPx = typedArray.getDimension(R.styleable.ShadowLayout_shadowCornerRadius, 0f)
-        val backgroundColor = typedArray.getColor(
-            R.styleable.ShadowLayout_shadowBackgroundColor,
-            ContextCompat.getColor(context, R.color.color_surface),
-        )
-        typedArray.recycle()
+            setBackgroundColor(backgroundColor)
+            clipToOutline = true
+            outlineProvider =
+                object : ViewOutlineProvider() {
+                    override fun getOutline(
+                        view: View,
+                        outline: Outline,
+                    ) {
+                        outline.setRoundRect(0, 0, view.width, view.height, cornerRadiusPx)
+                    }
+                }
+        }
 
-        setBackgroundColor(backgroundColor)
-        clipToOutline = true
-        outlineProvider = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, cornerRadiusPx)
-            }
+        override fun onSizeChanged(
+            w: Int,
+            h: Int,
+            oldw: Int,
+            oldh: Int,
+        ) {
+            super.onSizeChanged(w, h, oldw, oldh)
+            // Defensive: ensures the rounded outline (and its shadow) tracks the new bounds even if
+            // the platform doesn't invalidate it automatically for this layout pass.
+            invalidateOutline()
         }
     }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        // Defensive: ensures the rounded outline (and its shadow) tracks the new bounds even if
-        // the platform doesn't invalidate it automatically for this layout pass.
-        invalidateOutline()
-    }
-}

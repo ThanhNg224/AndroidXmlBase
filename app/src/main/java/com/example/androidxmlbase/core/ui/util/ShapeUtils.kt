@@ -15,7 +15,6 @@ enum class Shape {
  * plain values, so each component doesn't hand-roll [GradientDrawable] setup individually.
  */
 object ShapeUtils {
-
     fun buildDrawable(
         shape: Shape,
         cornerRadiusPx: Float,
@@ -24,10 +23,11 @@ object ShapeUtils {
         strokeColor: Int = Color.TRANSPARENT,
     ): GradientDrawable {
         val drawable = GradientDrawable()
-        drawable.shape = when (shape) {
-            Shape.RECTANGLE -> GradientDrawable.RECTANGLE
-            Shape.OVAL -> GradientDrawable.OVAL
-        }
+        drawable.shape =
+            when (shape) {
+                Shape.RECTANGLE -> GradientDrawable.RECTANGLE
+                Shape.OVAL -> GradientDrawable.OVAL
+            }
         drawable.setColor(fillColor)
         if (shape == Shape.RECTANGLE) {
             drawable.cornerRadius = resolveCornerRadiusPx(cornerRadiusPx)

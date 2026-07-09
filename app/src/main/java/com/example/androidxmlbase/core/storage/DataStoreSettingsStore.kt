@@ -15,17 +15,17 @@ import kotlinx.coroutines.flow.map
 class DataStoreSettingsStore(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsStore {
-
     override fun <T> observe(key: SettingsKey<T>): Flow<T> {
         val prefsKey = key.toPreferencesKey()
         return dataStore.data.map { it[prefsKey] ?: key.defaultValue }
     }
 
-    override suspend fun <T> get(key: SettingsKey<T>): T {
-        return observe(key).first()
-    }
+    override suspend fun <T> get(key: SettingsKey<T>): T = observe(key).first()
 
-    override suspend fun <T> set(key: SettingsKey<T>, value: T) {
+    override suspend fun <T> set(
+        key: SettingsKey<T>,
+        value: T,
+    ) {
         val prefsKey = key.toPreferencesKey()
         dataStore.edit { it[prefsKey] = value }
     }
@@ -36,13 +36,12 @@ class DataStoreSettingsStore(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T> SettingsKey<T>.toPreferencesKey(): Preferences.Key<T> {
-        return when (this) {
+    private fun <T> SettingsKey<T>.toPreferencesKey(): Preferences.Key<T> =
+        when (this) {
             is SettingsKey.StringKey -> stringPreferencesKey(name)
             is SettingsKey.IntKey -> intPreferencesKey(name)
             is SettingsKey.LongKey -> longPreferencesKey(name)
             is SettingsKey.BooleanKey -> booleanPreferencesKey(name)
             is SettingsKey.FloatKey -> floatPreferencesKey(name)
         } as Preferences.Key<T>
-    }
 }

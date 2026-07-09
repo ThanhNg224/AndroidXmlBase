@@ -11,12 +11,13 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
-private class FakeConnectivityChecker(private val connected: Boolean) : ConnectivityChecker {
+private class FakeConnectivityChecker(
+    private val connected: Boolean,
+) : ConnectivityChecker {
     override fun isConnected(): Boolean = connected
 }
 
 class ConnectivityInterceptorTest {
-
     private lateinit var server: MockWebServer
 
     @Before
@@ -33,9 +34,11 @@ class ConnectivityInterceptorTest {
     @Test
     fun `throws NoConnectivityException and never reaches the server when disconnected`() {
         server.enqueue(MockResponse().setResponseCode(200))
-        val client = OkHttpClient.Builder()
-            .addInterceptor(ConnectivityInterceptor(FakeConnectivityChecker(connected = false)))
-            .build()
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(ConnectivityInterceptor(FakeConnectivityChecker(connected = false)))
+                .build()
 
         assertThrows(NoConnectivityException::class.java) {
             client.newCall(Request.Builder().url(server.url("/")).build()).execute()
@@ -47,9 +50,11 @@ class ConnectivityInterceptorTest {
     @Test
     fun `proceeds to the server when connected`() {
         server.enqueue(MockResponse().setResponseCode(200))
-        val client = OkHttpClient.Builder()
-            .addInterceptor(ConnectivityInterceptor(FakeConnectivityChecker(connected = true)))
-            .build()
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(ConnectivityInterceptor(FakeConnectivityChecker(connected = true)))
+                .build()
 
         client.newCall(Request.Builder().url(server.url("/")).build()).execute().close()
 

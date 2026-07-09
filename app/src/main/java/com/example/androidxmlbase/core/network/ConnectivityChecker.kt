@@ -8,7 +8,9 @@ interface ConnectivityChecker {
     fun isConnected(): Boolean
 }
 
-class AndroidConnectivityChecker(private val context: Context) : ConnectivityChecker {
+class AndroidConnectivityChecker(
+    private val context: Context,
+) : ConnectivityChecker {
     override fun isConnected(): Boolean {
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = manager.activeNetwork ?: return false

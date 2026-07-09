@@ -23,17 +23,22 @@ class ButtonStyleDelegate(
     private val strokeWidthPx: Float = 0f,
     private val strokeColor: Int = Color.TRANSPARENT,
 ) {
-
     /** Builds the shape drawable and applies it, wrapped in a themed ripple, as the target's background. */
     fun apply() {
-        val shapeDrawable = ShapeUtils.buildDrawable(
-            shape = shape,
-            cornerRadiusPx = cornerRadiusPx,
-            fillColor = backgroundColor,
-            strokeWidthPx = strokeWidthPx,
-            strokeColor = strokeColor,
-        )
-        targetView.background = RippleDrawable(ColorStateList.valueOf(resolveRippleColor()), shapeDrawable, shapeDrawable)
+        val shapeDrawable =
+            ShapeUtils.buildDrawable(
+                shape = shape,
+                cornerRadiusPx = cornerRadiusPx,
+                fillColor = backgroundColor,
+                strokeWidthPx = strokeWidthPx,
+                strokeColor = strokeColor,
+            )
+        targetView.background =
+            RippleDrawable(
+                ColorStateList.valueOf(resolveRippleColor()),
+                shapeDrawable,
+                shapeDrawable,
+            )
     }
 
     /**
@@ -43,11 +48,12 @@ class ButtonStyleDelegate(
      */
     private fun resolveRippleColor(): Int {
         val typedValue = TypedValue()
-        val resolved = targetView.context.theme.resolveAttribute(
-            android.R.attr.colorControlHighlight,
-            typedValue,
-            true,
-        )
+        val resolved =
+            targetView.context.theme.resolveAttribute(
+                android.R.attr.colorControlHighlight,
+                typedValue,
+                true,
+            )
         return if (resolved) typedValue.data else ColorUtils.setAlphaComponent(Color.BLACK, FALLBACK_RIPPLE_ALPHA)
     }
 

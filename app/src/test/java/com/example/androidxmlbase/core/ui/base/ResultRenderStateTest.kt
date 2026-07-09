@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ResultRenderStateTest {
-
     @Test
     fun `Loading maps to loading-visible render state`() {
         val result: ResultState<String> = ResultState.Loading

@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DebouncerTest {
-
     @Test
     fun `first call is always allowed`() {
         val debouncer = Debouncer(intervalMs = 600L)

@@ -4,6 +4,9 @@
     <string name="view_demo">View Demo</string>
     <string name="demo_title">Demo</string>
     <string name="increment">Increment</string>
+    <string name="demo_count_format">%1$d</string>
+    <string name="demo_message_loading">Loading…</string>
+    <string name="demo_max_count_reached">Max count reached</string>
     <string name="lang_en">EN</string>
     <string name="lang_vi">VI</string>
     <string name="design_system_button">Design System</string>

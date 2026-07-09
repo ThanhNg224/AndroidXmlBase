@@ -10,7 +10,6 @@ import org.junit.Test
  * (negative radii, sub-pixel stroke widths) independent of any Android class.
  */
 class ShapeUtilsTest {
-
     @Test
     fun `resolveCornerRadiusPx clamps negative radius to zero`() {
         assertEquals(0f, ShapeUtils.resolveCornerRadiusPx(-4f))

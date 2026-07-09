@@ -33,6 +33,43 @@ The target project was created by Android Studio and currently looks like a Comp
 
 Do not port feature/business logic from HeyJapan directly. Port the reusable platform ideas and rewrite where the current implementation is too tied to HeyJapan.
 
+## Modernization Principle
+
+This project is not a direct port of HeyJapan.
+
+HeyJapan is the battle-tested reference. AndroidXmlBase must be the improved base extracted from that experience.
+
+Every port decision must ask:
+
+```text
+What did HeyJapan prove was useful?
+What was painful, legacy, too generic, too app-specific, or hard to test?
+What should the base do better now?
+```
+
+The default expectation is to upgrade, not copy.
+
+Examples:
+
+- `SharedPreferences` pattern from HeyJapan becomes typed DataStore-based settings.
+- Legacy singleton access becomes dependency injection.
+- `Any`-based APIs become typed APIs.
+- Large global key files become base keys plus feature-owned keys.
+- Mixed context wrappers become separate localization and responsive-resource policies.
+- Product-specific analytics clients become generic analytics interfaces plus optional adapters.
+- HeyJapan-specific feature/domain logic is excluded from core.
+- UI conventions are kept, but custom views must be cleaned, package-neutral, documented, and covered by showcase/tests.
+
+Use this rule for each component:
+
+| If HeyJapan has... | AndroidXmlBase should... |
+|---|---|
+| A strong reusable concept with app-specific code | Rewrite the concept cleanly |
+| A clean generic implementation | Port it after package/name cleanup |
+| A legacy implementation that solved a real problem | Rebuild it with modern Android APIs |
+| Product-specific logic | Drop it from base |
+| A weak pattern that caused coupling or testing pain | Replace it with a better pattern |
+
 ## Target Architecture
 
 Use MVVM as the presentation pattern and Clean Architecture as the dependency boundary.
@@ -674,9 +711,10 @@ Do not port these into the base unless explicitly requested:
 Use this rule for every source file:
 
 ```text
-copy only if generic and already clean
-rewrite if generic idea is strong but implementation is app-specific
-drop if product-specific or legacy-only
+copy only if generic, already clean, and still modern
+rewrite if the generic idea is strong but implementation is app-specific, weakly typed, or legacy
+replace if modern Android APIs provide a better solution
+drop if product-specific, legacy-only, or not useful for a reusable base
 ```
 
 Initial classification:

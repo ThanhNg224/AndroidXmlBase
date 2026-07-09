@@ -9,7 +9,12 @@ interface AppLocaleApplier {
 
 class AppCompatLocaleApplier : AppLocaleApplier {
     override fun applyLocales(tag: String) {
-        val locales = if (tag.isBlank()) LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(tag)
+        val locales =
+            if (tag.isBlank()) {
+                LocaleListCompat.getEmptyLocaleList()
+            } else {
+                LocaleListCompat.forLanguageTags(tag)
+            }
         AppCompatDelegate.setApplicationLocales(locales)
     }
 }

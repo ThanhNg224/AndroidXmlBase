@@ -21,7 +21,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class DemoViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -74,7 +73,9 @@ class DemoViewModelTest {
      * [releaseInitialLoad] is called, mimicking real DataStore's first read requiring an
      * actual suspension instead of resolving synchronously.
      */
-    private class DeferredFakeDemoRepository(initialCount: Int) : DemoRepository {
+    private class DeferredFakeDemoRepository(
+        initialCount: Int,
+    ) : DemoRepository {
         private val initialLoadGate = CompletableDeferred<Unit>()
         private val countFlow = MutableStateFlow(initialCount)
         val savedCounts = mutableListOf<Int>()
@@ -83,10 +84,11 @@ class DemoViewModelTest {
             initialLoadGate.complete(Unit)
         }
 
-        override fun observeCount(): Flow<Int> = flow {
-            initialLoadGate.await()
-            emitAll(countFlow)
-        }
+        override fun observeCount(): Flow<Int> =
+            flow {
+                initialLoadGate.await()
+                emitAll(countFlow)
+            }
 
         override suspend fun saveCount(count: Int) {
             savedCounts.add(count)
@@ -96,122 +98,129 @@ class DemoViewModelTest {
         override suspend fun fetchMessage(): ResultState<String> = ResultState.Success("fake message")
     }
 
-    private fun createViewModel(repository: DemoRepository): DemoViewModel {
-        return DemoViewModel(
+    private fun createViewModel(repository: DemoRepository): DemoViewModel =
+        DemoViewModel(
             incrementCounter = IncrementCounterUseCase(),
             observeDemoCount = ObserveDemoCountUseCase(repository),
             saveDemoCount = SaveDemoCountUseCase(repository),
             fetchDemoMessage = FetchDemoMessageUseCase(repository),
         )
-    }
 
     @Test
-    fun `increment event increases the count in state`() = runTest {
-        val viewModel = createViewModel(FakeDemoRepository())
+    fun `increment event increases the count in state`() =
+        runTest {
+            val viewModel = createViewModel(FakeDemoRepository())
 
-        viewModel.state.test {
-            assertEquals(0, awaitItem().count)
-            viewModel.onEvent(DemoUiEvent.IncrementClicked)
-            assertEquals(1, awaitItem().count)
+            viewModel.state.test {
+                assertEquals(0, awaitItem().count)
+                viewModel.onEvent(DemoUiEvent.IncrementClicked)
+                assertEquals(1, awaitItem().count)
+            }
         }
-    }
 
     @Test
-    fun `reaching the max count emits a show-toast effect`() = runTest {
-        val viewModel = createViewModel(FakeDemoRepository())
+    fun `reaching the max count emits a show-toast effect`() =
+        runTest {
+            val viewModel = createViewModel(FakeDemoRepository())
 
-        viewModel.effect.test {
-            repeat(10) { viewModel.onEvent(DemoUiEvent.IncrementClicked) }
-            assertEquals(DemoUiEffect.ShowToast("Max count reached"), awaitItem())
+            viewModel.effect.test {
+                repeat(10) { viewModel.onEvent(DemoUiEvent.IncrementClicked) }
+                assertEquals(DemoUiEffect.ShowMaxCountReached, awaitItem())
+            }
         }
-    }
 
     @Test
-    fun `initial state reflects the count already persisted in the repository`() = runTest {
-        val viewModel = createViewModel(FakeDemoRepository(initialCount = 5))
+    fun `initial state reflects the count already persisted in the repository`() =
+        runTest {
+            val viewModel = createViewModel(FakeDemoRepository(initialCount = 5))
 
-        viewModel.state.test {
-            assertEquals(5, awaitItem().count)
+            viewModel.state.test {
+                assertEquals(5, awaitItem().count)
+            }
         }
-    }
 
     @Test
-    fun `incrementing saves the new count to the repository`() = runTest {
-        val repository = FakeDemoRepository()
-        val viewModel = createViewModel(repository)
+    fun `incrementing saves the new count to the repository`() =
+        runTest {
+            val repository = FakeDemoRepository()
+            val viewModel = createViewModel(repository)
 
-        viewModel.state.test {
-            awaitItem()
-            viewModel.onEvent(DemoUiEvent.IncrementClicked)
-            awaitItem()
+            viewModel.state.test {
+                awaitItem()
+                viewModel.onEvent(DemoUiEvent.IncrementClicked)
+                awaitItem()
+            }
+
+            assertEquals(listOf(1), repository.savedCounts)
         }
-
-        assertEquals(listOf(1), repository.savedCounts)
-    }
 
     @Test
-    fun `count changes saved elsewhere in the repository are reflected in state`() = runTest {
-        val repository = FakeDemoRepository()
-        val viewModel = createViewModel(repository)
+    fun `count changes saved elsewhere in the repository are reflected in state`() =
+        runTest {
+            val repository = FakeDemoRepository()
+            val viewModel = createViewModel(repository)
 
-        viewModel.state.test {
-            assertEquals(0, awaitItem().count)
-            repository.saveCount(3)
-            assertEquals(3, awaitItem().count)
+            viewModel.state.test {
+                assertEquals(0, awaitItem().count)
+                repository.saveCount(3)
+                assertEquals(3, awaitItem().count)
+            }
         }
-    }
 
     @Test
-    fun `increment issued before the initial persisted count loads is ignored`() = runTest {
-        val repository = DeferredFakeDemoRepository(initialCount = 5)
-        val viewModel = createViewModel(repository)
+    fun `increment issued before the initial persisted count loads is ignored`() =
+        runTest {
+            val repository = DeferredFakeDemoRepository(initialCount = 5)
+            val viewModel = createViewModel(repository)
 
-        viewModel.state.test {
-            // The initial DataStore read hasn't resolved yet, so state is still the default.
-            assertEquals(0, awaitItem().count)
+            viewModel.state.test {
+                // The initial DataStore read hasn't resolved yet, so state is still the default.
+                assertEquals(0, awaitItem().count)
 
-            viewModel.onEvent(DemoUiEvent.IncrementClicked)
-            // Must be a no-op: no state change, and definitely no save of a value computed
-            // from the stale default.
-            expectNoEvents()
-            assertEquals(emptyList<Int>(), repository.savedCounts)
+                viewModel.onEvent(DemoUiEvent.IncrementClicked)
+                // Must be a no-op: no state change, and definitely no save of a value computed
+                // from the stale default.
+                expectNoEvents()
+                assertEquals(emptyList<Int>(), repository.savedCounts)
 
-            // The persisted value finally loads.
-            repository.releaseInitialLoad()
-            assertEquals(5, awaitItem().count)
+                // The persisted value finally loads.
+                repository.releaseInitialLoad()
+                assertEquals(5, awaitItem().count)
 
-            // A subsequent increment now behaves normally.
-            viewModel.onEvent(DemoUiEvent.IncrementClicked)
-            assertEquals(6, awaitItem().count)
+                // A subsequent increment now behaves normally.
+                viewModel.onEvent(DemoUiEvent.IncrementClicked)
+                assertEquals(6, awaitItem().count)
+            }
+
+            assertEquals(listOf(6), repository.savedCounts)
         }
-
-        assertEquals(listOf(6), repository.savedCounts)
-    }
 
     @Test
-    fun `message state starts Loading then becomes the fetch result once it resolves`() = runTest {
-        val repository = DeferredMessageFakeDemoRepository(messageResult = ResultState.Success("hello"))
-        val viewModel = createViewModel(repository)
+    fun `message state starts Loading then becomes the fetch result once it resolves`() =
+        runTest {
+            val repository = DeferredMessageFakeDemoRepository(messageResult = ResultState.Success("hello"))
+            val viewModel = createViewModel(repository)
 
-        viewModel.state.test {
-            assertEquals(ResultState.Loading, awaitItem().message)
+            viewModel.state.test {
+                assertEquals(ResultState.Loading, awaitItem().message)
 
-            repository.releaseMessageFetch()
-            assertEquals(ResultState.Success("hello"), awaitItem().message)
+                repository.releaseMessageFetch()
+                assertEquals(ResultState.Success("hello"), awaitItem().message)
+            }
         }
-    }
 
     @Test
-    fun `message state reflects a failed fetch`() = runTest {
-        val error = ResultState.Error("No connection")
-        val repository = DeferredMessageFakeDemoRepository(messageResult = error)
-        val viewModel = createViewModel(repository)
+    fun `message state reflects a failed fetch`() =
+        runTest {
+            val error = ResultState.Error("No connection")
+            val repository = DeferredMessageFakeDemoRepository(messageResult = error)
+            val viewModel = createViewModel(repository)
 
-        viewModel.state.test {
-            assertEquals(ResultState.Loading, awaitItem().message)
+            viewModel.state.test {
+                assertEquals(ResultState.Loading, awaitItem().message)
 
-            repository.releaseMessageFetch()
-            assertEquals(error, awaitItem().message)
+                repository.releaseMessageFetch()
+                assertEquals(error, awaitItem().message)
+            }
         }
-    }
 }

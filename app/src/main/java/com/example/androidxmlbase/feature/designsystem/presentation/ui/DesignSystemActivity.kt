@@ -3,7 +3,7 @@ package com.example.androidxmlbase.feature.designsystem.presentation.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.architecture.ResultState
 import com.example.androidxmlbase.core.architecture.fold
@@ -13,15 +13,13 @@ import com.example.androidxmlbase.core.ui.components.CustomToast
 import com.example.androidxmlbase.databinding.ActivityDesignSystemBinding
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.feature.designsystem.presentation.viewmodel.DesignSystemViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DesignSystemActivity : BaseActivity<ActivityDesignSystemBinding>() {
+    private val viewModel: DesignSystemViewModel by viewModels()
 
-    private val viewModel: DesignSystemViewModel by lazy {
-        ViewModelProvider(this)[DesignSystemViewModel::class.java]
-    }
-
-    override fun inflateBinding(inflater: LayoutInflater): ActivityDesignSystemBinding =
-        ActivityDesignSystemBinding.inflate(inflater)
+    override fun inflateBinding(inflater: LayoutInflater): ActivityDesignSystemBinding = ActivityDesignSystemBinding.inflate(inflater)
 
     override fun onBindingReady(savedInstanceState: Bundle?) {
         binding.btnShowToast.setOnClickListener {
@@ -47,10 +45,11 @@ class DesignSystemActivity : BaseActivity<ActivityDesignSystemBinding>() {
     private fun render(result: ResultState<Unit>) {
         val renderState = result.toRenderState()
         binding.progressDemoResult.visibility = if (renderState.isLoadingVisible) View.VISIBLE else View.GONE
-        binding.tvDemoResult.text = result.fold(
-            onLoading = { getString(R.string.design_system_result_loading) },
-            onSuccess = { getString(R.string.design_system_result_success) },
-            onError = { message, _ -> message },
-        )
+        binding.tvDemoResult.text =
+            result.fold(
+                onLoading = { getString(R.string.design_system_result_loading) },
+                onSuccess = { getString(R.string.design_system_result_success) },
+                onError = { message, _ -> message },
+            )
     }
 }

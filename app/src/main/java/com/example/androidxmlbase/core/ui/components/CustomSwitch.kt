@@ -15,26 +15,31 @@ import com.google.android.material.materialswitch.MaterialSwitch
  * switch widget it ships — a strictly more modern base than `SwitchCompat` for the same amount
  * of code.
  */
-class CustomSwitch @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : MaterialSwitch(context, attrs, defStyleAttr) {
+class CustomSwitch
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : MaterialSwitch(context, attrs, defStyleAttr) {
+        init {
+            val checkedColor = ContextCompat.getColor(context, R.color.color_primary)
+            val uncheckedColor = ContextCompat.getColor(context, R.color.color_on_surface)
+            val checkedSurfaceColor = ContextCompat.getColor(context, R.color.color_surface)
 
-    init {
-        val checkedColor = ContextCompat.getColor(context, R.color.color_primary)
-        val uncheckedColor = ContextCompat.getColor(context, R.color.color_on_surface)
-        val checkedSurfaceColor = ContextCompat.getColor(context, R.color.color_surface)
+            trackTintList = checkedStateList(checkedColor, uncheckedColor)
+            thumbTintList = checkedStateList(checkedColor, checkedSurfaceColor)
+        }
 
-        trackTintList = checkedStateList(checkedColor, uncheckedColor)
-        thumbTintList = checkedStateList(checkedColor, checkedSurfaceColor)
+        private fun checkedStateList(
+            checkedColor: Int,
+            uncheckedColor: Int,
+        ): ColorStateList =
+            ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_checked),
+                    intArrayOf(-android.R.attr.state_checked),
+                ),
+                intArrayOf(checkedColor, uncheckedColor),
+            )
     }
-
-    private fun checkedStateList(checkedColor: Int, uncheckedColor: Int): ColorStateList = ColorStateList(
-        arrayOf(
-            intArrayOf(android.R.attr.state_checked),
-            intArrayOf(-android.R.attr.state_checked),
-        ),
-        intArrayOf(checkedColor, uncheckedColor),
-    )
-}

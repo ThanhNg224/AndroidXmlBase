@@ -11,7 +11,6 @@ import org.junit.Test
  * right after `onEvent`.
  */
 class DesignSystemViewModelTest {
-
     @Test
     fun `initial state starts as Loading`() {
         val viewModel = DesignSystemViewModel()
