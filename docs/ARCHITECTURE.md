@@ -216,6 +216,8 @@ Improve architecture incrementally by making small, safe refactors that preserve
 
 Everything above this section describes the target architecture. The folders below are what actually exists in the codebase today; check here (or the source tree) before assuming a core module already exists.
 
+See `docs/FEATURE_TEMPLATE.md`, `docs/CORE_MODULES.md`, and `docs/DESIGN_SYSTEM.md` for a full walkthrough of building a new feature on top of the layout below.
+
 app/src/main/java/com/example/androidxmlbase/
   MainActivity.kt                            # launcher screen, XML + ViewBinding; extends BaseActivity, no attachBaseContext override of its own
   core/
