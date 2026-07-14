@@ -6,6 +6,7 @@ import com.example.androidxmlbase.core.network.connectivity.ConnectivityChecker
 import com.example.androidxmlbase.core.network.connectivity.ConnectivityInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
+import okhttp3.Authenticator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,6 +18,7 @@ object NetworkModule {
         config: ApiConfig,
         authTokenProvider: AuthTokenProvider,
         connectivityChecker: ConnectivityChecker,
+        authenticator: Authenticator = Authenticator.NONE,
     ): OkHttpClient {
         val loggingInterceptor =
             HttpLoggingInterceptor().apply {
@@ -35,6 +37,7 @@ object NetworkModule {
             .connectTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .authenticator(authenticator)
             .build()
     }
 

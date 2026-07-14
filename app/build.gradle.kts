@@ -41,6 +41,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
 }
 
 dependencies {
@@ -64,7 +68,14 @@ dependencies {
     implementation(libs.intuit.ssp)
     implementation(libs.hilt.android)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.shimmer)
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)

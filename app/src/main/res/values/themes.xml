@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.AndroidXmlBase" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.AndroidXmlBase" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container</item>
+        <item name="colorSecondary">@color/color_secondary</item>
+        <item name="colorOnSecondary">@color/color_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container</item>
+        <item name="colorTertiary">@color/color_tertiary</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container</item>
+        <item name="android:windowBackground">@color/color_background</item>
         <item name="colorSurface">@color/color_surface</item>
         <item name="colorOnSurface">@color/color_on_surface</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant</item>
+        <item name="colorOutline">@color/color_outline</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant</item>
         <item name="colorError">@color/color_error</item>
+        <item name="colorOnError">@color/color_on_error</item>
+        <item name="colorErrorContainer">@color/color_error_container</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container</item>
         <item name="android:statusBarColor">@color/color_surface</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
     </style>
 
-    <style name="Widget.AndroidXmlBase.SegmentedButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+    <style name="Widget.AndroidXmlBase.SegmentedButton" parent="Widget.Material3.CompoundButton.RadioButton">
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/bg_segmented_button</item>
         <item name="android:textColor">@color/color_segmented_button_text</item>
@@ -26,7 +44,7 @@
     </style>
 
     <!-- Shared button style enforcing 48dp height, 12dp corners, and icon styling. -->
-    <style name="Widget.AndroidXmlBase.IconButton" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.AndroidXmlBase.IconButton" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/_48sdp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/_13ssp</item>

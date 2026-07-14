@@ -7,6 +7,7 @@ import com.example.androidxmlbase.core.network.ApiConfig
 import com.example.androidxmlbase.core.network.NetworkModule
 import com.example.androidxmlbase.core.network.RetrofitApiClient
 import com.example.androidxmlbase.core.network.auth.AuthTokenProvider
+import com.example.androidxmlbase.core.network.auth.TokenAuthenticator
 import com.example.androidxmlbase.core.network.connectivity.AndroidConnectivityChecker
 import com.example.androidxmlbase.core.network.connectivity.ConnectivityChecker
 import com.example.androidxmlbase.core.network.transfer.FileTransferClient
@@ -56,11 +57,13 @@ object NetworkDiModule {
         config: ApiConfig,
         authTokenProvider: AuthTokenProvider,
         connectivityChecker: ConnectivityChecker,
+        authenticator: TokenAuthenticator,
     ): OkHttpClient =
         NetworkModule.createOkHttpClient(
             config = config,
             authTokenProvider = authTokenProvider,
             connectivityChecker = connectivityChecker,
+            authenticator = authenticator,
         )
 
     @Provides

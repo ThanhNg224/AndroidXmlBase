@@ -28,6 +28,10 @@ class FullScreenLoaderView
             visibility = GONE
         }
 
+        fun show() {
+            show(R.string.design_system_result_loading)
+        }
+
         fun show(statusText: String) {
             this.statusText.text = statusText
             showInternal()
