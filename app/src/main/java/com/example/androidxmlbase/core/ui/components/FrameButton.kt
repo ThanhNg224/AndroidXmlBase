@@ -47,7 +47,13 @@ class FrameButton
 
             isClickable = true
             isFocusable = true
-            minimumHeight = max(minimumHeight, resources.displayMetrics.density.times(MIN_TOUCH_TARGET_DP).roundToInt())
+            minimumHeight =
+                max(
+                    minimumHeight,
+                    resources.displayMetrics.density
+                        .times(MIN_TOUCH_TARGET_DP)
+                        .roundToInt(),
+                )
             ViewCompat.setAccessibilityDelegate(
                 this,
                 object : AccessibilityDelegateCompat() {

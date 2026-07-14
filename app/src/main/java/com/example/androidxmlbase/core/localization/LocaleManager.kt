@@ -22,7 +22,7 @@ class AppCompatLocaleApplier : AppLocaleApplier {
 class LocaleManager(
     private val localeApplier: AppLocaleApplier = AppCompatLocaleApplier(),
 ) {
-    suspend fun setLanguage(languageCode: String) {
+    fun setLanguage(languageCode: String) {
         val tag = if (languageCode.isBlank()) "" else LocaleTagMapper.toRegionalTag(languageCode)
         localeApplier.applyLocales(tag)
     }

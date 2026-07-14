@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.feature.designsystem.presentation.viewmodel
 
-import com.example.androidxmlbase.core.architecture.ResultState
 import com.example.androidxmlbase.core.architecture.StateViewModel
 import com.example.androidxmlbase.core.architecture.UiEffect
+import com.example.androidxmlbase.core.architecture.result.ResultState
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

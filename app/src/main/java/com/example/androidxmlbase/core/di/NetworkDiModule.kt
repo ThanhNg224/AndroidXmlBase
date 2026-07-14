@@ -2,16 +2,15 @@ package com.example.androidxmlbase.core.di
 
 import android.content.Context
 import com.example.androidxmlbase.BuildConfig
-import com.example.androidxmlbase.core.network.AndroidConnectivityChecker
 import com.example.androidxmlbase.core.network.ApiClient
 import com.example.androidxmlbase.core.network.ApiConfig
-import com.example.androidxmlbase.core.network.AuthTokenProvider
-import com.example.androidxmlbase.core.network.ConnectivityChecker
-import com.example.androidxmlbase.core.network.FileTransferClient
 import com.example.androidxmlbase.core.network.NetworkModule
-import com.example.androidxmlbase.core.network.OkHttpFileTransferClient
 import com.example.androidxmlbase.core.network.RetrofitApiClient
-import com.example.androidxmlbase.core.network.SecureStoreAuthTokenProvider
+import com.example.androidxmlbase.core.network.auth.AuthTokenProvider
+import com.example.androidxmlbase.core.network.connectivity.AndroidConnectivityChecker
+import com.example.androidxmlbase.core.network.connectivity.ConnectivityChecker
+import com.example.androidxmlbase.core.network.transfer.FileTransferClient
+import com.example.androidxmlbase.core.network.transfer.OkHttpFileTransferClient
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,10 +27,6 @@ abstract class NetworkBindingsModule {
     @Binds
     @Singleton
     abstract fun bindApiClient(implementation: RetrofitApiClient): ApiClient
-
-    @Binds
-    @Singleton
-    abstract fun bindAuthTokenProvider(implementation: SecureStoreAuthTokenProvider): AuthTokenProvider
 
     @Binds
     @Singleton

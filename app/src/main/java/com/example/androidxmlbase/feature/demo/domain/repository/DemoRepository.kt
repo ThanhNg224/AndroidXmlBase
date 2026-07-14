@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.feature.demo.domain.repository
 
-import com.example.androidxmlbase.core.architecture.DomainResult
+import com.example.androidxmlbase.core.architecture.result.DomainResult
 import kotlinx.coroutines.flow.Flow
 
 interface DemoRepository {

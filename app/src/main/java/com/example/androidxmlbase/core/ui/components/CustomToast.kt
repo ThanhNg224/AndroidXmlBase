@@ -20,7 +20,7 @@ object CustomToast {
         anchorView: View,
         message: String,
         duration: Int = Snackbar.LENGTH_SHORT,
-    ) {
+    ): Snackbar {
         val context = anchorView.context
         val density = context.resources.displayMetrics.density
 
@@ -33,6 +33,7 @@ object CustomToast {
                 fillColor = ContextCompat.getColor(context, R.color.color_surface),
             )
         snackbar.show()
+        return snackbar
     }
 
     private const val CORNER_RADIUS_DP = 8f

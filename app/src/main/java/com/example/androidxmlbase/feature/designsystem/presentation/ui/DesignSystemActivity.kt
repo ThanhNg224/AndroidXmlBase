@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.viewModels
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.architecture.ResultState
-import com.example.androidxmlbase.core.architecture.fold
+import com.example.androidxmlbase.core.architecture.result.ResultState
+import com.example.androidxmlbase.core.architecture.result.fold
 import com.example.androidxmlbase.core.ui.base.BaseActivity
 import com.example.androidxmlbase.core.ui.base.toRenderState
 import com.example.androidxmlbase.core.ui.components.CustomToast

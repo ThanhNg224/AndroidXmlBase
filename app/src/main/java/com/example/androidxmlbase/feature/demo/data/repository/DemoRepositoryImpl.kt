@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.feature.demo.data.repository
 
-import com.example.androidxmlbase.core.architecture.DomainResult
-import com.example.androidxmlbase.core.storage.SettingsKey
-import com.example.androidxmlbase.core.storage.SettingsStore
+import com.example.androidxmlbase.core.architecture.result.DomainResult
+import com.example.androidxmlbase.core.storage.settings.SettingsKey
+import com.example.androidxmlbase.core.storage.settings.SettingsStore
 import com.example.androidxmlbase.feature.demo.data.datasource.DemoRemoteDataSource
 import com.example.androidxmlbase.feature.demo.data.mapper.toDomainResult
 import com.example.androidxmlbase.feature.demo.domain.repository.DemoRepository

@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.core.ui.base
 
 import android.view.View
-import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.result.ResultState
 
 /** Visibility-only projection of a [ResultState], independent of any View. */
 data class ResultRenderState(

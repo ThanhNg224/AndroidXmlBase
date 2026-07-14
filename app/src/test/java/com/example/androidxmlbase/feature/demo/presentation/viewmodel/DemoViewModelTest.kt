@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.feature.demo.presentation.viewmodel
 
 import app.cash.turbine.test
-import com.example.androidxmlbase.core.architecture.AppError
-import com.example.androidxmlbase.core.architecture.DomainResult
+import com.example.androidxmlbase.core.architecture.result.AppError
+import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.feature.demo.domain.repository.DemoRepository
 import com.example.androidxmlbase.feature.demo.domain.usecase.FetchDemoMessageUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.IncrementCounterUseCase

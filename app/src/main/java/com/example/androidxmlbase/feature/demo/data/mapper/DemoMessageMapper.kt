@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.feature.demo.data.mapper
 
-import com.example.androidxmlbase.core.architecture.AppError
-import com.example.androidxmlbase.core.architecture.DomainResult
+import com.example.androidxmlbase.core.architecture.result.AppError
+import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.core.network.ApiResult
 import com.example.androidxmlbase.feature.demo.data.dto.DemoMessageDto
 

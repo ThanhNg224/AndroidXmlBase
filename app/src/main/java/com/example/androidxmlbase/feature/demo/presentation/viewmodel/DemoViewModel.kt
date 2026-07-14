@@ -1,9 +1,9 @@
 package com.example.androidxmlbase.feature.demo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.example.androidxmlbase.core.architecture.AppError
-import com.example.androidxmlbase.core.architecture.DomainResult
 import com.example.androidxmlbase.core.architecture.StateViewModel
+import com.example.androidxmlbase.core.architecture.result.AppError
+import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.feature.demo.domain.usecase.FetchDemoMessageUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.IncrementCounterUseCase
 import com.example.androidxmlbase.feature.demo.domain.usecase.ObserveDemoCountUseCase

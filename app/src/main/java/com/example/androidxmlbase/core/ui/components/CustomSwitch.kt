@@ -29,6 +29,9 @@ class CustomSwitch
 
             trackTintList = checkedStateList(checkedColor, uncheckedColor)
             thumbTintList = checkedStateList(checkedColor, checkedSurfaceColor)
+            textOn = ""
+            textOff = ""
+            showText = false
         }
 
         private fun checkedStateList(

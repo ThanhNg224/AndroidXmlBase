@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.feature.designsystem.presentation.viewmodel
 
-import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.result.ResultState
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import org.junit.Assert.assertEquals
 import org.junit.Test

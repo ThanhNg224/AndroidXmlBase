@@ -225,35 +225,46 @@ app/src/main/java/com/example/androidxmlbase/
       UiState.kt
       UiEvent.kt
       UiEffect.kt
-      ResultState.kt
-      DomainResult.kt
       AppDispatchers.kt
       UseCase.kt
       StateViewModel.kt
+      result/
+        ResultState.kt
+        DomainResult.kt                      # also declares AppError & map helper
     storage/
-      SettingsKey.kt                         # typed key sealed class (String/Int/Long/Boolean/Float)
-      SettingsStore.kt                       # observe/get/set/remove contract
-      DataStoreSettingsStore.kt              # DataStore<Preferences>-backed implementation
-      AppDataStore.kt                        # Context.appSettingsDataStore delegate
-      AppSettingsKeys.kt                     # app-wide keys only; feature keys stay feature-private
+      settings/
+        SettingsKey.kt                       # typed key sealed class (String/Int/Long/Boolean/Float)
+        SettingsStore.kt                     # observe/get/set/remove contract
+        DataStoreSettingsStore.kt            # DataStore<Preferences>-backed implementation
+        AppDataStore.kt                      # Context.appSettingsDataStore delegate
+        AppSettingsKeys.kt                   # app-wide keys only; feature keys stay feature-private
+      secure/
+        SecureStore.kt                       # + SecureStoreKey, SecureStoreKeys
+        EncryptedSecureStore.kt
     network/
       ApiResult.kt                           # Success/HttpError/NetworkError/ParseError/EmptyBody
       ApiConfig.kt
-      AuthTokenProvider.kt                   # + NoOpAuthTokenProvider
-      ConnectivityChecker.kt                 # + AndroidConnectivityChecker
       ApiClient.kt
       RetrofitApiClient.kt                   # classifies Retrofit calls into ApiResult
-      NetworkModule.kt                       # hand-wired Retrofit/OkHttp composition root
-      interceptor/
+      NetworkModule.kt                       # OkHttp timeouts + Retrofit composition root
+      auth/
+        AuthTokenProvider.kt                 # + NoOpAuthTokenProvider
+        SecureStoreAuthTokenProvider.kt
         AuthTokenInterceptor.kt
+      connectivity/
+        ConnectivityChecker.kt               # + AndroidConnectivityChecker
         ConnectivityInterceptor.kt
+      transfer/
+        FileTransferClient.kt                # + OkHttpFileTransferClient
+        TransferResult.kt
+        ProgressRequestBody.kt
     localization/
       LocaleTagMapper.kt                     # regional tag overrides (vi->vi-VN, ko->ko-KR, zh-TW->zh-TW), passthrough otherwise
       LocaleManager.kt                       # AppLocaleApplier interface + AppCompatLocaleApplier (real) + LocaleManager (injected applier, unit-testable)
       LanguageOption.kt                      # LanguageOption + SUPPORTED_LANGUAGES sample data (en, vi)
     ui/
       base/
-        BaseActivity.kt                      # ViewBinding inflate + responsive attachBaseContext + collectOnStarted; subclasses wire up in onBindingReady
+        BaseActivity.kt                      # ViewBinding inflate + responsive attachBaseContext + collectOnStarted + immersive window cutout support
         BaseFragment.kt
         BaseDialogFragment.kt
         BaseBottomSheetDialogFragment.kt
@@ -270,10 +281,14 @@ app/src/main/java/com/example/androidxmlbase/
         ShadowLayout.kt                      # FrameLayout drawing an elevation+outline shadow (caller sets android:elevation)
         CustomSwitch.kt                      # MaterialSwitch wrapper tinted from the color tokens
         CustomToast.kt                       # Snackbar-based Toast replacement styled with the color tokens
+        FullScreenLoaderView.kt              # Custom full-screen loading spinner overlay
+        PromptDialogFragment.kt              # Status prompt dialog fragment (success, fail, info) with action callbacks
     navigation/
       ActivityDestination.kt
-      ActivityNavigator.kt
+      ActivityNavigator.kt                   # transition support (SLIDE_HORIZONTAL, FADE, etc.)
       NavigationOptions.kt
+    time/
+      ElapsedRealtimeClock.kt                # Monotonic elapsed time utility (clock)
     di/
       AppCoreModule.kt, NetworkDiModule.kt  # Hilt app/core wiring
   feature/

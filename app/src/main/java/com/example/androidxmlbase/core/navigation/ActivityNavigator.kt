@@ -20,19 +20,61 @@ class ActivityNavigator
                     if (context !is Activity) {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
+                    putExtra(EXTRA_TRANSITION_TYPE, destination.options.transitionType.name)
                 }
             context.startActivity(intent)
-            if (destination.options.noAnimation && context is Activity) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    context.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, 0, 0)
-                } else {
-                    @Suppress("DEPRECATION")
-                    context.overridePendingTransition(0, 0)
-                }
+            if (context is Activity) {
+                applyTransition(context, destination.options.transitionType, isOpen = true)
             }
         }
 
         fun finish(activity: Activity) {
             activity.finish()
+        }
+
+        companion object {
+            const val EXTRA_TRANSITION_TYPE = "extra_transition_type"
+
+            fun applyTransition(
+                activity: Activity,
+                type: TransitionType,
+                isOpen: Boolean,
+            ) {
+                val enterAnim: Int
+                val exitAnim: Int
+                when (type) {
+                    TransitionType.NONE -> {
+                        enterAnim = 0
+                        exitAnim = 0
+                    }
+                    TransitionType.SLIDE_HORIZONTAL -> {
+                        if (isOpen) {
+                            enterAnim = com.example.androidxmlbase.R.anim.slide_in_right
+                            exitAnim = com.example.androidxmlbase.R.anim.slide_out_left
+                        } else {
+                            enterAnim = com.example.androidxmlbase.R.anim.slide_in_left
+                            exitAnim = com.example.androidxmlbase.R.anim.slide_out_right
+                        }
+                    }
+                    TransitionType.FADE -> {
+                        enterAnim = com.example.androidxmlbase.R.anim.fade_in
+                        exitAnim = com.example.androidxmlbase.R.anim.fade_out
+                    }
+                    TransitionType.DEFAULT -> return
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    val overrideType =
+                        if (isOpen) {
+                            Activity.OVERRIDE_TRANSITION_OPEN
+                        } else {
+                            Activity.OVERRIDE_TRANSITION_CLOSE
+                        }
+                    activity.overrideActivityTransition(overrideType, enterAnim, exitAnim)
+                } else {
+                    @Suppress("DEPRECATION")
+                    activity.overridePendingTransition(enterAnim, exitAnim)
+                }
+            }
         }
     }

@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.AndroidXmlBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.AndroidXmlBase" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorOnPrimary">@color/color_on_primary</item>
         <item name="colorSurface">@color/color_surface</item>
         <item name="colorOnSurface">@color/color_on_surface</item>
         <item name="colorError">@color/color_error</item>
+        <item name="android:statusBarColor">@color/color_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+    </style>
+
+    <style name="Widget.AndroidXmlBase.SegmentedButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/bg_segmented_button</item>
+        <item name="android:textColor">@color/color_segmented_button_text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:paddingTop">@dimen/_8sdp</item>
+        <item name="android:paddingBottom">@dimen/_8sdp</item>
+        <item name="android:minHeight">@dimen/_48sdp</item>
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Shared button style enforcing 48dp height, 12dp corners, and icon styling. -->
+    <style name="Widget.AndroidXmlBase.IconButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/_48sdp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="cornerRadius">@dimen/_12sdp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/_8sdp</item>
+        <item name="iconSize">@dimen/_18sdp</item>
     </style>
 </resources>

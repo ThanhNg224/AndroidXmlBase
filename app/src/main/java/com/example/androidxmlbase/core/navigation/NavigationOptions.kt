@@ -2,10 +2,18 @@ package com.example.androidxmlbase.core.navigation
 
 import android.content.Intent
 
+enum class TransitionType {
+    DEFAULT,
+    NONE,
+    SLIDE_HORIZONTAL,
+    FADE,
+}
+
 data class NavigationOptions(
     val clearTask: Boolean = false,
     val singleTop: Boolean = false,
     val noAnimation: Boolean = false,
+    val transitionType: TransitionType = if (noAnimation) TransitionType.NONE else TransitionType.DEFAULT,
 ) {
     fun toIntentFlags(): Int {
         var flags = 0

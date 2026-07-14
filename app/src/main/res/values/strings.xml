@@ -30,4 +30,9 @@
     <string name="design_system_error_button">Error</string>
     <string name="design_system_result_loading">Loading…</string>
     <string name="design_system_result_success">Success!</string>
+    <string name="error_dialog_retry">Retry</string>
+    <string name="error_dialog_close">Close</string>
+    <string name="error_network">No internet connection</string>
+    <string name="error_parse">Data parsing error</string>
+    <string name="error_empty_body">Empty response from server</string>
 </resources>

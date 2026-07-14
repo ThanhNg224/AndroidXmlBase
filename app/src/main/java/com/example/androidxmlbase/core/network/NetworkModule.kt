@@ -1,13 +1,16 @@
 package com.example.androidxmlbase.core.network
 
-import com.example.androidxmlbase.core.network.interceptor.AuthTokenInterceptor
-import com.example.androidxmlbase.core.network.interceptor.ConnectivityInterceptor
+import com.example.androidxmlbase.core.network.auth.AuthTokenInterceptor
+import com.example.androidxmlbase.core.network.auth.AuthTokenProvider
+import com.example.androidxmlbase.core.network.connectivity.ConnectivityChecker
+import com.example.androidxmlbase.core.network.connectivity.ConnectivityInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 object NetworkModule {
     fun createOkHttpClient(
@@ -29,6 +32,9 @@ object NetworkModule {
             .addInterceptor(ConnectivityInterceptor(connectivityChecker))
             .addInterceptor(AuthTokenInterceptor(authTokenProvider))
             .addInterceptor(loggingInterceptor)
+            .connectTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
     }
 
@@ -45,18 +51,5 @@ object NetworkModule {
             .build()
     }
 
-    fun createRetrofit(
-        config: ApiConfig,
-        authTokenProvider: AuthTokenProvider,
-        connectivityChecker: ConnectivityChecker,
-    ): Retrofit =
-        createRetrofit(
-            config = config,
-            okHttpClient =
-                createOkHttpClient(
-                    config = config,
-                    authTokenProvider = authTokenProvider,
-                    connectivityChecker = connectivityChecker,
-                ),
-        )
+    private const val REQUEST_TIMEOUT_SECONDS = 30L
 }

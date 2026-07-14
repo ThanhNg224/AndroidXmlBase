@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.core.ui.base
 
-import com.example.androidxmlbase.core.architecture.ResultState
+import com.example.androidxmlbase.core.architecture.result.ResultState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -73,6 +73,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
+configurations.all {
+    exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+}
+
 detekt {
     buildUponDefaultConfig = true
     allRules = false
@@ -92,7 +96,8 @@ kover {
         filters {
             includes {
                 classes(
-                    "*.core.architecture.ResultState*",
+                    "*.core.architecture.result.ResultState*",
+                    "*.core.architecture.result.DomainResult*",
                     "*.core.architecture.StateViewModel*",
                     "*.core.architecture.DefaultAppDispatchers",
                     "*.core.localization.LocaleManager*",
@@ -100,15 +105,15 @@ kover {
                     "*.core.navigation.NavigationOptions*",
                     "*.core.network.ApiResult*",
                     "*.core.network.RetrofitApiClient*",
-                    "*.core.network.SecureStoreAuthTokenProvider*",
-                    "*.core.network.TransferResult*",
-                    "*.core.network.HttpTransferResponse*",
-                    "*.core.network.StreamChunk*",
-                    "*.core.network.ProgressRequestBody*",
-                    "*.core.network.OkHttpFileTransferClient*",
-                    "*.core.network.interceptor.*",
-                    "*.core.storage.DataStoreSettingsStore*",
-                    "*.core.storage.SettingsKey*",
+                    "*.core.network.auth.SecureStoreAuthTokenProvider*",
+                    "*.core.network.transfer.TransferResult*",
+                    "*.core.network.transfer.ProgressRequestBody*",
+                    "*.core.network.transfer.OkHttpFileTransferClient*",
+                    "*.core.network.auth.*",
+                    "*.core.network.connectivity.*",
+                    "*.core.network.transfer.*",
+                    "*.core.storage.settings.DataStoreSettingsStore*",
+                    "*.core.storage.settings.SettingsKey*",
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
                     "*.core.ui.util.ShapeUtils*",

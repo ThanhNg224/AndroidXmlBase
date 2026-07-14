@@ -30,4 +30,9 @@
     <string name="design_system_error_button">Lỗi</string>
     <string name="design_system_result_loading">Đang tải…</string>
     <string name="design_system_result_success">Thành công!</string>
+    <string name="error_dialog_retry">Thử lại</string>
+    <string name="error_dialog_close">Đóng</string>
+    <string name="error_network">Không có kết nối mạng</string>
+    <string name="error_parse">Lỗi xử lý dữ liệu</string>
+    <string name="error_empty_body">Không nhận được phản hồi từ máy chủ</string>
 </resources>
