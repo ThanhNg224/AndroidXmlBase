@@ -1,9 +1,9 @@
 package com.example.androidxmlbase.core.ui.util
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
@@ -116,20 +116,10 @@ fun <T> Bundle.getTyped(
             if (containsKey(key)) getDouble(key) as? T else null
         }
         Parcelable::class.java.isAssignableFrom(clazz) -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelable(key, clazz as Class<out Parcelable>) as? T
-            } else {
-                @Suppress("DEPRECATION")
-                getParcelable<Parcelable>(key) as? T
-            }
+            BundleCompat.getParcelable(this, key, clazz as Class<out Parcelable>) as? T
         }
         Serializable::class.java.isAssignableFrom(clazz) -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getSerializable(key, clazz as Class<out Serializable>) as? T
-            } else {
-                @Suppress("DEPRECATION")
-                getSerializable(key) as? T
-            }
+            BundleCompat.getSerializable(this, key, clazz as Class<out Serializable>) as? T
         }
         else -> {
             @Suppress("DEPRECATION")

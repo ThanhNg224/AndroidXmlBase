@@ -54,7 +54,6 @@ class EncryptedSecureStore
             }
         }
 
-        @Suppress("DEPRECATION")
         private fun createEncryptedPreferences(): SharedPreferences {
             val masterKey =
                 MasterKey
