@@ -20,15 +20,23 @@ class CustomSwitch
     constructor(
         context: Context,
         attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0,
+        defStyleAttr: Int = com.google.android.material.R.attr.materialSwitchStyle,
     ) : MaterialSwitch(context, attrs, defStyleAttr) {
         init {
-            val checkedColor = ContextCompat.getColor(context, R.color.color_primary)
-            val uncheckedColor = ContextCompat.getColor(context, R.color.color_on_surface)
-            val checkedSurfaceColor = ContextCompat.getColor(context, R.color.color_surface)
+            val checkedTrackColor = ContextCompat.getColor(context, R.color.color_primary)
+            val uncheckedTrackColor = ContextCompat.getColor(context, R.color.color_surface_variant)
 
-            trackTintList = checkedStateList(checkedColor, uncheckedColor)
-            thumbTintList = checkedStateList(checkedColor, checkedSurfaceColor)
+            val checkedThumbColor = ContextCompat.getColor(context, R.color.color_surface)
+            val uncheckedThumbColor = ContextCompat.getColor(context, R.color.color_outline)
+
+            trackTintList = checkedStateList(checkedTrackColor, uncheckedTrackColor)
+            trackDecorationTintList = checkedStateList(checkedTrackColor, uncheckedTrackColor)
+            thumbTintList = checkedStateList(checkedThumbColor, uncheckedThumbColor)
+
+            // Prevent text overlapping with the switch widget
+            val density = context.resources.displayMetrics.density
+            switchPadding = (16 * density).toInt()
+
             textOn = ""
             textOff = ""
             showText = false
@@ -41,7 +49,7 @@ class CustomSwitch
             ColorStateList(
                 arrayOf(
                     intArrayOf(android.R.attr.state_checked),
-                    intArrayOf(-android.R.attr.state_checked),
+                    intArrayOf(), // Default unchecked state fallback
                 ),
                 intArrayOf(checkedColor, uncheckedColor),
             )

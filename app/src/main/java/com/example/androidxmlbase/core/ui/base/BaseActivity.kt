@@ -15,6 +15,7 @@ import com.example.androidxmlbase.core.ui.components.FullScreenLoaderView
 import com.example.androidxmlbase.core.ui.components.PromptDialogFragment
 import com.example.androidxmlbase.core.ui.responsive.ResponsiveConfig
 import com.example.androidxmlbase.core.ui.responsive.ResponsiveContextWrapper
+import com.example.androidxmlbase.core.ui.util.setImmersiveMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected abstract fun inflateBinding(inflater: LayoutInflater): VB
 
     protected open val responsiveConfig: ResponsiveConfig = ResponsiveConfig()
+    protected open val useImmersiveMode: Boolean = false
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(ResponsiveContextWrapper.wrap(newBase, responsiveConfig))
@@ -38,6 +40,9 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (useImmersiveMode) {
+            window.setImmersiveMode(true)
+        }
         bindingOrNull = inflateBinding(layoutInflater)
         setContentView(binding.root)
         onBindingReady(savedInstanceState)
