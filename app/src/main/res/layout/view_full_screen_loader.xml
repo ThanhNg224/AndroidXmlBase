@@ -18,7 +18,7 @@
         app:cardElevation="@dimen/_8sdp"
         app:strokeWidth="@dimen/_1sdp"
         app:strokeColor="@color/color_stroke_subtle"
-        app:cardBackgroundColor="@android:color/white"
+        app:cardBackgroundColor="@color/color_surface"
         tools:ignore="MergeRootFrame">
 
         <LinearLayout

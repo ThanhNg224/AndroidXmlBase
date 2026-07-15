@@ -1,4 +1,4 @@
-package com.example.androidxmlbase.core.ui
+package com.example.androidxmlbase.core.ui.text
 
 import androidx.annotation.StringRes
 

@@ -20,6 +20,8 @@ The MVVM primitives every feature is built on. Framework-light: only `StateViewM
 
 **Consumers:** `DemoViewModel`, `DesignSystemViewModel` (both extend `StateViewModel`); `DomainResult`/`AppError` are used by `feature/demo`'s repository/use case path so data/domain can report failure without UI strings; `ResultState` is used by `feature/designsystem` (`DesignSystemUiState.demoResult`) and by `core/ui/base` render helpers. `UseCase<in P, R>` is implemented by `feature/demo`'s `SaveDemoCountUseCase`/`FetchDemoMessageUseCase`.
 
+**Why three result types, not one:** `ApiResult` (`core/network`), `DomainResult`/`AppError` (here), and `ResultState` (here) look similar but belong to different layers on purpose — `ApiResult` carries Retrofit/HTTP-shaped errors and must not leak past data sources; `DomainResult`/`AppError` are the domain-safe, UI-string-free version repositories/use cases return; `ResultState` is presentation-only and is what a ViewModel exposes to a View. Each layer maps the one below into its own type (see `feature/demo`'s mapper) instead of passing the lower type through. Don't collapse these into one shared type — that would leak Retrofit/HTTP types into the domain or UI layer.
+
 ## `core/storage`
 
 ### `core/storage/settings`
@@ -42,7 +44,7 @@ A typed, testable settings store backed by Jetpack DataStore (`androidx.datastor
 - `ApiConfig(baseUrl: String, enableLogging: Boolean)`.
 - `ApiClient` (interface) — `suspend fun <T> execute(call: suspend () -> retrofit2.Response<T>): ApiResult<T>`.
 - `RetrofitApiClient` — the `ApiClient` implementation; classifies success/HTTP error/empty body, catches `IOException` as `NetworkError`, any other `Exception` as `ParseError`, and always rethrows `CancellationException` before those catches.
-- `NetworkModule` (object) — reusable factory functions for `OkHttpClient` and `Retrofit` with 30-second timeouts configured.
+- `NetworkClientFactory` (object) — reusable factory functions for `OkHttpClient` and `Retrofit` with 30-second timeouts configured. Named apart from `core/di/NetworkModule` (the Hilt module) so "factory" vs. "DI wiring" stays unambiguous.
 
 ### `core/network/auth`
 - `AuthTokenProvider` (interface, `suspend fun getToken(): String?`) + `SecureStoreAuthTokenProvider` (reads `SecureStoreKeys.AUTH_TOKEN`) + `NoOpAuthTokenProvider` for tests/demo overrides.
@@ -66,7 +68,7 @@ Hilt modules for app-wide wiring.
 - `AppCoreBindingsModule` — binds `DefaultAppDispatchers` to `AppDispatchers`, `EncryptedSecureStore` to `SecureStore`, `SecureStoreAuthTokenProvider` to `AuthTokenProvider`, `AndroidElapsedRealtimeClock` to `ElapsedRealtimeClock`, and `AndroidStringProvider` to `StringProvider`.
 - `AppCoreModule` — provides `SettingsStore` and `LocaleManager`.
 - `NetworkBindingsModule` — binds `RetrofitApiClient` and `OkHttpFileTransferClient`.
-- `NetworkDiModule` — provides `ApiConfig`, `ConnectivityChecker`, `OkHttpClient`, and `Retrofit`. Feature-specific Retrofit services belong in that feature's own DI module.
+- `NetworkModule` — provides `ApiConfig`, `ConnectivityChecker`, `OkHttpClient`, and `Retrofit` (built via `core/network/NetworkClientFactory`). Feature-specific Retrofit services belong in that feature's own DI module.
 
 ## `core/localization`
 
@@ -88,6 +90,11 @@ A `smallestScreenWidthDp` clamp to avoid tablet/wide-screen layout issues.
 
 **Consumers:** `BaseActivity.attachBaseContext`.
 
+## `core/ui/text`
+
+- `StringProvider` (interface) — `fun getString(@StringRes resId: Int): String`, lets a ViewModel resolve string resources without holding an Activity/View `Context`.
+- `AndroidStringProvider` — the real implementation, backed by an injected `@ApplicationContext Context`. Bound in Hilt via `AppCoreBindingsModule`.
+
 ## `core/ui/base`
 
 Shared UI infrastructure.
@@ -96,8 +103,10 @@ Shared UI infrastructure.
 - `BaseFragment<VB : ViewBinding>` — Fragment view lifecycle binding and flow collector.
 - `BaseDialogFragment<VB : ViewBinding>` — rounded dialog fragment base using `R.drawable.bg_dialog`.
 - `BaseBottomSheetDialogFragment<VB : ViewBinding>` — Material bottom-sheet view base.
+- `collectOnStartedBy(lifecycleOwner, action)` (in `LifecycleFlowExtensions.kt`) — shared lifecycle-safe Flow collection; each Base* host's `collectOnStarted` delegates here with its own `LifecycleOwner` (the host itself for `BaseActivity`, `viewLifecycleOwner` for the Fragment/BottomSheet hosts).
+- `renderResultState(result, contentRoot, dialogHost, onSuccess)` (in `ResultStateOverlay.kt`) — shared full-screen-loader + `PromptDialogFragment` error rendering; `BaseActivity`/`BaseFragment.bindResultState` both delegate here so the loading/error UI stays identical across hosts.
 - `Debouncer` — pure rate limiter with `View.setOnDebouncedClickListener` click rate limiting.
-- `ResultRenderState(isLoadingVisible, isContentVisible, isErrorVisible, errorMessage)` — visibility-only projection of a `ResultState<T>`.
+- `ResultRenderState(isLoadingVisible, isContentVisible, isErrorVisible, errorMessage)` — visibility-only projection of a `ResultState<T>`. Not the same mechanism as `ResultStateOverlay`: this one toggles View visibility for screens that render inline (e.g. `feature/designsystem`); `ResultStateOverlay` drives a full-screen loader + dialog for `bindResultState` callers. Pick per-screen based on whether the loading/error UI should be inline or overlay the whole screen.
 
 ## `core/ui/components`
 
@@ -113,6 +122,17 @@ Shared UI infrastructure.
 
 - `Shape` (enum: `RECTANGLE`, `OVAL`).
 - `ShapeUtils` (object) — `buildDrawable(...)` programmatically creates GradientDrawables.
+
+## `core/ui/theme`
+
+App-wide light/dark/system theme, backed by AppCompat's night mode and persisted through `SettingsStore`.
+
+- `AppTheme` (enum: `LIGHT`, `DARK`, `SYSTEM`, each with a `key: String`) — `AppTheme.fromKey(key)` maps a stored key back to an enum value, defaulting to `SYSTEM` if unrecognized.
+- `ThemeManager` (interface) — `currentTheme: Flow<AppTheme>`, `suspend fun getTheme(): AppTheme`, `suspend fun setTheme(theme: AppTheme)`, `fun applyTheme(theme: AppTheme)`.
+- `AndroidThemeManager` — the only implementation; reads/writes `AppSettingsKeys.THEME_MODE` via `SettingsStore` and applies the theme through `AppCompatDelegate.setDefaultNightMode`.
+- `ThemeModule` (Hilt `@Module`) — binds `AndroidThemeManager` to `ThemeManager`.
+
+**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice.
 
 ## `core/navigation`
 

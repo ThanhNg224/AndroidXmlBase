@@ -19,6 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class DesignSystemActivity : BaseActivity<ActivityDesignSystemBinding>() {
     private val viewModel: DesignSystemViewModel by viewModels()
 
+    override val useImmersiveMode: Boolean = true
+
     override fun inflateBinding(inflater: LayoutInflater): ActivityDesignSystemBinding = ActivityDesignSystemBinding.inflate(inflater)
 
     override fun onBindingReady(savedInstanceState: Bundle?) {

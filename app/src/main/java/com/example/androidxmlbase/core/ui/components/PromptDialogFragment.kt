@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import androidx.fragment.app.DialogFragment
 import com.example.androidxmlbase.R
+import com.example.androidxmlbase.core.ui.base.BaseDialogFragment
+import com.example.androidxmlbase.core.ui.base.DialogAnimation
 import com.example.androidxmlbase.core.ui.base.setOnDebouncedClickListener
 import com.example.androidxmlbase.databinding.DialogPromptBinding
 
@@ -17,9 +18,13 @@ enum class PromptType {
 }
 
 /** Reusable status dialog (Success, Error, Info) with customizable actions. */
-class PromptDialogFragment : DialogFragment() {
-    private var bindingOrNull: DialogPromptBinding? = null
-    private val binding get() = requireNotNull(bindingOrNull)
+class PromptDialogFragment : BaseDialogFragment<DialogPromptBinding>() {
+    override val dialogAnimation: DialogAnimation = DialogAnimation.SCALE
+
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+    ): DialogPromptBinding = DialogPromptBinding.inflate(inflater, container, false)
 
     var onPrimary: (() -> Unit)? = null
     var onSecondary: (() -> Unit)? = null
@@ -36,33 +41,7 @@ class PromptDialogFragment : DialogFragment() {
             onSecondary = value
         }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        bindingOrNull = DialogPromptBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setBackgroundDrawableResource(R.drawable.bg_dialog)
-        dialog?.window?.setLayout(dialogWindowWidth(), ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    private fun dialogWindowWidth(): Int {
-        val screenWidth = resources.displayMetrics.widthPixels
-        val margin = resources.getDimensionPixelSize(R.dimen.dialog_screen_margin) * 2
-        val maxWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
-        return (screenWidth - margin).coerceAtMost(maxWidth)
-    }
-
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onBindingReady(savedInstanceState: Bundle?) {
         val args = requireArguments()
 
         binding.tvPromptMessage.text = args.getString(ARG_MESSAGE)
@@ -109,11 +88,6 @@ class PromptDialogFragment : DialogFragment() {
                 putString(EVENT_KEY, event)
             },
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        bindingOrNull = null
     }
 
     companion object {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidXmlBase</string>
+    <string name="app_name">XML Base</string>
     <string name="hello_android">Chào Android!</string>
     <string name="view_demo">Xem Demo</string>
     <string name="demo_title">Demo</string>

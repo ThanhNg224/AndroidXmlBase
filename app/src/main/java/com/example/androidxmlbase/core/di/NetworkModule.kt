@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.androidxmlbase.BuildConfig
 import com.example.androidxmlbase.core.network.ApiClient
 import com.example.androidxmlbase.core.network.ApiConfig
-import com.example.androidxmlbase.core.network.NetworkModule
+import com.example.androidxmlbase.core.network.NetworkClientFactory
 import com.example.androidxmlbase.core.network.RetrofitApiClient
 import com.example.androidxmlbase.core.network.auth.AuthTokenProvider
 import com.example.androidxmlbase.core.network.auth.TokenAuthenticator
@@ -36,7 +36,7 @@ abstract class NetworkBindingsModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkDiModule {
+object NetworkModule {
     @Provides
     @Singleton
     fun provideApiConfig(): ApiConfig =
@@ -59,7 +59,7 @@ object NetworkDiModule {
         connectivityChecker: ConnectivityChecker,
         authenticator: TokenAuthenticator,
     ): OkHttpClient =
-        NetworkModule.createOkHttpClient(
+        NetworkClientFactory.createOkHttpClient(
             config = config,
             authTokenProvider = authTokenProvider,
             connectivityChecker = connectivityChecker,
@@ -72,7 +72,7 @@ object NetworkDiModule {
         config: ApiConfig,
         okHttpClient: OkHttpClient,
     ): Retrofit =
-        NetworkModule.createRetrofit(
+        NetworkClientFactory.createRetrofit(
             config = config,
             okHttpClient = okHttpClient,
         )

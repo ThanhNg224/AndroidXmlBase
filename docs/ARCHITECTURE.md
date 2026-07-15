@@ -246,7 +246,7 @@ app/src/main/java/com/example/androidxmlbase/
       ApiConfig.kt
       ApiClient.kt
       RetrofitApiClient.kt                   # classifies Retrofit calls into ApiResult
-      NetworkModule.kt                       # OkHttp timeouts + Retrofit composition root
+      NetworkClientFactory.kt                # OkHttp timeouts + Retrofit composition root
       auth/
         AuthTokenProvider.kt                 # + NoOpAuthTokenProvider
         SecureStoreAuthTokenProvider.kt
@@ -263,11 +263,16 @@ app/src/main/java/com/example/androidxmlbase/
       LocaleManager.kt                       # AppLocaleApplier interface + AppCompatLocaleApplier (real) + LocaleManager (injected applier, unit-testable)
       LanguageOption.kt                      # LanguageOption + SUPPORTED_LANGUAGES sample data (en, vi)
     ui/
+      text/
+        StringProvider.kt                    # lets a ViewModel resolve string resources without an Android Context
+        AndroidStringProvider.kt              # real Context-backed implementation
       base/
         BaseActivity.kt                      # ViewBinding inflate + responsive attachBaseContext + collectOnStarted + immersive window cutout support
         BaseFragment.kt
         BaseDialogFragment.kt
         BaseBottomSheetDialogFragment.kt
+        LifecycleFlowExtensions.kt            # shared collectOnStartedBy(lifecycleOwner) used by all Base* hosts
+        ResultStateOverlay.kt                 # shared full-screen-loader + error-prompt rendering used by BaseActivity/BaseFragment.bindResultState
         Debouncer.kt                          # pure shouldAllow(nowMs) rate limiter + View.setOnDebouncedClickListener glue
         ResultRenderState.kt                  # ResultState<T>.toRenderState() (loading/content/error visibility + error message) + View.applyVisibilityTo glue
       responsive/
@@ -290,7 +295,7 @@ app/src/main/java/com/example/androidxmlbase/
     time/
       ElapsedRealtimeClock.kt                # Monotonic elapsed time utility (clock)
     di/
-      AppCoreModule.kt, NetworkDiModule.kt  # Hilt app/core wiring
+      AppCoreModule.kt, NetworkModule.kt  # Hilt app/core wiring
   feature/
     demo/
       domain/
