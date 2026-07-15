@@ -62,10 +62,9 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     private fun setupDialogWindow() {
         dialog?.window?.let { window ->
-            // Apply standard rounded background
             window.setBackgroundDrawableResource(backgroundDrawableRes)
 
-            // Setup width with margin & cap at maximum layout width
+            // Cap width at max width with margin
             val screenWidth = resources.displayMetrics.widthPixels
             val margin = resources.getDimensionPixelSize(R.dimen.dialog_screen_margin) * 2
             val maxWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
@@ -73,7 +72,6 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
             window.setLayout(calculatedWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-            // Apply selected transition animation
             val animStyle =
                 when (dialogAnimation) {
                     DialogAnimation.NONE -> 0

@@ -17,12 +17,10 @@ fun Window.setImmersiveMode(enabled: Boolean) {
     val controller = WindowCompat.getInsetsController(this, decorView)
 
     if (enabled) {
-        // Configure behavior: show transient bars by swipe without resizing layout
         controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        // Hide both status bars and navigation bars
         controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
 
-        // Extend content behind camera cutout / notch for seamless full screen layout
+        // Extend content behind camera cutout/notch
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val params = attributes
             params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES

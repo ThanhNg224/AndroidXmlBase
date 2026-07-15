@@ -58,7 +58,7 @@ class ButtonStyleDelegate(
     }
 
     private companion object {
-        // Used only if the theme has no colorControlHighlight, which MaterialComponents/AppCompat themes always define.
+        // Fallback alpha if theme lacks colorControlHighlight
         const val FALLBACK_RIPPLE_ALPHA = 51 // ~20% opacity
     }
 }
