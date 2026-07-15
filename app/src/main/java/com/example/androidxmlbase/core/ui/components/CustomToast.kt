@@ -7,14 +7,7 @@ import com.example.androidxmlbase.core.ui.util.Shape
 import com.example.androidxmlbase.core.ui.util.ShapeUtils
 import com.google.android.material.snackbar.Snackbar
 
-/**
- * Drop-in replacement for a custom-styled `Toast` that renders on this base's design tokens
- * (surface background, on-surface text). Backed by [Snackbar] rather than a custom `Toast` view:
- * `Toast.setView` is deprecated from API 30 onward and custom toast views are suppressed while
- * the host app is backgrounded, whereas a [Snackbar] is anchored to a visible [View] and always
- * renders reliably in the foreground — the modern, Android-recommended mechanism for this exact
- * use case, and Material Components (already a dependency) ships it for free.
- */
+/** Custom status toast replacement utilizing a styled [Snackbar] for foreground reliability. */
 object CustomToast {
     fun show(
         anchorView: View,

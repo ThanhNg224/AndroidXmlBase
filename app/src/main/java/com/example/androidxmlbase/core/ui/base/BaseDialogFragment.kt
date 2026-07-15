@@ -1,49 +1,94 @@
 package com.example.androidxmlbase.core.ui.base
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.appcompat.app.AlertDialog
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import com.example.androidxmlbase.R
 
+enum class DialogAnimation {
+    NONE,
+    FADE,
+    SLIDE,
+    SCALE,
+}
+
+/**
+ * Base class for all customized DialogFragments. Handles standard margins,
+ * tablet width limits, corner rounding, and entry/exit animation styling.
+ */
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     private var bindingOrNull: VB? = null
     protected val binding: VB
-        get() = requireNotNull(bindingOrNull) { "binding accessed outside the Dialog view lifecycle" }
+        get() = requireNotNull(bindingOrNull) { "binding accessed before onViewCreated() completed" }
 
-    protected abstract fun inflateBinding(inflater: LayoutInflater): VB
+    protected abstract fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+    ): VB
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        bindingOrNull = inflateBinding(layoutInflater)
-        return AlertDialog
-            .Builder(requireContext())
-            .setView(binding.root)
-            .create()
+    /** Chosen entrance/exit transition animation style. Override this to customize. */
+    protected open val dialogAnimation: DialogAnimation = DialogAnimation.SCALE
+
+    /** Background drawable. Override to use custom shapes. */
+    protected open val backgroundDrawableRes: Int = R.drawable.bg_dialog
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        bindingOrNull = inflateBinding(inflater, container)
+        return binding.root
     }
+
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        super.onViewCreated(view, savedInstanceState)
+        onBindingReady(savedInstanceState)
+    }
+
+    /** Subclasses do their wiring here instead of overriding onViewCreated */
+    protected abstract fun onBindingReady(savedInstanceState: Bundle?)
 
     override fun onStart() {
         super.onStart()
-        onBindingReady()
+        setupDialogWindow()
     }
 
-    protected abstract fun onBindingReady()
+    private fun setupDialogWindow() {
+        dialog?.window?.let { window ->
+            // Apply standard rounded background
+            window.setBackgroundDrawableResource(backgroundDrawableRes)
 
-    override fun onDestroyView() {
-        bindingOrNull = null
-        super.onDestroyView()
-    }
+            // Setup width with margin & cap at maximum layout width
+            val screenWidth = resources.displayMetrics.widthPixels
+            val margin = resources.getDimensionPixelSize(R.dimen.dialog_screen_margin) * 2
+            val maxWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+            val calculatedWidth = (screenWidth - margin).coerceAtMost(maxWidth)
 
-    protected fun <T> Flow<T>.collectOnStarted(action: suspend (T) -> Unit) {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                collect(action)
+            window.setLayout(calculatedWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+            // Apply selected transition animation
+            val animStyle =
+                when (dialogAnimation) {
+                    DialogAnimation.NONE -> 0
+                    DialogAnimation.FADE -> R.style.Animation_AndroidXmlBase_Dialog_Fade
+                    DialogAnimation.SLIDE -> R.style.Animation_AndroidXmlBase_Dialog_Slide
+                    DialogAnimation.SCALE -> R.style.Animation_AndroidXmlBase_Dialog_Scale
+                }
+            if (animStyle != 0) {
+                window.setWindowAnimations(animStyle)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingOrNull = null
     }
 }

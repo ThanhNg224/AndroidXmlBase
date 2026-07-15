@@ -13,8 +13,8 @@ import com.example.androidxmlbase.core.storage.settings.SettingsStore
 import com.example.androidxmlbase.core.storage.settings.appSettingsDataStore
 import com.example.androidxmlbase.core.time.AndroidElapsedRealtimeClock
 import com.example.androidxmlbase.core.time.ElapsedRealtimeClock
-import com.example.androidxmlbase.core.ui.AndroidStringProvider
-import com.example.androidxmlbase.core.ui.StringProvider
+import com.example.androidxmlbase.core.ui.text.AndroidStringProvider
+import com.example.androidxmlbase.core.ui.text.StringProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

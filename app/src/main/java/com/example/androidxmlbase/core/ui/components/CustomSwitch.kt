@@ -7,14 +7,7 @@ import androidx.core.content.ContextCompat
 import com.example.androidxmlbase.R
 import com.google.android.material.materialswitch.MaterialSwitch
 
-/**
- * Thin [MaterialSwitch] wrapper that tints the track/thumb from this base's color tokens instead
- * of the platform default, without reimplementing the base widget's touch/accessibility
- * handling. Based on [MaterialSwitch] rather than the older `SwitchCompat`: Material Components
- * is already a dependency, and `MaterialSwitch` is the actively maintained, Material3-styled
- * switch widget it ships — a strictly more modern base than `SwitchCompat` for the same amount
- * of code.
- */
+/** Custom [MaterialSwitch] wrapped to apply design system color tokens. */
 class CustomSwitch
     @JvmOverloads
     constructor(
@@ -33,7 +26,7 @@ class CustomSwitch
             trackDecorationTintList = checkedStateList(checkedTrackColor, uncheckedTrackColor)
             thumbTintList = checkedStateList(checkedThumbColor, uncheckedThumbColor)
 
-            // Prevent text overlapping with the switch widget
+            // Prevent text overlap
             val density = context.resources.displayMetrics.density
             switchPadding = (16 * density).toInt()
 
@@ -49,7 +42,7 @@ class CustomSwitch
             ColorStateList(
                 arrayOf(
                     intArrayOf(android.R.attr.state_checked),
-                    intArrayOf(), // Default unchecked state fallback
+                    intArrayOf(), // Unchecked fallback
                 ),
                 intArrayOf(checkedColor, uncheckedColor),
             )

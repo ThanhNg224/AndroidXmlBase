@@ -5,11 +5,11 @@ import com.example.androidxmlbase.core.network.connectivity.ConnectivityChecker
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NetworkModuleTest {
+class NetworkClientFactoryTest {
     @Test
     fun `creates client with thirty second connect read and write timeouts`() {
         val client =
-            NetworkModule.createOkHttpClient(
+            NetworkClientFactory.createOkHttpClient(
                 config = ApiConfig(baseUrl = "https://example.com/", enableLogging = false),
                 authTokenProvider = NoOpAuthTokenProvider(),
                 connectivityChecker = ConnectedConnectivityChecker,

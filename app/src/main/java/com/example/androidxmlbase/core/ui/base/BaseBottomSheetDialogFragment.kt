@@ -4,13 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDialogFragment() {
     private var bindingOrNull: VB? = null
@@ -49,11 +45,5 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
         super.onDestroyView()
     }
 
-    protected fun <T> Flow<T>.collectOnStarted(action: suspend (T) -> Unit) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                collect(action)
-            }
-        }
-    }
+    protected fun <T> Flow<T>.collectOnStarted(action: suspend (T) -> Unit) = collectOnStartedBy(viewLifecycleOwner, action)
 }

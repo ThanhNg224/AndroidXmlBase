@@ -13,7 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-object NetworkModule {
+object NetworkClientFactory {
     fun createOkHttpClient(
         config: ApiConfig,
         authTokenProvider: AuthTokenProvider,
