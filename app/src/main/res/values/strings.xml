@@ -18,6 +18,9 @@
     <string name="design_system_headline_sample">Headline sample</string>
     <string name="design_system_body_sample">Body text sample, showing the base Body text appearance.</string>
     <string name="design_system_caption_sample">Caption sample</string>
+    <string name="design_system_body_emphasis_sample">Body emphasis sample</string>
+    <string name="design_system_body_medium_sample">Body medium sample</string>
+    <string name="design_system_micro_sample">Micro sample</string>
     <string name="design_system_primary_button">Primary</string>
     <string name="design_system_outlined_button">Outlined</string>
     <string name="design_system_shadow_card_text">This card is a ShadowLayout.</string>

@@ -33,6 +33,27 @@
             android:text="@string/design_system_caption_sample"
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.Caption" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="@string/design_system_body_emphasis_sample"
+            android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="@string/design_system_body_medium_sample"
+            android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyMedium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="@string/design_system_micro_sample"
+            android:textAppearance="@style/TextAppearance.AndroidXmlBase.Micro" />
+
         <!-- FrameButton #1: primary filled -->
         <com.example.androidxmlbase.core.ui.components.FrameButton
             android:layout_width="match_parent"

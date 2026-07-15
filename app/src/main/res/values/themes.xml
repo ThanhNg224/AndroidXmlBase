@@ -28,6 +28,9 @@
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="materialButtonStyle">@style/Widget.AndroidXmlBase.Button</item>
         <item name="android:buttonBarButtonStyle">@style/Widget.AndroidXmlBase.Button.TextButton</item>
+        <!-- Explicit default (matches the system fallback, so no visual change today) so a
+             future brand font is a one-line swap here instead of touching every text style. -->
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Theme.AndroidXmlBase" parent="Base.Theme.AndroidXmlBase">

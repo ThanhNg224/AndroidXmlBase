@@ -21,8 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12sdp"
         android:gravity="center"
-        android:textColor="@color/color_on_surface"
-        android:textSize="@dimen/_14ssp" />
+        android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyMedium" />
 
     <!-- Technical details / code (optional) -->
     <TextView
@@ -31,9 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:gravity="center"
-        android:textColor="@color/color_on_surface"
-        android:alpha="0.6"
-        android:textSize="@dimen/_10ssp" />
+        android:textAppearance="@style/TextAppearance.AndroidXmlBase.Micro"
+        android:alpha="0.6" />
 
     <!-- Primary Action Button -->
     <com.example.androidxmlbase.core.ui.components.FrameButton
@@ -50,9 +48,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/color_on_primary"
-            android:textSize="@dimen/_15ssp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
+            android:textColor="@color/color_on_primary" />
 
     </com.example.androidxmlbase.core.ui.components.FrameButton>
 
@@ -70,9 +67,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/color_primary"
-            android:textSize="@dimen/_15ssp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
+            android:textColor="@color/color_primary" />
 
     </com.example.androidxmlbase.core.ui.components.FrameButton>
 
