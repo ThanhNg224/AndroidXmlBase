@@ -84,6 +84,12 @@ Per-app language switching, backed by AndroidX's per-app language API (`AppCompa
 
 **Consumers:** `MainActivity`'s EN/VI buttons drive `LocaleManager.setLanguage(...)` directly.
 
+## `core/logging`
+
+- `ReleaseTree` (extends `timber.log.Timber.Tree`) — filters to WARN+ only, forwards to `android.util.Log`. Planted instead of `Timber.DebugTree()` in release builds.
+
+**Consumers:** `AndroidXmlBaseApplication` plants `Timber.DebugTree()` in debug builds and `ReleaseTree` in release builds. Feature code should call `Timber.tag(...).d/i/w/e(...)` instead of `android.util.Log` directly.
+
 ## `core/ui/responsive`
 
 A `smallestScreenWidthDp` clamp to avoid tablet/wide-screen layout issues.
