@@ -1,6 +1,7 @@
 package com.example.androidxmlbase
 
 import android.app.Application
+import com.example.androidxmlbase.core.storage.database.DbPassphraseProvider
 import com.example.androidxmlbase.core.ui.theme.ThemeManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -8,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -16,10 +18,16 @@ class AndroidXmlBaseApplication : Application() {
     @Inject
     lateinit var themeManager: ThemeManager
 
+    @Inject
+    lateinit var dbPassphraseProvider: DbPassphraseProvider
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate() {
         super.onCreate()
+
+        // Warm the encrypted DB passphrase on a background dispatcher (see DbPassphraseProvider).
+        applicationScope.launch(Dispatchers.IO) { dbPassphraseProvider.getOrCreate() }
 
         // Synchronously load and apply the theme on startup to prevent launch flashing
         runBlocking {
