@@ -35,8 +35,10 @@ coreSplashscreen = "1.2.0"
 startupRuntime = "1.2.0"
 workRuntime = "2.11.2"
 androidxHilt = "1.4.0"
+# 1.4.1 (latest stable) fails against AGP 9.x with "Module ':app' is not a supported android module" --
+# no stable androidx.baselineprofile release has shipped since AGP 9.x did. Revisit once one does.
 baselineProfile = "1.5.0-alpha07"
-benchmarkMacro = "1.4.1"
+benchmarkMacro = "1.5.0-alpha07"
 profileinstaller = "1.4.1"
 uiautomator = "2.2.0"
 
