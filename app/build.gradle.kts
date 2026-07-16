@@ -142,6 +142,8 @@ kover {
                     "*.core.network.transfer.*",
                     "*.core.storage.settings.DataStoreSettingsStore*",
                     "*.core.storage.settings.SettingsKey*",
+                    "*.core.storage.database.DbPassphraseProvider*",
+                    "*.core.logging.ReleaseTree*",
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
                     "*.core.ui.util.ShapeUtils*",
