@@ -3,6 +3,8 @@ package com.example.androidxmlbase.core.startup
 import android.content.Context
 import androidx.startup.Initializer
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -13,6 +15,7 @@ class ThemeApplyInitializer : Initializer<Unit> {
         val themeManager = entryPoint.themeManager()
         themeManager.currentTheme
             .onEach { themeManager.applyTheme(it) }
+            .flowOn(Dispatchers.Main)
             .launchIn(entryPoint.applicationScope())
     }
 
