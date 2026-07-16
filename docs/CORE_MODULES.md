@@ -72,6 +72,7 @@ Hilt modules for app-wide wiring.
 - `AppCoreModule` — provides `SettingsStore` and `LocaleManager`.
 - `NetworkBindingsModule` — binds `RetrofitApiClient` and `OkHttpFileTransferClient`.
 - `NetworkModule` — provides `ApiConfig`, `ConnectivityChecker`, `OkHttpClient`, and `Retrofit` (built via `core/network/NetworkClientFactory`). Feature-specific Retrofit services belong in that feature's own DI module.
+- `CoroutineScopeModule` — provides the `@ApplicationScope`-qualified, `SupervisorJob() + Dispatchers.Default` `CoroutineScope` used for app-wide fire-and-forget work (startup Initializers, and any future feature's background triggers).
 
 ## `core/localization`
 
@@ -89,6 +90,19 @@ Per-app language switching, backed by AndroidX's per-app language API (`AppCompa
 - `ReleaseTree` (extends `timber.log.Timber.Tree`) — filters to WARN+ only, forwards to `android.util.Log`. Planted instead of `Timber.DebugTree()` in release builds.
 
 **Consumers:** `AndroidXmlBaseApplication` plants `Timber.DebugTree()` in debug builds and `ReleaseTree` in release builds. Feature code should call `Timber.tag(...).d/i/w/e(...)` instead of `android.util.Log` directly.
+
+## `core/startup`
+
+Formalizes process-startup work via `androidx.startup.Initializer` instead of `Application.onCreate()`.
+
+- `AppStartupEntryPoint` (Hilt `@EntryPoint`) — how Initializers (instantiated by reflection, no constructor injection available) reach `DbPassphraseProvider`, `ThemeManager`, and the `@ApplicationScope CoroutineScope`.
+- `TimberInitializer` — plants `Timber.DebugTree()` (debug) or `ReleaseTree()` (release).
+- `DbPassphraseWarmupInitializer` — warms `DbPassphraseProvider` on `Dispatchers.IO`. Depends on `TimberInitializer`.
+- `ThemeApplyInitializer` — collects `ThemeManager.currentTheme` and applies it reactively. Depends on `TimberInitializer`.
+
+All three are registered as `<meta-data>` entries under `androidx.startup.InitializationProvider` in `AndroidManifest.xml`.
+
+**Consumers:** `AndroidXmlBaseApplication` no longer does any of this directly — see its class doc comment.
 
 ## `core/ui/responsive`
 

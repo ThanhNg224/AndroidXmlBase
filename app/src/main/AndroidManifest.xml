@@ -37,6 +37,21 @@
             android:exported="false"
             android:label="@string/design_system_title"
             android:theme="@style/Theme.AndroidXmlBase" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.TimberInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.DbPassphraseWarmupInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.ThemeApplyInitializer"
+                android:value="androidx.startup" />
+        </provider>
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"
