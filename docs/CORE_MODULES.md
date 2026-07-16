@@ -104,6 +104,14 @@ All three are registered as `<meta-data>` entries under `androidx.startup.Initia
 
 **Consumers:** `AndroidXmlBaseApplication` no longer does any of this directly — see its class doc comment.
 
+## `core/work`
+
+WorkManager wiring: `AndroidXmlBaseApplication` implements `Configuration.Provider`, supplying `HiltWorkerFactory` so `@HiltWorker` classes get constructor injection. WorkManager's default initializer is disabled in `AndroidManifest.xml` (`androidx.work.WorkManagerInitializer` removed from the `androidx.startup.InitializationProvider` merge) so this custom configuration is the one actually used.
+
+- `SampleHeartbeatWorker` (`@HiltWorker`, `CoroutineWorker`) — reference implementation only, not scheduled by default. Copy this shape (constructor pattern, `@Assisted context`/`@Assisted workerParameters`) for real background work.
+
+**Consumers:** none yet — this is infrastructure for the first feature that needs background work.
+
 ## `core/ui/responsive`
 
 A `smallestScreenWidthDp` clamp to avoid tablet/wide-screen layout issues.

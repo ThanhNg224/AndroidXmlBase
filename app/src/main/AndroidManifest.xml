@@ -51,6 +51,10 @@
             <meta-data
                 android:name="com.example.androidxmlbase.core.startup.ThemeApplyInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

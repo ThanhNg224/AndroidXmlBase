@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.startup.runtime)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.work)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.kotlinx.coroutines.core)
@@ -85,12 +87,15 @@ dependencies {
     implementation(libs.timber)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.hilt.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.okhttp.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
 
 configurations.all {
@@ -164,6 +169,7 @@ kover {
                     "*Fragment",
                     "*DialogFragment",
                     "*.core.ui.components.*",
+                    "*.core.work.SampleHeartbeatWorker",
                 )
             }
         }
