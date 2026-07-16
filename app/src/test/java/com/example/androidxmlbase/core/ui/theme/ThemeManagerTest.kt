@@ -69,4 +69,17 @@ class ThemeManagerTest {
 
             assertEquals(AppTheme.LIGHT, activeTheme)
         }
+
+    @Test
+    fun `isThemeApplied stays false until applyTheme runs`() =
+        runTest {
+            val settingsStore = FakeSettingsStore()
+            val themeManager = AndroidThemeManager(settingsStore)
+
+            assertEquals(false, themeManager.isThemeApplied.value)
+
+            themeManager.applyTheme(AppTheme.DARK)
+
+            assertEquals(true, themeManager.isThemeApplied.value)
+        }
 }

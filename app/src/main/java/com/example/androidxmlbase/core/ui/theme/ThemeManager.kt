@@ -4,12 +4,18 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.androidxmlbase.core.storage.settings.AppSettingsKeys
 import com.example.androidxmlbase.core.storage.settings.SettingsStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface ThemeManager {
     val currentTheme: Flow<AppTheme>
+
+    /** True once the persisted theme has been read and applied at least once this process. */
+    val isThemeApplied: StateFlow<Boolean>
 
     suspend fun getTheme(): AppTheme
 
@@ -24,6 +30,9 @@ class AndroidThemeManager
     constructor(
         private val settingsStore: SettingsStore,
     ) : ThemeManager {
+        private val themeAppliedState = MutableStateFlow(false)
+        override val isThemeApplied: StateFlow<Boolean> = themeAppliedState.asStateFlow()
+
         override val currentTheme: Flow<AppTheme> =
             settingsStore
                 .observe(AppSettingsKeys.THEME_MODE)
@@ -47,5 +56,6 @@ class AndroidThemeManager
                     AppTheme.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 }
             AppCompatDelegate.setDefaultNightMode(nightMode)
+            themeAppliedState.value = true
         }
     }

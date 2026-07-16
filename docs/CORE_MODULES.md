@@ -131,11 +131,11 @@ Shared UI infrastructure.
 App-wide light/dark/system theme, backed by AppCompat's night mode and persisted through `SettingsStore`.
 
 - `AppTheme` (enum: `LIGHT`, `DARK`, `SYSTEM`, each with a `key: String`) — `AppTheme.fromKey(key)` maps a stored key back to an enum value, defaulting to `SYSTEM` if unrecognized.
-- `ThemeManager` (interface) — `currentTheme: Flow<AppTheme>`, `suspend fun getTheme(): AppTheme`, `suspend fun setTheme(theme: AppTheme)`, `fun applyTheme(theme: AppTheme)`.
+- `ThemeManager` (interface) — `currentTheme: Flow<AppTheme>`, `isThemeApplied: StateFlow<Boolean>` (true once the persisted theme has been applied at least once this process), `suspend fun getTheme(): AppTheme`, `suspend fun setTheme(theme: AppTheme)`, `fun applyTheme(theme: AppTheme)`.
 - `AndroidThemeManager` — the only implementation; reads/writes `AppSettingsKeys.THEME_MODE` via `SettingsStore` and applies the theme through `AppCompatDelegate.setDefaultNightMode`.
 - `ThemeModule` (Hilt `@Module`) — binds `AndroidThemeManager` to `ThemeManager`.
 
-**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice.
+**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice; `MainActivity` reads `isThemeApplied` for its splash screen keep-on-screen condition (Task 3).
 
 ## `core/navigation`
 
