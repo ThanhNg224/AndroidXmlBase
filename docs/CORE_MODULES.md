@@ -178,3 +178,11 @@ App-wide light/dark/system theme, backed by AppCompat's night mode and persisted
 ---
 
 No other packages exist. Check the source tree before creating new code.
+
+## `:baselineprofile` (separate Gradle module, not `core/`)
+
+A `com.android.test`-type module containing only a Macrobenchmark profile generator — no business/feature code. Exempted from the single-module rule in `CLAUDE.md` because it's closer to `androidTest` than to a feature module.
+
+- `BaselineProfileGenerator` — drives a cold launch + "open demo screen" + back, via `BaselineProfileRule`. Run `./gradlew :app:generateReleaseBaselineProfile` to regenerate `app/src/main/generated/baselineProfiles/baseline-prof.txt` after significant startup-path changes.
+
+**Consumers:** `:app` (via `baselineProfile(project(":baselineprofile"))` and `androidx.profileinstaller:profileinstaller`, which installs the checked-in profile at app install time).

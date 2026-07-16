@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidXmlBase"
 include(":app")
- 
+include(":baselineprofile")
