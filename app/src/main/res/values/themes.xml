@@ -38,6 +38,12 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="Theme.AndroidXmlBase.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/color_surface</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.AndroidXmlBase</item>
+    </style>
+
     <!-- Custom base button style enabling text auto-wrap to prevent truncation -->
     <style name="Widget.AndroidXmlBase.Button" parent="Widget.Material3.Button">
         <item name="android:singleLine">false</item>
