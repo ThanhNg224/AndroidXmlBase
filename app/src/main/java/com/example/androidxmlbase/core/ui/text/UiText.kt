@@ -10,11 +10,12 @@ sealed interface UiText {
     ) : UiText
 
     data class StringResource(
-        @StringRes val resId: Int,
+        @param:StringRes val resId: Int,
         val formatArgs: List<Any> = emptyList(),
     ) : UiText
 }
 
+@Suppress("SpreadOperator")
 fun UiText.resolve(context: Context): String =
     when (this) {
         is UiText.DynamicString -> value
