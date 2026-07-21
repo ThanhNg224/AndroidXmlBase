@@ -3,6 +3,7 @@ package com.example.androidxmlbase.core.ui.base
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
@@ -48,6 +49,7 @@ class TransitionActivity : AppCompatActivity() {
             actionHasCompleted = true
             finishAfterSettleDelay()
         } else {
+            animateEntrance()
             runActionAfterTransitionIsOpaque()
         }
     }
@@ -61,6 +63,20 @@ class TransitionActivity : AppCompatActivity() {
         val loader = findViewById<LottieAnimationView>(R.id.transitionLoader)
         val primaryColor = MaterialColors.getColor(loader, androidx.appcompat.R.attr.colorPrimary)
         loader.addValueCallback(KeyPath("**"), LottieProperty.COLOR) { primaryColor }
+    }
+
+    private fun animateEntrance() {
+        val content = findViewById<View>(R.id.transitionContent)
+        content.alpha = ENTRANCE_START_ALPHA
+        content.scaleX = ENTRANCE_START_SCALE
+        content.scaleY = ENTRANCE_START_SCALE
+        content
+            .animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(ENTRANCE_ANIM_DURATION_MS)
+            .start()
     }
 
     private fun runActionAfterTransitionIsOpaque() {
@@ -85,6 +101,9 @@ class TransitionActivity : AppCompatActivity() {
         private const val STATE_ACTION_COMPLETED = "state_action_completed"
         private const val TRANSITION_ENTER_DURATION_MS = 320L
         private const val TRANSITION_SETTLE_DURATION_MS = 80L
+        private const val ENTRANCE_ANIM_DURATION_MS = 280L
+        private const val ENTRANCE_START_ALPHA = 0f
+        private const val ENTRANCE_START_SCALE = 0.9f
 
         fun createIntent(
             context: Context,
