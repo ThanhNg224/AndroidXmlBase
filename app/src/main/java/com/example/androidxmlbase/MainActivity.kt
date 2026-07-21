@@ -2,7 +2,6 @@ package com.example.androidxmlbase
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.androidxmlbase.core.localization.AppLanguage
 import com.example.androidxmlbase.core.localization.LocaleManager
@@ -80,7 +79,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             TransitionActivity.createIntent(
                 context = this,
                 actionKey = LanguageTransitionAction.KEY,
-                extras = bundleOf(LanguageTransitionAction.EXTRA_LANGUAGE_TAG to language?.languageTag.orEmpty()),
+                extras =
+                    Bundle().apply {
+                        putString(LanguageTransitionAction.EXTRA_LANGUAGE_TAG, language?.languageTag.orEmpty())
+                    },
             ),
         )
     }

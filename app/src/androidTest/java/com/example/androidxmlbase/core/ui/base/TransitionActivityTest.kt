@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.core.ui.base
 
-import androidx.core.os.bundleOf
+import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -25,7 +25,10 @@ class TransitionActivityTest {
             TransitionActivity.createIntent(
                 context = InstrumentationRegistry.getInstrumentation().targetContext,
                 actionKey = LanguageTransitionAction.KEY,
-                extras = bundleOf(LanguageTransitionAction.EXTRA_LANGUAGE_TAG to AppLanguage.VIETNAMESE.languageTag),
+                extras =
+                    Bundle().apply {
+                        putString(LanguageTransitionAction.EXTRA_LANGUAGE_TAG, AppLanguage.VIETNAMESE.languageTag)
+                    },
             ),
         )
 
