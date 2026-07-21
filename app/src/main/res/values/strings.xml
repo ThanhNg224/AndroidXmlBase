@@ -7,7 +7,6 @@
     <string name="language_system">System</string>
     <string name="language_english">English</string>
     <string name="language_vietnamese">Tiếng Việt</string>
-    <string name="language_change_loading">Applying language…</string>
     <string name="view_demo">View Demo</string>
     <string name="demo_title">Demo</string>
     <string name="increment">Increment</string>

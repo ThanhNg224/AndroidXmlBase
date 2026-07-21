@@ -7,7 +7,6 @@
     <string name="language_system">Theo hệ thống</string>
     <string name="language_english">English</string>
     <string name="language_vietnamese">Tiếng Việt</string>
-    <string name="language_change_loading">Đang áp dụng ngôn ngữ…</string>
     <string name="view_demo">Xem Demo</string>
     <string name="demo_title">Demo</string>
     <string name="increment">Tăng</string>

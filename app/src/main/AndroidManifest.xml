@@ -28,11 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LanguageTransitionActivity"
-            android:configChanges="locale|layoutDirection"
-            android:exported="false"
-            android:theme="@style/Theme.AndroidXmlBase.LanguageTransition" />
-        <activity
             android:name=".core.ui.base.TransitionActivity"
             android:configChanges="locale|layoutDirection"
             android:exported="false"

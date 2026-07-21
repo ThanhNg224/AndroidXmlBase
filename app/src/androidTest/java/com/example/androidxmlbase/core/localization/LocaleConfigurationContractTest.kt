@@ -4,8 +4,8 @@ import android.content.ComponentName
 import android.content.pm.ActivityInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.androidxmlbase.LanguageTransitionActivity
 import com.example.androidxmlbase.R
+import com.example.androidxmlbase.core.ui.base.TransitionActivity
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,11 +30,11 @@ class LocaleConfigurationContractTest {
     }
 
     @Test
-    fun languageTransition_keepsItsOpaqueWindowAcrossLocaleRecreation() {
+    fun transitionActivity_keepsItsOpaqueWindowAcrossLocaleRecreation() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val activityInfo =
             context.packageManager.getActivityInfo(
-                ComponentName(context, LanguageTransitionActivity::class.java),
+                ComponentName(context, TransitionActivity::class.java),
                 0,
             )
         val requiredConfigChanges = ActivityInfo.CONFIG_LOCALE or ActivityInfo.CONFIG_LAYOUT_DIRECTION

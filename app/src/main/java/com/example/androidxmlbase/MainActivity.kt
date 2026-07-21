@@ -2,13 +2,16 @@ package com.example.androidxmlbase
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.androidxmlbase.core.localization.AppLanguage
 import com.example.androidxmlbase.core.localization.LocaleManager
 import com.example.androidxmlbase.core.navigation.ActivityDestination
 import com.example.androidxmlbase.core.navigation.ActivityNavigator
 import com.example.androidxmlbase.core.ui.base.BaseActivity
+import com.example.androidxmlbase.core.ui.base.TransitionActivity
 import com.example.androidxmlbase.core.ui.theme.ThemeManager
+import com.example.androidxmlbase.core.ui.transition.LanguageTransitionAction
 import com.example.androidxmlbase.databinding.ActivityMainBinding
 import com.example.androidxmlbase.feature.demo.presentation.ui.DemoActivity
 import com.example.androidxmlbase.feature.designsystem.presentation.ui.DesignSystemActivity
@@ -73,6 +76,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         if (isLanguageChangeInProgress || language == localeManager.currentLanguage()) return
 
         isLanguageChangeInProgress = true
-        startActivity(LanguageTransitionActivity.createIntent(this, language))
+        startActivity(
+            TransitionActivity.createIntent(
+                context = this,
+                actionKey = LanguageTransitionAction.KEY,
+                extras = bundleOf(LanguageTransitionAction.EXTRA_LANGUAGE_TAG to language?.languageTag.orEmpty()),
+            ),
+        )
     }
 }
