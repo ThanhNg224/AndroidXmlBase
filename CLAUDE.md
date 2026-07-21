@@ -15,6 +15,18 @@ Reference project the plan ports ideas from (do not copy blindly, and never touc
 
 Read `docs/BASE_PROJECT_PORT_PLAN.md` before changing the base architecture — it defines what was extracted vs. rewritten vs. dropped from the reference project, and why the base should modernize HeyJapan patterns instead of copying them blindly.
 
+## Current Phase: Base-Building (scoped YAGNI exception)
+
+This repo is in the **base-building phase**: hardening the reusable foundation (`core/`) itself, not shipping a feature on top of it. In this phase, proactively adding modern, production-grade infrastructure to `core/` — startup correctness, security posture, logging, performance tooling — is expected even before a concrete consuming feature demands it, because gaps in the base are expensive to retrofit once features depend on it.
+
+This is a narrow exception to "don't add abstractions without a proven need" (see the working conventions below and `AGENTS.md`). It does **not** license:
+- New Gradle modules containing `app`/feature source code — still gated on `core` stabilizing (see "Open Decisions" in `docs/BASE_PROJECT_PORT_PLAN.md`).
+  - Exception: build-tooling/test-only modules that contain no business or feature code (e.g. a `:baselineprofile` module holding only Macrobenchmark tests) are allowed, since they don't fork the app's architecture or add a real module boundary to maintain — they're closer to `androidTest` than to a feature module.
+- Feature-specific or business-domain abstractions.
+- Anything that isn't genuinely foundational (i.e., not something every consuming app would eventually need).
+
+Once feature development on top of this base starts, the strict "proven need" rule applies again in full.
+
 ## Commands
 
 ```bash
@@ -69,4 +81,4 @@ Even though the reference HeyJapan project is the source of ideas, never bring a
 - Naming: classes `PascalCase`; functions/variables `camelCase`; constants `UPPER_SNAKE_CASE`; resources/layouts/drawables/colors/dimens `lowercase_with_underscores`.
 - Kotlin: prefer `val`, avoid `!!`, use sealed classes for finite UI state, avoid `GlobalScope`, use structured concurrency and `viewModelScope`.
 - No hardcoded `dp`/`sp` in XML layouts once the sdp/ssp convention lands (Phase 5) — use `@dimen/_<n>sdp` / `_<n>ssp`. No hardcoded hex colors in layouts except launcher assets. All user-facing text goes through string resources.
-- Keep refactors scoped to what's requested; don't rewrite unrelated files or introduce abstractions without a repeated, proven need.
+- Keep refactors scoped to what's requested; don't rewrite unrelated files or introduce abstractions without a repeated, proven need (base-infrastructure hardening in `core/` is exempted — see "Current Phase" above).

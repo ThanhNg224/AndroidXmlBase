@@ -10,6 +10,8 @@ This document defines coding conventions for Android projects using Kotlin, MVVM
 - Simplicity over over-engineering.  
 - Maintainability first.
 
+Base-building phase exception: see `AGENTS.md` → "Current Project Phase" — proactively hardening `core/` infrastructure before a feature needs it is expected while this repo is a base, not over-engineering.
+
 ## Project Structure
 - Organize by feature instead of layer when possible.  
 - Keep feature boundaries clear.  
