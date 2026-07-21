@@ -28,9 +28,6 @@ class DemoViewModel
         private val saveDemoCount: SaveDemoCountUseCase,
         private val fetchDemoMessage: FetchDemoMessageUseCase,
     ) : StateViewModel<DemoUiState, DemoUiEvent, DemoUiEffect>(DemoUiState()) {
-        // Real DataStore's first read genuinely suspends, so currentState.count can still be the
-        // constructor default while that read is in flight. Gate increments on it to avoid
-        // computing from the stale default and clobbering the real persisted value.
         private var isInitialCountLoaded = false
 
         init {
