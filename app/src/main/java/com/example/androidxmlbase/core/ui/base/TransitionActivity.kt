@@ -24,11 +24,13 @@ import kotlin.time.Duration.Companion.milliseconds
  * [TransitionAction] implementation registered into the Hilt multibinding map, not a new
  * Activity subclass or manifest entry.
  *
- * Extends [AppCompatActivity] (not the lighter `ComponentActivity`) because on API 33+,
- * `AppCompatDelegate.setApplicationLocales`/`getApplicationLocales` (used by
- * [com.example.androidxmlbase.core.ui.transition.LanguageTransitionAction]) route through the
- * framework `LocaleManager` obtained from an *active* `AppCompatDelegate`'s context; with no
- * `AppCompatActivity` alive in the process, both calls silently no-op.
+ * Extends [AppCompatActivity] (not the lighter `ComponentActivity`): matches this project's
+ * convention of every other real screen using `AppCompatActivity` (via `BaseActivity`), and,
+ * as a side benefit, makes an isolated single-Activity instrumented test of this class correct
+ * without depending on another Activity being alive alongside it. In real usage this Activity is
+ * always launched on top of an already-alive `AppCompatActivity` (e.g. `MainActivity`), so
+ * `ComponentActivity` would have worked fine there too — this isn't required for production
+ * correctness, it's just harmless and more consistent.
  */
 @AndroidEntryPoint
 class TransitionActivity : AppCompatActivity() {
