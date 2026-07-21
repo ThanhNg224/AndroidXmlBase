@@ -49,6 +49,11 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
 
+    <style name="Theme.AndroidXmlBase.Transition" parent="Theme.AndroidXmlBase">
+        <item name="android:windowAnimationStyle">@style/Animation_AndroidXmlBase_Transition</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
     <!-- Custom base button style enabling text auto-wrap to prevent truncation -->
     <style name="Widget.AndroidXmlBase.Button" parent="Widget.Material3.Button">
         <item name="android:singleLine">false</item>
@@ -106,6 +111,13 @@
     </style>
 
     <style name="Animation_AndroidXmlBase_LanguageTransition">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/no_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/no_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="Animation_AndroidXmlBase_Transition">
         <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
         <item name="android:activityOpenExitAnimation">@anim/no_anim</item>
         <item name="android:activityCloseEnterAnimation">@anim/no_anim</item>
