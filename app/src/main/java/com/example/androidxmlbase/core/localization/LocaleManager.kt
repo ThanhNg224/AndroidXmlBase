@@ -5,6 +5,8 @@ import androidx.core.os.LocaleListCompat
 
 interface AppLocaleApplier {
     fun applyLocales(tag: String)
+
+    fun currentLocaleTags(): String
 }
 
 class AppCompatLocaleApplier : AppLocaleApplier {
@@ -17,13 +19,20 @@ class AppCompatLocaleApplier : AppLocaleApplier {
             }
         AppCompatDelegate.setApplicationLocales(locales)
     }
+
+    override fun currentLocaleTags(): String = AppCompatDelegate.getApplicationLocales().toLanguageTags()
 }
 
 class LocaleManager(
     private val localeApplier: AppLocaleApplier = AppCompatLocaleApplier(),
 ) {
-    fun setLanguage(languageCode: String) {
-        val tag = if (languageCode.isBlank()) "" else LocaleTagMapper.toRegionalTag(languageCode)
-        localeApplier.applyLocales(tag)
+    fun setLanguage(language: AppLanguage) {
+        localeApplier.applyLocales(language.languageTag)
     }
+
+    fun useSystemLanguage() {
+        localeApplier.applyLocales("")
+    }
+
+    fun currentLanguage(): AppLanguage? = AppLanguage.findByLanguageTag(localeApplier.currentLocaleTags())
 }

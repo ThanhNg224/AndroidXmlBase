@@ -6,6 +6,7 @@ import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.architecture.result.ResultState
 import com.example.androidxmlbase.core.ui.components.FullScreenLoaderView
 import com.example.androidxmlbase.core.ui.components.PromptDialogFragment
+import com.example.androidxmlbase.core.ui.text.resolve
 
 /**
  * Renders [result] onto [contentRoot] (full-screen loader) and [dialogHost] (error prompt),
@@ -26,7 +27,7 @@ internal fun <T> renderResultState(
         }
         is ResultState.Error -> {
             hideFullScreenLoader(contentRoot)
-            showErrorPrompt(dialogHost, result.message)
+            showErrorPrompt(dialogHost, result.message.resolve(contentRoot.context))
         }
     }
 }

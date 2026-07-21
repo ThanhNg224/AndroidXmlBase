@@ -1,6 +1,7 @@
 package com.example.androidxmlbase.core.ui.base
 
 import com.example.androidxmlbase.core.architecture.result.ResultState
+import com.example.androidxmlbase.core.ui.text.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -41,7 +42,8 @@ class ResultRenderStateTest {
 
     @Test
     fun `Error maps to error-visible render state and passes the message through`() {
-        val result: ResultState<String> = ResultState.Error("boom", cause = IllegalStateException("boom"))
+        val message = UiText.DynamicString("boom")
+        val result: ResultState<String> = ResultState.Error(message, cause = IllegalStateException("boom"))
 
         val renderState = result.toRenderState()
 
@@ -50,7 +52,7 @@ class ResultRenderStateTest {
                 isLoadingVisible = false,
                 isContentVisible = false,
                 isErrorVisible = true,
-                errorMessage = "boom",
+                errorMessage = message,
             ),
             renderState,
         )

@@ -90,6 +90,10 @@ A thin `MaterialSwitch` subclass (`com.google.android.material.materialswitch.Ma
 
 `CustomToast.show(anchorView: View, message: String, duration: Int = Snackbar.LENGTH_SHORT)`. Backed by `Snackbar`, not a custom `Toast` view — **takes a `View` anchor, not a `Context`**, because `Toast.setView` is deprecated since API 30 and custom-view toasts are suppressed while the host app is backgrounded, whereas a `Snackbar` anchored to a visible `View` always renders reliably in the foreground. Typical call site: `CustomToast.show(binding.root, getString(R.string.some_message))`.
 
+### Single-choice controls
+
+Use `MaterialButtonToggleGroup` for a short, mutually exclusive option set such as app language. Keep it vertically stacked and give each button `wrap_content` height plus a 48dp minimum: unlike a fixed horizontal segmented row, this remains readable with long translations and larger accessibility font sizes. `activity_main.xml` is the live example (System, English, Vietnamese).
+
 ## sdp/ssp convention
 
 This base uses `com.intuit.sdp:sdp-android` / `com.intuit.ssp:ssp-android` (both pure resource-only artifacts) for responsive dimensions, applied as `@dimen/_<n>sdp` (density-independent, scales with `smallestScreenWidthDp`) and `@dimen/_<n>ssp` (same, for text sizes) directly in layout XML:

@@ -78,12 +78,11 @@ Hilt modules for app-wide wiring.
 
 Per-app language switching, backed by AndroidX's per-app language API (`AppCompatDelegate.setApplicationLocales`). The manifest declares `android:localeConfig="@xml/locales_config"` and opts into AppCompat `autoStoreLocales`.
 
-- `LanguageOption(code: String, displayName: String)` + `val SUPPORTED_LANGUAGES` sample data (en, vi).
-- `LocaleTagMapper` (object) — `toRegionalTag(languageCode): String`, mapping `vi`→`vi-VN`, `ko`→`ko-KR`, `zh-TW`→`zh-TW` (passthrough otherwise).
-- `AppLocaleApplier` (interface, `fun applyLocales(tag: String)`) + `AppCompatLocaleApplier` (real impl) — injected as an interface so `LocaleManager` is unit-testable.
-- `LocaleManager(localeApplier = AppCompatLocaleApplier())` — synchronous `fun setLanguage(languageCode: String)` mapped through `LocaleTagMapper` and applied.
+- `AppLanguage` — the single app-language contract. The demo currently ships only English (`en`) and Vietnamese (`vi-VN`), each with a resource-backed display name.
+- `AppLocaleApplier` (interface, apply/read locale tags) + `AppCompatLocaleApplier` (real impl) — injected as an interface so `LocaleManager` is unit-testable.
+- `LocaleManager(localeApplier = AppCompatLocaleApplier())` — applies a supported `AppLanguage`, clears the override to follow the system, and reports the current app-language override.
 
-**Consumers:** `MainActivity`'s EN/VI buttons drive `LocaleManager.setLanguage(...)` directly.
+**Consumers:** `MainActivity` renders a single-selection system/English/Vietnamese control and drives `LocaleManager` directly.
 
 ## `core/logging`
 
@@ -125,6 +124,7 @@ A `smallestScreenWidthDp` clamp to avoid tablet/wide-screen layout issues.
 
 - `StringProvider` (interface) — `fun getString(@StringRes resId: Int): String`, lets a ViewModel resolve string resources without holding an Activity/View `Context`.
 - `AndroidStringProvider` — the real implementation, backed by an injected `@ApplicationContext Context`. Bound in Hilt via `AppCoreBindingsModule`.
+- `UiText` — an immutable resource-or-dynamic UI message, resolved only by a rendering host. Shared presentation states use it instead of requiring a pre-resolved English string.
 
 ## `core/ui/base`
 

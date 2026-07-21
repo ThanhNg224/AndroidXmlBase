@@ -3,6 +3,7 @@ package com.example.androidxmlbase
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.androidxmlbase.core.localization.AppLanguage
 import com.example.androidxmlbase.core.localization.LocaleManager
 import com.example.androidxmlbase.core.navigation.ActivityDestination
 import com.example.androidxmlbase.core.navigation.ActivityNavigator
@@ -25,6 +26,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @Inject
     lateinit var themeManager: ThemeManager
 
+    private var isLanguageChangeInProgress = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -34,18 +37,42 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun inflateBinding(inflater: LayoutInflater): ActivityMainBinding = ActivityMainBinding.inflate(inflater)
 
     override fun onBindingReady(savedInstanceState: Bundle?) {
+        bindLanguageSelector()
+
         binding.btnOpenDemo.setOnClickListener {
             activityNavigator.navigate(this, ActivityDestination(DemoActivity::class))
         }
 
-        binding.btnLangEn.setOnClickListener {
-            localeManager.setLanguage("en")
-        }
-        binding.btnLangVi.setOnClickListener {
-            localeManager.setLanguage("vi")
-        }
         binding.btnDesignSystem.setOnClickListener {
             activityNavigator.navigate(this, ActivityDestination(DesignSystemActivity::class))
         }
+    }
+
+    private fun bindLanguageSelector() {
+        binding.languageSelector.check(
+            when (localeManager.currentLanguage()) {
+                AppLanguage.ENGLISH -> R.id.btnLangEnglish
+                AppLanguage.VIETNAMESE -> R.id.btnLangVietnamese
+                null -> R.id.btnLangSystem
+            },
+        )
+        binding.languageSelector.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            requestLanguageChange(
+                when (checkedId) {
+                    R.id.btnLangSystem -> null
+                    R.id.btnLangEnglish -> AppLanguage.ENGLISH
+                    R.id.btnLangVietnamese -> AppLanguage.VIETNAMESE
+                    else -> return@addOnButtonCheckedListener
+                },
+            )
+        }
+    }
+
+    private fun requestLanguageChange(language: AppLanguage?) {
+        if (isLanguageChangeInProgress || language == localeManager.currentLanguage()) return
+
+        isLanguageChangeInProgress = true
+        startActivity(LanguageTransitionActivity.createIntent(this, language))
     }
 }
