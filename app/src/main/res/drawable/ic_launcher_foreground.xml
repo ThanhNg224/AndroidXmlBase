@@ -6,16 +6,19 @@
     android:viewportHeight="108">
 
     <!-- Premium Minimalist Shield Frame -->
+    <!-- Scaled to 75% around the canvas center (54,54) so every point stays inside the
+         adaptive-icon safe zone (66dp circle) instead of bleeding past it and getting
+         clipped by circular/squircle launcher masks. -->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="3.5"
+        android:strokeWidth="2.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M54,26 L80,38 L80,64 C80,78 69,87 54,92 C39,87 28,78 28,64 L28,38 Z" />
+        android:pathData="M54,33 L73.5,42 L73.5,61.5 C73.5,72 65.25,78.75 54,82.5 C42.75,78.75 34.5,72 34.5,61.5 L34.5,42 Z" />
 
     <!-- Nested Floating Core Engine Symbol -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,40 L70,68 L38,68 Z" />
+        android:pathData="M54,43.5 L66,64.5 L42,64.5 Z" />
 </vector>
