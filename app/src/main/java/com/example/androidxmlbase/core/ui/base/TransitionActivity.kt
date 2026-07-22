@@ -15,9 +15,10 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Opaque full-screen host for a single [TransitionAction]: shows a loading animation (its own
- * fixed color palette, not theme-tinted — see `activity_transition.xml`), runs the action
- * registered under the caller-supplied action key, then finishes.
+ * Opaque full-screen host for a single [TransitionAction]: shows a loading animation (its
+ * colors are static, authored directly into `loading_pulse.json` — see that file if the palette
+ * needs to change), runs the action registered under the caller-supplied action key, then
+ * finishes.
  * One Activity, one manifest entry — a new transition use case only needs a new
  * [TransitionAction] implementation registered into the Hilt multibinding map, not a new
  * Activity subclass or manifest entry.
