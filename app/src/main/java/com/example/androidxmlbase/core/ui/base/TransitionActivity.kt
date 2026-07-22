@@ -6,12 +6,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieProperty
-import com.airbnb.lottie.model.KeyPath
 import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.ui.transition.TransitionAction
-import com.google.android.material.color.MaterialColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,8 +15,9 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Opaque full-screen host for a single [TransitionAction]: shows a theme-aware loading
- * animation, runs the action registered under the caller-supplied action key, then finishes.
+ * Opaque full-screen host for a single [TransitionAction]: shows a loading animation (its own
+ * fixed color palette, not theme-tinted — see `activity_transition.xml`), runs the action
+ * registered under the caller-supplied action key, then finishes.
  * One Activity, one manifest entry — a new transition use case only needs a new
  * [TransitionAction] implementation registered into the Hilt multibinding map, not a new
  * Activity subclass or manifest entry.
@@ -43,7 +40,6 @@ class TransitionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transition)
-        tintLoaderToTheme()
 
         if (savedInstanceState?.getBoolean(STATE_ACTION_COMPLETED) == true) {
             actionHasCompleted = true
@@ -57,12 +53,6 @@ class TransitionActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(STATE_ACTION_COMPLETED, actionHasCompleted)
         super.onSaveInstanceState(outState)
-    }
-
-    private fun tintLoaderToTheme() {
-        val loader = findViewById<LottieAnimationView>(R.id.transitionLoader)
-        val primaryColor = MaterialColors.getColor(loader, androidx.appcompat.R.attr.colorPrimary)
-        loader.addValueCallback(KeyPath("**"), LottieProperty.COLOR) { primaryColor }
     }
 
     private fun animateEntrance() {
