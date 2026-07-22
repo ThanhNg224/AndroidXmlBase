@@ -6,6 +6,14 @@ This file defines how AI assistants should contribute to any Android project. Co
 
 ---
 
+## Current Project Phase (AndroidXmlBase)
+
+This repository is currently in the **base-building phase**: hardening the reusable `core/` foundation itself, not building a feature on top of it. While in this phase, proactively adding modern, production-grade infrastructure to `core/` (startup correctness, security posture, logging, performance tooling) is expected even before a concrete consuming feature demands it — the whole point of a base is to be a solid foundation for every future feature, and gaps are expensive to retrofit later.
+
+This is a narrow, scoped exception to the "no abstraction without proven reuse" principles elsewhere in this document. It does not license new Gradle modules, feature-specific abstractions, or anything that isn't genuinely foundational. Once feature development on top of this base begins, the rules below apply again in full.
+
+---
+
 ## Engineering Documents
 
 This repository is governed by multiple engineering documents. Every implementation must follow all relevant documents instead of relying on a single source.

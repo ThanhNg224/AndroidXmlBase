@@ -10,6 +10,7 @@ import com.example.androidxmlbase.core.architecture.result.fold
 import com.example.androidxmlbase.core.ui.base.BaseActivity
 import com.example.androidxmlbase.core.ui.base.toRenderState
 import com.example.androidxmlbase.core.ui.components.CustomToast
+import com.example.androidxmlbase.core.ui.text.resolve
 import com.example.androidxmlbase.databinding.ActivityDesignSystemBinding
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.feature.designsystem.presentation.viewmodel.DesignSystemViewModel
@@ -51,7 +52,7 @@ class DesignSystemActivity : BaseActivity<ActivityDesignSystemBinding>() {
             result.fold(
                 onLoading = { getString(R.string.design_system_result_loading) },
                 onSuccess = { getString(R.string.design_system_result_success) },
-                onError = { message, _ -> message },
+                onError = { message, _ -> message.resolve(this) },
             )
     }
 }

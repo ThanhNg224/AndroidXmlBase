@@ -28,11 +28,25 @@
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="materialButtonStyle">@style/Widget.AndroidXmlBase.Button</item>
         <item name="android:buttonBarButtonStyle">@style/Widget.AndroidXmlBase.Button.TextButton</item>
+        <!-- Explicit default (matches the system fallback, so no visual change today) so a
+             future brand font is a one-line swap here instead of touching every text style. -->
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Theme.AndroidXmlBase" parent="Base.Theme.AndroidXmlBase">
         <item name="android:statusBarColor">@color/color_surface</item>
         <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.AndroidXmlBase.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/color_surface</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.AndroidXmlBase</item>
+    </style>
+
+    <style name="Theme.AndroidXmlBase.Transition" parent="Theme.AndroidXmlBase">
+        <item name="android:windowAnimationStyle">@style/Animation_AndroidXmlBase_Transition</item>
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 
     <!-- Custom base button style enabling text auto-wrap to prevent truncation -->
@@ -89,5 +103,12 @@
     <style name="Animation_AndroidXmlBase_Dialog_Fade" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="Animation_AndroidXmlBase_Transition">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/no_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/no_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
     </style>
 </resources>

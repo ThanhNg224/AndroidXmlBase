@@ -22,18 +22,15 @@ class TokenAuthenticator
             route: Route?,
             response: Response,
         ): Request? {
-            // Double-check if the failed request already contained a token
             val authorizationHeader = response.request.header("Authorization")
-
-            // Retrieve token
             val token = runBlocking { tokenProvider.get().getToken() }
 
             if (token != null && token == authorizationHeader) {
-                // The request failed with the latest token. Avoid infinite retries.
+                // Avoid infinite retries if request failed with the latest token
                 return null
             }
 
-            // Re-fetch token (or trigger refresh logic in a fully integrated provider)
+            // Fetch fresh token
             val freshToken = runBlocking { tokenProvider.get().getToken() }
 
             if (freshToken.isNullOrBlank()) {

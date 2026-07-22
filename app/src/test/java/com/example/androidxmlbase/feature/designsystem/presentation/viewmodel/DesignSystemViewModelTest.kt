@@ -1,6 +1,7 @@
 package com.example.androidxmlbase.feature.designsystem.presentation.viewmodel
 
 import com.example.androidxmlbase.core.architecture.result.ResultState
+import com.example.androidxmlbase.core.ui.text.UiText
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -43,6 +44,9 @@ class DesignSystemViewModelTest {
 
         viewModel.onEvent(DesignSystemUiEvent.ShowErrorClicked)
 
-        assertEquals(ResultState.Error("Sample error"), viewModel.state.value.demoResult)
+        assertEquals(
+            ResultState.Error(UiText.StringResource(com.example.androidxmlbase.R.string.design_system_error_sample)),
+            viewModel.state.value.demoResult,
+        )
     }
 }

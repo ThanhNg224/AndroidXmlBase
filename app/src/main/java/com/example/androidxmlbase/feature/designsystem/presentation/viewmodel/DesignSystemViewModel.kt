@@ -1,8 +1,10 @@
 package com.example.androidxmlbase.feature.designsystem.presentation.viewmodel
 
+import com.example.androidxmlbase.R
 import com.example.androidxmlbase.core.architecture.StateViewModel
 import com.example.androidxmlbase.core.architecture.UiEffect
 import com.example.androidxmlbase.core.architecture.result.ResultState
+import com.example.androidxmlbase.core.ui.text.UiText
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.feature.designsystem.presentation.state.DesignSystemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,12 +26,12 @@ class DesignSystemViewModel
                 is DesignSystemUiEvent.ShowLoadingClicked -> setState { copy(demoResult = ResultState.Loading) }
                 is DesignSystemUiEvent.ShowSuccessClicked -> setState { copy(demoResult = ResultState.Success(Unit)) }
                 is DesignSystemUiEvent.ShowErrorClicked -> {
-                    setState { copy(demoResult = ResultState.Error(SAMPLE_ERROR_MESSAGE)) }
+                    setState {
+                        copy(
+                            demoResult = ResultState.Error(UiText.StringResource(R.string.design_system_error_sample)),
+                        )
+                    }
                 }
             }
-        }
-
-        private companion object {
-            const val SAMPLE_ERROR_MESSAGE = "Sample error"
         }
     }

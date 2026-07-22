@@ -56,8 +56,7 @@ class ShadowLayout
             oldh: Int,
         ) {
             super.onSizeChanged(w, h, oldw, oldh)
-            // Defensive: ensures the rounded outline (and its shadow) tracks the new bounds even if
-            // the platform doesn't invalidate it automatically for this layout pass.
+            // Ensure outline updates if platform doesn't invalidate automatically
             invalidateOutline()
         }
     }

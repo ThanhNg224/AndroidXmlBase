@@ -38,6 +38,9 @@ A typed, testable settings store backed by Jetpack DataStore (`androidx.datastor
 
 **Consumers:** `DemoRepositoryImpl` (feature-private counter key + `SettingsStore`); `SecureStoreAuthTokenProvider` (reads `SecureStoreKeys.AUTH_TOKEN`).
 
+### `core/storage/database`
+- `DbPassphraseProvider` — memoized SQLCipher passphrase resolver (`suspend fun getOrCreate(): String`), backed by `SecureStore`. Warmed on `Dispatchers.IO` during process startup so `DatabaseModule`'s Hilt `@Provides` boundary doesn't block on disk I/O.
+
 ## `core/network`
 
 - `ApiResult<out T>` (sealed interface) — `Success<T>(data)`, `HttpError(code, message)`, `NetworkError(cause)`, `ParseError(cause)`, `EmptyBody`.
@@ -69,17 +72,44 @@ Hilt modules for app-wide wiring.
 - `AppCoreModule` — provides `SettingsStore` and `LocaleManager`.
 - `NetworkBindingsModule` — binds `RetrofitApiClient` and `OkHttpFileTransferClient`.
 - `NetworkModule` — provides `ApiConfig`, `ConnectivityChecker`, `OkHttpClient`, and `Retrofit` (built via `core/network/NetworkClientFactory`). Feature-specific Retrofit services belong in that feature's own DI module.
+- `CoroutineScopeModule` — provides the `@ApplicationScope`-qualified, `SupervisorJob() + Dispatchers.Default` `CoroutineScope` used for app-wide fire-and-forget work (startup Initializers, and any future feature's background triggers).
 
 ## `core/localization`
 
 Per-app language switching, backed by AndroidX's per-app language API (`AppCompatDelegate.setApplicationLocales`). The manifest declares `android:localeConfig="@xml/locales_config"` and opts into AppCompat `autoStoreLocales`.
 
-- `LanguageOption(code: String, displayName: String)` + `val SUPPORTED_LANGUAGES` sample data (en, vi).
-- `LocaleTagMapper` (object) — `toRegionalTag(languageCode): String`, mapping `vi`→`vi-VN`, `ko`→`ko-KR`, `zh-TW`→`zh-TW` (passthrough otherwise).
-- `AppLocaleApplier` (interface, `fun applyLocales(tag: String)`) + `AppCompatLocaleApplier` (real impl) — injected as an interface so `LocaleManager` is unit-testable.
-- `LocaleManager(localeApplier = AppCompatLocaleApplier())` — synchronous `fun setLanguage(languageCode: String)` mapped through `LocaleTagMapper` and applied.
+- `AppLanguage` — the single app-language contract. The demo currently ships only English (`en`) and Vietnamese (`vi-VN`), each with a resource-backed display name.
+- `AppLocaleApplier` (interface, apply/read locale tags) + `AppCompatLocaleApplier` (real impl) — injected as an interface so `LocaleManager` is unit-testable.
+- `LocaleManager(localeApplier = AppCompatLocaleApplier())` — applies a supported `AppLanguage`, clears the override to follow the system, and reports the current app-language override.
 
-**Consumers:** `MainActivity`'s EN/VI buttons drive `LocaleManager.setLanguage(...)` directly.
+**Consumers:** `MainActivity` renders a single-selection system/English/Vietnamese control and drives `LocaleManager` directly.
+
+## `core/logging`
+
+- `ReleaseTree` (extends `timber.log.Timber.Tree`) — filters to WARN+ only, forwards to `android.util.Log`. Planted instead of `Timber.DebugTree()` in release builds.
+
+**Consumers:** `TimberInitializer` plants `Timber.DebugTree()` in debug builds and `ReleaseTree` in release builds. Feature code should call `Timber.tag(...).d/i/w/e(...)` instead of `android.util.Log` directly.
+
+## `core/startup`
+
+Formalizes process-startup work via `androidx.startup.Initializer` instead of `Application.onCreate()`.
+
+- `AppStartupEntryPoint` (Hilt `@EntryPoint`) — how Initializers (instantiated by reflection, no constructor injection available) reach `DbPassphraseProvider`, `ThemeManager`, and the `@ApplicationScope CoroutineScope`.
+- `TimberInitializer` — plants `Timber.DebugTree()` (debug) or `ReleaseTree()` (release).
+- `DbPassphraseWarmupInitializer` — warms `DbPassphraseProvider` on `Dispatchers.IO`. Depends on `TimberInitializer`.
+- `ThemeApplyInitializer` — collects `ThemeManager.currentTheme` and applies it reactively. Depends on `TimberInitializer`.
+
+All three are registered as `<meta-data>` entries under `androidx.startup.InitializationProvider` in `AndroidManifest.xml`.
+
+**Consumers:** `AndroidXmlBaseApplication` no longer does any of this directly — see its class doc comment.
+
+## `core/work`
+
+WorkManager wiring: `AndroidXmlBaseApplication` implements `Configuration.Provider`, supplying `HiltWorkerFactory` so `@HiltWorker` classes get constructor injection. WorkManager's default initializer is disabled in `AndroidManifest.xml` (`androidx.work.WorkManagerInitializer` removed from the `androidx.startup.InitializationProvider` merge) so this custom configuration is the one actually used.
+
+- `SampleHeartbeatWorker` (`@HiltWorker`, `CoroutineWorker`) — reference implementation only, not scheduled by default. Copy this shape (constructor pattern, `@Assisted context`/`@Assisted workerParameters`) for real background work.
+
+**Consumers:** none yet — this is infrastructure for the first feature that needs background work.
 
 ## `core/ui/responsive`
 
@@ -94,6 +124,7 @@ A `smallestScreenWidthDp` clamp to avoid tablet/wide-screen layout issues.
 
 - `StringProvider` (interface) — `fun getString(@StringRes resId: Int): String`, lets a ViewModel resolve string resources without holding an Activity/View `Context`.
 - `AndroidStringProvider` — the real implementation, backed by an injected `@ApplicationContext Context`. Bound in Hilt via `AppCoreBindingsModule`.
+- `UiText` — an immutable resource-or-dynamic UI message, resolved only by a rendering host. Shared presentation states use it instead of requiring a pre-resolved English string.
 
 ## `core/ui/base`
 
@@ -128,11 +159,11 @@ Shared UI infrastructure.
 App-wide light/dark/system theme, backed by AppCompat's night mode and persisted through `SettingsStore`.
 
 - `AppTheme` (enum: `LIGHT`, `DARK`, `SYSTEM`, each with a `key: String`) — `AppTheme.fromKey(key)` maps a stored key back to an enum value, defaulting to `SYSTEM` if unrecognized.
-- `ThemeManager` (interface) — `currentTheme: Flow<AppTheme>`, `suspend fun getTheme(): AppTheme`, `suspend fun setTheme(theme: AppTheme)`, `fun applyTheme(theme: AppTheme)`.
+- `ThemeManager` (interface) — `currentTheme: Flow<AppTheme>`, `isThemeApplied: StateFlow<Boolean>` (true once the persisted theme has been applied at least once this process), `suspend fun getTheme(): AppTheme`, `suspend fun setTheme(theme: AppTheme)`, `fun applyTheme(theme: AppTheme)`.
 - `AndroidThemeManager` — the only implementation; reads/writes `AppSettingsKeys.THEME_MODE` via `SettingsStore` and applies the theme through `AppCompatDelegate.setDefaultNightMode`.
 - `ThemeModule` (Hilt `@Module`) — binds `AndroidThemeManager` to `ThemeManager`.
 
-**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice.
+**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice; `MainActivity` reads `isThemeApplied` for its splash screen keep-on-screen condition (Task 3).
 
 ## `core/navigation`
 
@@ -147,3 +178,11 @@ App-wide light/dark/system theme, backed by AppCompat's night mode and persisted
 ---
 
 No other packages exist. Check the source tree before creating new code.
+
+## `:baselineprofile` (separate Gradle module, not `core/`)
+
+A `com.android.test`-type module containing only a Macrobenchmark profile generator — no business/feature code. Exempted from the single-module rule in `CLAUDE.md` because it's closer to `androidTest` than to a feature module.
+
+- `BaselineProfileGenerator` — drives a cold launch + "open demo screen" + back, via `BaselineProfileRule`. Run `./gradlew :app:generateReleaseBaselineProfile` to regenerate `app/src/main/generated/baselineProfiles/baseline-prof.txt` after significant startup-path changes.
+
+**Consumers:** `:app` (via `baselineProfile(project(":baselineprofile"))` and `androidx.profileinstaller:profileinstaller`, which installs the checked-in profile at app install time).

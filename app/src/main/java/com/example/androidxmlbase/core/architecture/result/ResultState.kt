@@ -1,5 +1,7 @@
 package com.example.androidxmlbase.core.architecture.result
 
+import com.example.androidxmlbase.core.ui.text.UiText
+
 sealed interface ResultState<out T> {
     data object Loading : ResultState<Nothing>
 
@@ -8,7 +10,7 @@ sealed interface ResultState<out T> {
     ) : ResultState<T>
 
     data class Error(
-        val message: String,
+        val message: UiText,
         val cause: Throwable? = null,
     ) : ResultState<Nothing>
 }
@@ -16,7 +18,7 @@ sealed interface ResultState<out T> {
 inline fun <T, R> ResultState<T>.fold(
     onLoading: () -> R,
     onSuccess: (T) -> R,
-    onError: (String, Throwable?) -> R,
+    onError: (UiText, Throwable?) -> R,
 ): R =
     when (this) {
         is ResultState.Loading -> onLoading()

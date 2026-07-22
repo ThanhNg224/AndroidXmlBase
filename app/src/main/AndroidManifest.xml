@@ -19,7 +19,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AndroidXmlBase"
+            android:theme="@style/Theme.AndroidXmlBase.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".core.ui.base.TransitionActivity"
+            android:configChanges="locale|layoutDirection"
+            android:exported="false"
+            android:theme="@style/Theme.AndroidXmlBase.Transition" />
         <activity
             android:name=".feature.demo.presentation.ui.DemoActivity"
             android:exported="false"
@@ -37,6 +42,28 @@
             android:exported="false"
             android:label="@string/design_system_title"
             android:theme="@style/Theme.AndroidXmlBase" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.TimberInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.DbPassphraseWarmupInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.ThemeApplyInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.example.androidxmlbase.core.startup.LocaleContextInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"

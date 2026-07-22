@@ -92,6 +92,9 @@ class FragmentArgumentNullableDelegate<T>(
 
 /**
  * Extension helper to safely fetch typed attributes from bundles using non-deprecated APIs.
+ *
+ * Every type Bundle can legitimately hold has a dedicated type-safe getter, so there is no
+ * generic fallback here: an unsupported [clazz] is a programmer error, not a runtime null.
  */
 @Suppress("UNCHECKED_CAST", "ComplexMethod")
 fun <T> Bundle.getTyped(
@@ -100,6 +103,7 @@ fun <T> Bundle.getTyped(
 ): T? =
     when {
         clazz == String::class.java -> getString(key) as? T
+        clazz == CharSequence::class.java -> getCharSequence(key) as? T
         clazz == Int::class.java -> {
             if (containsKey(key)) getInt(key) as? T else null
         }
@@ -115,14 +119,21 @@ fun <T> Bundle.getTyped(
         clazz == Double::class.java -> {
             if (containsKey(key)) getDouble(key) as? T else null
         }
+        clazz == Byte::class.java -> {
+            if (containsKey(key)) getByte(key) as? T else null
+        }
+        clazz == Short::class.java -> {
+            if (containsKey(key)) getShort(key) as? T else null
+        }
+        clazz == Char::class.java -> {
+            if (containsKey(key)) getChar(key) as? T else null
+        }
+        clazz == Bundle::class.java -> getBundle(key) as? T
         Parcelable::class.java.isAssignableFrom(clazz) -> {
             BundleCompat.getParcelable(this, key, clazz as Class<out Parcelable>) as? T
         }
         Serializable::class.java.isAssignableFrom(clazz) -> {
             BundleCompat.getSerializable(this, key, clazz as Class<out Serializable>) as? T
         }
-        else -> {
-            @Suppress("DEPRECATION")
-            get(key) as? T
-        }
+        else -> throw IllegalArgumentException("Unsupported bundle value type: ${clazz.name}")
     }

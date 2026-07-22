@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">XML Base</string>
     <string name="hello_android">Hello Android!</string>
+    <string name="main_subtitle">A production-ready XML foundation for Android apps.</string>
+    <string name="language_section_title">App language</string>
+    <string name="language_section_subtitle">Choose the language used in this app.</string>
+    <string name="language_system">System</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
     <string name="view_demo">View Demo</string>
     <string name="demo_title">Demo</string>
     <string name="increment">Increment</string>
@@ -11,13 +17,14 @@
     <string name="demo_message_error_unexpected_response">Unexpected response</string>
     <string name="demo_message_error_empty_response">Empty response</string>
     <string name="demo_max_count_reached">Max count reached</string>
-    <string name="lang_en">EN</string>
-    <string name="lang_vi">VI</string>
     <string name="design_system_button">Design System</string>
     <string name="design_system_title">Design System</string>
     <string name="design_system_headline_sample">Headline sample</string>
     <string name="design_system_body_sample">Body text sample, showing the base Body text appearance.</string>
     <string name="design_system_caption_sample">Caption sample</string>
+    <string name="design_system_body_emphasis_sample">Body emphasis sample</string>
+    <string name="design_system_body_medium_sample">Body medium sample</string>
+    <string name="design_system_micro_sample">Micro sample</string>
     <string name="design_system_primary_button">Primary</string>
     <string name="design_system_outlined_button">Outlined</string>
     <string name="design_system_shadow_card_text">This card is a ShadowLayout.</string>
@@ -30,6 +37,7 @@
     <string name="design_system_error_button">Error</string>
     <string name="design_system_result_loading">Loading…</string>
     <string name="design_system_result_success">Success!</string>
+    <string name="design_system_error_sample">Something went wrong. Please try again.</string>
     <string name="error_dialog_retry">Retry</string>
     <string name="error_dialog_close">Close</string>
     <string name="error_network">No internet connection</string>

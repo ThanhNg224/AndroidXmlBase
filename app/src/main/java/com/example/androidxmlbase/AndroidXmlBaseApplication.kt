@@ -1,35 +1,27 @@
 package com.example.androidxmlbase
 
 import android.app.Application
-import com.example.androidxmlbase.core.ui.theme.ThemeManager
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
+/**
+ * Startup work (logging, DB passphrase warm-up, theme application) runs via the
+ * `androidx.startup` `Initializer`s in `core/startup/`, registered in AndroidManifest.xml —
+ * not here. See `docs/CORE_MODULES.md` → `core/startup`.
+ *
+ * `Configuration.Provider` supplies `HiltWorkerFactory` so `@HiltWorker` classes (see
+ * `core/work/`) get constructor injection; WorkManager's default initializer is disabled in the
+ * manifest so this custom configuration is the one actually used.
+ */
 @HiltAndroidApp
-class AndroidXmlBaseApplication : Application() {
+class AndroidXmlBaseApplication :
+    Application(),
+    Configuration.Provider {
     @Inject
-    lateinit var themeManager: ThemeManager
+    lateinit var workerFactory: HiltWorkerFactory
 
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
-    override fun onCreate() {
-        super.onCreate()
-
-        // Synchronously load and apply the theme on startup to prevent launch flashing
-        runBlocking {
-            val initialTheme = themeManager.getTheme()
-            themeManager.applyTheme(initialTheme)
-        }
-
-        // Observe dynamic user theme configuration updates at runtime
-        themeManager.currentTheme
-            .onEach { themeManager.applyTheme(it) }
-            .launchIn(applicationScope)
-    }
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 }

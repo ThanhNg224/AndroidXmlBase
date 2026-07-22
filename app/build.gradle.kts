@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -60,6 +61,12 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.startup.runtime)
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.work)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.kotlinx.coroutines.core)
@@ -73,21 +80,25 @@ dependencies {
     implementation(libs.intuit.sdp)
     implementation(libs.intuit.ssp)
     implementation(libs.hilt.android)
-    implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.sqlcipher.android)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.shimmer)
+    implementation(libs.lottie)
+    implementation(libs.timber)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.hilt.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.okhttp.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
 
 configurations.all {
@@ -131,6 +142,8 @@ kover {
                     "*.core.network.transfer.*",
                     "*.core.storage.settings.DataStoreSettingsStore*",
                     "*.core.storage.settings.SettingsKey*",
+                    "*.core.storage.database.DbPassphraseProvider*",
+                    "*.core.logging.ReleaseTree*",
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
                     "*.core.ui.util.ShapeUtils*",
@@ -161,6 +174,7 @@ kover {
                     "*Fragment",
                     "*DialogFragment",
                     "*.core.ui.components.*",
+                    "*.core.work.SampleHeartbeatWorker",
                 )
             }
         }

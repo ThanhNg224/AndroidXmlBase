@@ -1,5 +1,6 @@
 package com.example.androidxmlbase.core.architecture.result
 
+import com.example.androidxmlbase.core.ui.text.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -20,13 +21,13 @@ class ResultStateTest {
 
     @Test
     fun `fold invokes onError branch for Error`() {
-        val result: ResultState<Int> = ResultState.Error("boom")
+        val result: ResultState<Int> = ResultState.Error(UiText.DynamicString("boom"))
 
         val text =
             result.fold(
                 onLoading = { "loading" },
                 onSuccess = { "success:$it" },
-                onError = { message, _ -> "error:$message" },
+                onError = { message, _ -> "error:${(message as UiText.DynamicString).value}" },
             )
 
         assertEquals("error:boom", text)
