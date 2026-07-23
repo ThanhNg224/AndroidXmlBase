@@ -10,7 +10,7 @@ The MVVM primitives every feature is built on. Framework-light: only `StateViewM
 - `UiEvent` — empty marker interface. Feature event sealed interfaces implement it (e.g. `DemoUiEvent`).
 - `UiEffect` — empty marker interface for one-shot effects (e.g. `DemoUiEffect`). `DesignSystemViewModel` uses the bare `UiEffect` interface directly (no dedicated effect type) since it never emits one.
 - `AppDispatchers` (`main`/`io`/`default` `CoroutineDispatcher`s) + `DefaultAppDispatchers` implementation. Bound in Hilt and used by blocking/IO-heavy adapters.
-- `UseCase<in P, R>` — `suspend operator fun invoke(params: P): R`. Implementers: `SaveDemoCountUseCase`, `FetchDemoMessageUseCase`. See `docs/FEATURE_TEMPLATE.md` section 4 for when to implement it vs. stay a plain class.
+- `UseCase<in P, R>` — `suspend operator fun invoke(params: P): R`. Implementers: `SaveDemoCountUseCase`, `FetchDemoWeatherUseCase`. See `docs/FEATURE_TEMPLATE.md` section 4 for when to implement it vs. stay a plain class.
 - `StateViewModel<S : UiState, E : UiEvent, F : UiEffect>(initialState: S)` (abstract, extends `ViewModel`) — exposes `state: StateFlow<S>`, `effect: Flow<F>` (buffered `Channel`-backed), `protected val currentState: S`, `abstract fun onEvent(event: E)`, `protected fun setState(reducer: S.() -> S)` (implemented via `MutableStateFlow.update {}`, atomic under concurrent calls), `protected fun sendEffect(effect: F)`.
 
 ### `core/architecture/result`
@@ -18,9 +18,9 @@ The MVVM primitives every feature is built on. Framework-light: only `StateViewM
 - `DomainResult<out T>` (sealed interface) — `Success<T>(data)` and `Error(error: AppError)` for domain/data results that should not carry UI strings. Contains `map` extension function to transform Success cases.
 - `AppError` (sealed interface) — reusable error categories: `Http(code, serverMessage)`, `Network(cause)`, `Parse(cause)`, `EmptyBody`, and `Business(code, message)`.
 
-**Consumers:** `DemoViewModel`, `DesignSystemViewModel` (both extend `StateViewModel`); `DomainResult`/`AppError` are used by `feature/demo`'s repository/use case path so data/domain can report failure without UI strings; `ResultState` is used by `feature/designsystem` (`DesignSystemUiState.demoResult`) and by `core/ui/base` render helpers. `UseCase<in P, R>` is implemented by `feature/demo`'s `SaveDemoCountUseCase`/`FetchDemoMessageUseCase`.
+**Consumers:** `DemoViewModel`, `DesignSystemViewModel` (both extend `StateViewModel`); `DomainResult`/`AppError` are used by `sample/demo`'s repository/use case path so data/domain can report failure without UI strings; `ResultState` is used by `sample/designsystem` (`DesignSystemUiState.demoResult`) and by `core/ui/base` render helpers. `UseCase<in P, R>` is implemented by `sample/demo`'s `SaveDemoCountUseCase`/`FetchDemoWeatherUseCase`.
 
-**Why three result types, not one:** `ApiResult` (`core/network`), `DomainResult`/`AppError` (here), and `ResultState` (here) look similar but belong to different layers on purpose — `ApiResult` carries Retrofit/HTTP-shaped errors and must not leak past data sources; `DomainResult`/`AppError` are the domain-safe, UI-string-free version repositories/use cases return; `ResultState` is presentation-only and is what a ViewModel exposes to a View. Each layer maps the one below into its own type (see `feature/demo`'s mapper) instead of passing the lower type through. Don't collapse these into one shared type — that would leak Retrofit/HTTP types into the domain or UI layer.
+**Why three result types, not one:** `ApiResult` (`core/network`), `DomainResult`/`AppError` (here), and `ResultState` (here) look similar but belong to different layers on purpose — `ApiResult` carries Retrofit/HTTP-shaped errors and must not leak past data sources; `DomainResult`/`AppError` are the domain-safe, UI-string-free version repositories/use cases return; `ResultState` is presentation-only and is what a ViewModel exposes to a View. Each layer maps the one below into its own type (see `sample/demo`'s mapper) instead of passing the lower type through. Don't collapse these into one shared type — that would leak Retrofit/HTTP types into the domain or UI layer.
 
 ## `core/storage`
 
@@ -36,7 +36,7 @@ A typed, testable settings store backed by Jetpack DataStore (`androidx.datastor
 - `SecureStoreKey`, `SecureStore`, `SecureStoreKeys` — string-secret storage contract for tokens/secrets. Built-in keys: `AUTH_TOKEN`, `REFRESH_TOKEN`.
 - `EncryptedSecureStore` — AndroidX Security-backed implementation using encrypted SharedPreferences behind the `SecureStore` interface. Provided as the app-wide `SecureStore` by Hilt.
 
-**Consumers:** `DemoRepositoryImpl` (feature-private counter key + `SettingsStore`); `SecureStoreAuthTokenProvider` (reads `SecureStoreKeys.AUTH_TOKEN`).
+**Consumers:** `DemoRepositoryImpl` (sample-private counter key + `SettingsStore`); `SettingsRepositoryImpl` reaches theme persistence through `ThemeManager`; `SecureStoreAuthTokenProvider` reads `SecureStoreKeys.AUTH_TOKEN`.
 
 ### `core/storage/database`
 - `DbPassphraseProvider` — memoized SQLCipher passphrase resolver (`suspend fun getOrCreate(): String`), backed by `SecureStore`. Warmed on `Dispatchers.IO` during process startup so `DatabaseModule`'s Hilt `@Provides` boundary doesn't block on disk I/O.
@@ -62,7 +62,7 @@ A typed, testable settings store backed by Jetpack DataStore (`androidx.datastor
 - `TransferResult<T>` — `Progress`, `Success<T>`, `Failure`; transfer-specific aliases: `DownloadResult`, `UploadResult`, `StreamResult`.
 - `HttpTransferResponse`, `StreamChunk`, `ProgressRequestBody` — upload/stream/download support types.
 
-**Consumers:** `feature/demo`'s `DemoApiService`/`DemoRemoteDataSourceImpl`.
+**Consumers:** `sample/demo`'s `DemoApiService`/`DemoRemoteDataSourceImpl`.
 
 ## `core/di`
 
@@ -82,7 +82,7 @@ Per-app language switching, backed by AndroidX's per-app language API (`AppCompa
 - `AppLocaleApplier` (interface, apply/read locale tags) + `AppCompatLocaleApplier` (real impl) — injected as an interface so `LocaleManager` is unit-testable.
 - `LocaleManager(localeApplier = AppCompatLocaleApplier())` — applies a supported `AppLanguage`, clears the override to follow the system, and reports the current app-language override.
 
-**Consumers:** `MainActivity` renders a single-selection system/English/Vietnamese control and drives `LocaleManager` directly.
+**Consumers:** `feature/settings` adapts `LocaleManager` through `SettingsRepository`; `SettingsActivity` renders System/English/Vietnamese in a single-choice dialog and delegates the actual change to its feature-owned `LanguageTransitionAction`, run by core `TransitionActivity`.
 
 ## `core/logging`
 
@@ -137,7 +137,7 @@ Shared UI infrastructure.
 - `collectOnStartedBy(lifecycleOwner, action)` (in `LifecycleFlowExtensions.kt`) — shared lifecycle-safe Flow collection; each Base* host's `collectOnStarted` delegates here with its own `LifecycleOwner` (the host itself for `BaseActivity`, `viewLifecycleOwner` for the Fragment/BottomSheet hosts).
 - `renderResultState(result, contentRoot, dialogHost, onSuccess)` (in `ResultStateOverlay.kt`) — shared full-screen-loader + `PromptDialogFragment` error rendering; `BaseActivity`/`BaseFragment.bindResultState` both delegate here so the loading/error UI stays identical across hosts.
 - `Debouncer` — pure rate limiter with `View.setOnDebouncedClickListener` click rate limiting.
-- `ResultRenderState(isLoadingVisible, isContentVisible, isErrorVisible, errorMessage)` — visibility-only projection of a `ResultState<T>`. Not the same mechanism as `ResultStateOverlay`: this one toggles View visibility for screens that render inline (e.g. `feature/designsystem`); `ResultStateOverlay` drives a full-screen loader + dialog for `bindResultState` callers. Pick per-screen based on whether the loading/error UI should be inline or overlay the whole screen.
+- `ResultRenderState(isLoadingVisible, isContentVisible, isErrorVisible, errorMessage)` — visibility-only projection of a `ResultState<T>`. Not the same mechanism as `ResultStateOverlay`: this one toggles View visibility for screens that render inline (e.g. `sample/designsystem`); `ResultStateOverlay` drives a full-screen loader + dialog for `bindResultState` callers. Pick per-screen based on whether the loading/error UI should be inline or overlay the whole screen.
 
 ## `core/ui/components`
 
@@ -163,7 +163,7 @@ App-wide light/dark/system theme, backed by AppCompat's night mode and persisted
 - `AndroidThemeManager` — the only implementation; reads/writes `AppSettingsKeys.THEME_MODE` via `SettingsStore` and applies the theme through `AppCompatDelegate.setDefaultNightMode`.
 - `ThemeModule` (Hilt `@Module`) — binds `AndroidThemeManager` to `ThemeManager`.
 
-**Consumers:** any screen that lets the user switch theme; `applyTheme` is also called on app start to restore the persisted choice; `MainActivity` reads `isThemeApplied` for its splash screen keep-on-screen condition (Task 3).
+**Consumers:** `feature/settings` adapts `ThemeManager` through `SettingsRepository` for its settings-list state and appearance dialog; `applyTheme` is also called on app start to restore the persisted choice; `MainActivity` reads `isThemeApplied` for its splash screen keep-on-screen condition (Task 3).
 
 ## `core/navigation`
 

@@ -1,6 +1,6 @@
 # DESIGN_SYSTEM.md
 
-The design tokens, custom components, and dimension convention this base ships today. `feature/designsystem`'s `DesignSystemActivity` (`app/src/main/res/layout/activity_design_system.xml`) is the live, working reference for everything in this document — when in doubt about how a component is actually used, read that layout and its `DesignSystemViewModel`/`DesignSystemActivity` first.
+The design tokens, custom components, and dimension convention this base ships today. `sample/designsystem`'s `DesignSystemFragment` (`app/src/main/res/layout/fragment_design_system.xml`) is the live, working reference for everything in this document — when in doubt about how a component is actually used, read that layout and its `DesignSystemViewModel`/`DesignSystemFragment` first. It is a developer-facing reference showcase, not a model for a business feature's domain/data shape.
 
 ## Color tokens
 
@@ -12,7 +12,7 @@ Defined in `app/src/main/res/values/colors.xml`:
 | `color_on_primary` | `#FFFFFFFF` | Text/icon color on top of `color_primary` (e.g. filled button label). |
 | `color_surface` | `#FFFFFFFF` | Card/sheet/toast background. |
 | `color_on_surface` | `#FF1A1A1A` | Text/icon color on top of `color_surface` (also the unchecked-switch tint). |
-| `color_error` | `#FFB00020` | Reserved for error-state UI. Not yet consumed by any screen — `DesignSystemActivity`'s error demo uses a plain string message (`"Sample error"`), not this color. Wire it in when a screen needs an error-colored visual, not just error text. |
+| `color_error` | `#FFB00020` | Reserved for error-state UI. Not yet consumed by any screen — `DesignSystemFragment`'s error demo uses a plain string message, not this color. Wire it in when a screen needs an error-colored visual, not just error text. |
 
 No hardcoded hex colors belong in layout XML outside these tokens (per `CLAUDE.md`), with the standing exception of launcher icon assets.
 
@@ -61,7 +61,7 @@ A `FrameLayout`-based button — the **only** button shape this base has built. 
 </com.example.androidxmlbase.core.ui.components.FrameButton>
 ```
 
-`activity_design_system.xml` shows two styles side by side: filled (`buttonBackgroundColor="@color/color_primary"`, no stroke) and outlined (`buttonBackgroundColor="@color/color_surface"`, `buttonStrokeColor="@color/color_primary"`, `buttonStrokeWidth="@dimen/_1sdp"`).
+`fragment_design_system.xml` shows two styles side by side: filled (`buttonBackgroundColor="@color/color_primary"`, no stroke) and outlined (`buttonBackgroundColor="@color/color_surface"`, `buttonStrokeColor="@color/color_primary"`, `buttonStrokeWidth="@dimen/_1sdp"`).
 
 **`LinearButton`/`CardButton`/etc. do not exist yet.** The reference project this base ports from has 9 total button variants (all the same underlying `ButtonStyleDelegate`, composed onto a different base `View`/`ViewGroup` — a `LinearLayout`, a `CardView`, plain `TextView`, `ImageView`, ...). This base ported only `FrameButton`. Add another variant only when a real screen needs a shape `FrameButton` genuinely can't express (e.g. a button that must itself be an `ImageView`) — do not add one speculatively "for completeness." See `docs/FEATURE_TEMPLATE.md` anti-pattern 5.
 
@@ -92,7 +92,15 @@ A thin `MaterialSwitch` subclass (`com.google.android.material.materialswitch.Ma
 
 ### Single-choice controls
 
-Use `MaterialButtonToggleGroup` for a short, mutually exclusive option set such as app language. Keep it vertically stacked and give each button `wrap_content` height plus a 48dp minimum: unlike a fixed horizontal segmented row, this remains readable with long translations and larger accessibility font sizes. `activity_main.xml` is the live example (System, English, Vietnamese).
+Use a Material single-choice dialog for a short, mutually exclusive settings value such as app language or appearance. `SettingsActivity` is the live example: the settings screen remains a scannable list, while the dialog owns the finite choice interaction.
+
+### Bottom navigation
+
+`activity_main.xml` uses `Widget.Material3Expressive.BottomNavigationView` inside a rounded `MaterialCardView`. Keep all three labels visible, use the Material active indicator instead of a custom animation, and map item IDs directly to top-level destination IDs in `main_navigation.xml`. The bottom bar is limited to 3-5 equally important destinations; secondary actions such as Settings belong in the app bar.
+
+### Icon color
+
+Monochrome vector sources use `color_on_surface`, never a hardcoded white fill. Apply a contextual tint only where the icon sits on a different semantic container (for example, `color_on_primary_container` in a settings-row icon). `Widget.AndroidXmlBase.Toolbar` explicitly supplies `colorControlNormal` and navigation-icon tint from `color_on_surface`, so app-bar action icons remain legible in both light and dark themes. White remains valid only for a foreground deliberately drawn on a colored container, such as the success checkmark.
 
 ## sdp/ssp convention
 
@@ -103,7 +111,7 @@ android:layout_marginTop="@dimen/_16sdp"
 app:buttonCornerRadius="@dimen/_8sdp"
 ```
 
-**No hardcoded `dp`/`sp` literal belongs in a layout XML this convention covers** (per `CLAUDE.md`) — `activity_main.xml` and `activity_demo.xml` were both retrofitted in Phase 5 to replace their one hardcoded `16dp` margin with `@dimen/_16sdp`.
+**No hardcoded non-zero `dp`/`sp` literal belongs in a layout XML this convention covers** — use the sdp/ssp resources consistently in `activity_main.xml`, `fragment_home.xml`, and `fragment_demo.xml`.
 
 **There is no `Int.sdp()` / `Int.ssp()` Kotlin extension function, and that is a deliberate decision, not a gap.** The Phase 5 plan resolved this explicitly:
 
@@ -115,4 +123,4 @@ Related: `core.ui.responsive.ResponsiveContextWrapper` clamps `smallestScreenWid
 
 ## Live reference
 
-`feature/designsystem`'s `DesignSystemActivity` / `app/src/main/res/layout/activity_design_system.xml` inflates every component and token described above in one screen: all 6 text styles (headline/body/caption/body-emphasis/body-medium/micro), a filled `FrameButton`, an outlined `FrameButton`, a `ShadowLayout` card, a `CustomSwitch`, a `FrameButton` that triggers `CustomToast`, and a 3-button `ResultState` (loading/success/error) demo driven by `DesignSystemViewModel`. When adding a new component or token, add it to this screen too so it stays the working reference.
+`sample/designsystem`'s `DesignSystemFragment` / `app/src/main/res/layout/fragment_design_system.xml` inflates every component and token described above in one screen: all 6 text styles (headline/body/caption/body-emphasis/body-medium/micro), a filled `FrameButton`, an outlined `FrameButton`, a `ShadowLayout` card, a `CustomSwitch`, a `FrameButton` that triggers `CustomToast`, and a 3-button `ResultState` (loading/success/error) demo driven by `DesignSystemViewModel`. When adding a new component or token, add it to this screen too so it stays the working reference.

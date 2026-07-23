@@ -16,6 +16,8 @@ Base-building phase exception: see `AGENTS.md` → "Current Project Phase" — p
 - Organize by feature instead of layer when possible.  
 - Keep feature boundaries clear.  
 - Shared code belongs in core/shared only when reused.
+- Treat a feature as a capability, not as a synonym for a screen.
+- Keep screens inside their owning feature; never create a root-level `screens/` package.
 
 ## Clean Architecture
 - Presentation: UI only.  
@@ -135,7 +137,11 @@ Good code is:
 
 Organize code by feature rather than by technical layer whenever practical.
 
-A feature should contain everything required to implement that feature while respecting architectural boundaries.
+A feature is a vertical slice for one capability or bounded business context. It contains everything required for that capability while respecting architectural boundaries.
+
+A screen is one presentation destination owned by a feature. With one screen, keep `presentation/ui`, `presentation/viewmodel`, and `presentation/state` flat. When a feature has multiple screens, colocate each screen's UI host, ViewModel, and UI state under `presentation/<screen-name>/`; keep shared domain/data code at the feature root.
+
+Do not add screen folders, feature-level presentation components, or empty layers before a real second consumer exists. If two screens do not share a capability or domain/data ownership, they are separate features rather than siblings grouped for navigation convenience.
 
 Shared modules should only contain code that is genuinely reusable across multiple features.
 

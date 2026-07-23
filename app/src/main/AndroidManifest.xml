@@ -33,14 +33,9 @@
             android:exported="false"
             android:theme="@style/Theme.AndroidXmlBase.Transition" />
         <activity
-            android:name=".feature.demo.presentation.ui.DemoActivity"
+            android:name=".feature.settings.presentation.ui.SettingsActivity"
             android:exported="false"
-            android:label="@string/demo_title"
-            android:theme="@style/Theme.AndroidXmlBase" />
-        <activity
-            android:name=".feature.designsystem.presentation.ui.DesignSystemActivity"
-            android:exported="false"
-            android:label="@string/design_system_title"
+            android:label="@string/settings_title"
             android:theme="@style/Theme.AndroidXmlBase" />
         <provider
             android:name="androidx.startup.InitializationProvider"

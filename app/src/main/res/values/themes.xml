@@ -65,19 +65,6 @@
         <item name="android:paddingRight">@dimen/_4sdp</item>
     </style>
 
-    <style name="Widget.AndroidXmlBase.SegmentedButton" parent="Widget.Material3.CompoundButton.RadioButton">
-        <item name="android:button">@null</item>
-        <item name="android:background">@drawable/bg_segmented_button</item>
-        <item name="android:textColor">@color/color_segmented_button_text</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAlignment">center</item>
-        <item name="android:paddingTop">@dimen/_8sdp</item>
-        <item name="android:paddingBottom">@dimen/_8sdp</item>
-        <item name="android:minHeight">@dimen/_48sdp</item>
-        <item name="android:textSize">@dimen/_11ssp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
     <!-- Shared button style enforcing 48dp height, 12dp corners, and icon styling. -->
     <style name="Widget.AndroidXmlBase.IconButton" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/_48sdp</item>
@@ -87,6 +74,15 @@
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/_8sdp</item>
         <item name="iconSize">@dimen/_18sdp</item>
+    </style>
+
+    <style name="Widget.AndroidXmlBase.BottomNavigation" parent="Widget.Material3Expressive.BottomNavigationView">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.AndroidXmlBase.Toolbar" parent="Widget.Material3.Toolbar.Surface">
+        <item name="colorControlNormal">@color/color_on_surface</item>
+        <item name="navigationIconTint">@color/color_on_surface</item>
     </style>
 
     <!-- Dialog entry/exit animations -->

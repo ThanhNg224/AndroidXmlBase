@@ -38,7 +38,8 @@ Build and test commands configured in the template:
 ```
 app/src/main/java/com/example/androidxmlbase/
 ├── AndroidXmlBaseApplication.kt
-├── MainActivity.kt
+├── MainActivity.kt             # App shell and top-level navigation
+├── appshell/                   # Shell-owned destinations such as Home
 ├── core/                       # Shared modules
 │   ├── architecture/           # Base result states & ViewModels
 │   ├── di/                     # Dependency injection module bindings
@@ -48,6 +49,9 @@ app/src/main/java/com/example/androidxmlbase/
 │   ├── storage/                # Database (SQLCipher) and Datastore preferences
 │   ├── time/                   # Monotonic clocks
 │   └── ui/                     # Base classes, custom components, and type-safe delegates
-└── feature/                    # Business feature scopes
-    └── demo/                   # Demo implementation
+├── feature/                    # Product capability scopes
+│   └── settings/               # Canonical product feature
+└── sample/                     # Reference implementations, not product features
+    ├── demo/                   # Clean Architecture data/state sample
+    └── designsystem/           # Reusable UI showcase
 ```

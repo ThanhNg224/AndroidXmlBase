@@ -23,7 +23,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_BASE_URL", "\"https://example.com/\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://api.open-meteo.com/\"")
         buildConfigField("boolean", "API_ENABLE_LOGGING", "false")
     }
 
@@ -147,13 +147,13 @@ kover {
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
                     "*.core.ui.util.ShapeUtils*",
-                    "*.feature.demo.data.mapper.*",
-                    "*.feature.demo.domain.usecase.FetchDemoMessageUseCase",
-                    "*.feature.demo.domain.usecase.IncrementCounterUseCase",
-                    "*.feature.demo.domain.usecase.ObserveDemoCountUseCase",
-                    "*.feature.demo.domain.usecase.SaveDemoCountUseCase",
-                    "*.feature.demo.presentation.viewmodel.DemoViewModel",
-                    "*.feature.designsystem.presentation.viewmodel.DesignSystemViewModel",
+                    "*.sample.demo.data.mapper.*",
+                    "*.sample.demo.domain.usecase.FetchDemoWeatherUseCase",
+                    "*.sample.demo.domain.usecase.IncrementCounterUseCase",
+                    "*.sample.demo.domain.usecase.ObserveDemoCountUseCase",
+                    "*.sample.demo.domain.usecase.SaveDemoCountUseCase",
+                    "*.sample.demo.presentation.viewmodel.DemoViewModel",
+                    "*.sample.designsystem.presentation.viewmodel.DesignSystemViewModel",
                 )
             }
             excludes {
