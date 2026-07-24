@@ -1,39 +1,26 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
-    alias(libs.plugins.baselineprofile)
 }
 
 android {
-    namespace = "com.example.androidxmlbase"
+    namespace = "com.thanhng224.androidxmlbase.core"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.androidxmlbase"
         minSdk = 24
-        targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_BASE_URL", "\"https://api.open-meteo.com/\"")
         buildConfigField("boolean", "API_ENABLE_LOGGING", "false")
     }
 
-    buildTypes {
-        release {
-            optimization {
-                enable = false
-            }
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -55,7 +42,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -64,12 +50,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.startup.runtime)
-    implementation(libs.androidx.profileinstaller)
-    baselineProfile(project(":baselineprofile"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.hilt.work)
     implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.datastore.preferences)
@@ -84,9 +67,6 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.sqlcipher.android)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.shimmer)
     implementation(libs.lottie)
     implementation(libs.timber)
     ksp(libs.hilt.compiler)
@@ -148,13 +128,6 @@ kover {
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
                     "*.core.ui.util.ShapeUtils*",
-                    "*.sample.demo.data.mapper.*",
-                    "*.sample.demo.domain.usecase.FetchDemoWeatherUseCase",
-                    "*.sample.demo.domain.usecase.IncrementCounterUseCase",
-                    "*.sample.demo.domain.usecase.ObserveDemoCountUseCase",
-                    "*.sample.demo.domain.usecase.SaveDemoCountUseCase",
-                    "*.sample.demo.presentation.viewmodel.DemoViewModel",
-                    "*.sample.designsystem.presentation.viewmodel.DesignSystemViewModel",
                 )
             }
             excludes {
@@ -169,8 +142,6 @@ kover {
                     "*Hilt_*",
                     "dagger.hilt.*",
                     "hilt_aggregated_deps.*",
-                    "*.AndroidXmlBaseApplication",
-                    "*.MainActivity",
                     "*Activity",
                     "*Fragment",
                     "*DialogFragment",
