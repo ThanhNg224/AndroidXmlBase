@@ -125,29 +125,6 @@ kover {
         filters {
             includes {
                 classes(
-                    "*.core.architecture.result.ResultState*",
-                    "*.core.architecture.result.DomainResult*",
-                    "*.core.architecture.StateViewModel*",
-                    "*.core.architecture.DefaultAppDispatchers",
-                    "*.core.localization.LocaleManager*",
-                    "*.core.localization.LocaleTagMapper*",
-                    "*.core.navigation.NavigationOptions*",
-                    "*.core.network.ApiResult*",
-                    "*.core.network.RetrofitApiClient*",
-                    "*.core.network.auth.SecureStoreAuthTokenProvider*",
-                    "*.core.network.transfer.TransferResult*",
-                    "*.core.network.transfer.ProgressRequestBody*",
-                    "*.core.network.transfer.OkHttpFileTransferClient*",
-                    "*.core.network.auth.*",
-                    "*.core.network.connectivity.*",
-                    "*.core.network.transfer.*",
-                    "*.core.storage.settings.DataStoreSettingsStore*",
-                    "*.core.storage.settings.SettingsKey*",
-                    "*.core.storage.database.DbPassphraseProvider*",
-                    "*.core.logging.ReleaseTree*",
-                    "*.core.ui.base.Debouncer*",
-                    "*.core.ui.base.ResultRenderState*",
-                    "*.core.ui.util.ShapeUtils*",
                     "*.sample.demo.data.mapper.*",
                     "*.sample.demo.domain.usecase.FetchDemoWeatherUseCase",
                     "*.sample.demo.domain.usecase.IncrementCounterUseCase",
@@ -174,8 +151,6 @@ kover {
                     "*Activity",
                     "*Fragment",
                     "*DialogFragment",
-                    "*.core.ui.components.*",
-                    "*.core.work.SampleHeartbeatWorker",
                 )
             }
         }

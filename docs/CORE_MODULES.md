@@ -1,6 +1,8 @@
 # CORE_MODULES.md
 
-One section per `core/*` package that actually exists in this codebase today (verified against `app/src/main/java/com/example/androidxmlbase/core/` directly, not reconstructed from earlier phase plans). Each section lists the real public API surface and which feature(s) currently consume it. If a class/file isn't listed here, it doesn't exist yet — don't assume it does.
+`core/` lives in the `:core` Gradle module under `com.thanhng224.androidxmlbase.core`; `:app` consumes it through `implementation(project(":core"))`.
+
+One section per `core/*` package that actually exists in this codebase today (verified against `core/src/main/java/com/thanhng224/androidxmlbase/core/` directly, not reconstructed from earlier phase plans). Each section lists the real public API surface and which feature(s) currently consume it. If a class/file isn't listed here, it doesn't exist yet — don't assume it does.
 
 ## `core/architecture`
 
