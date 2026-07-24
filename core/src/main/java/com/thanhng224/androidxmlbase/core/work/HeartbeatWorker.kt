@@ -14,7 +14,7 @@ import timber.log.Timber
  * shape for real background work — this worker itself is not scheduled anywhere by default.
  */
 @HiltWorker
-class SampleHeartbeatWorker
+class HeartbeatWorker
     @AssistedInject
     constructor(
         @Assisted context: Context,
@@ -26,6 +26,6 @@ class SampleHeartbeatWorker
         }
 
         private companion object {
-            const val TAG = "SampleHeartbeatWorker"
+            const val TAG = "HeartbeatWorker"
         }
     }

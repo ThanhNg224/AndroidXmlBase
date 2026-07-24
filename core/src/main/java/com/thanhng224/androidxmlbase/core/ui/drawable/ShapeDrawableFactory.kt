@@ -1,11 +1,11 @@
-package com.thanhng224.androidxmlbase.core.ui.util
+package com.thanhng224.androidxmlbase.core.ui.drawable
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import kotlin.math.roundToInt
 
-/** Shapes [ShapeUtils.buildDrawable] can render. */
-enum class Shape {
+/** Shapes [ShapeDrawableFactory.buildDrawable] can render. */
+enum class DrawableShape {
     RECTANGLE,
     OVAL,
 }
@@ -14,9 +14,9 @@ enum class Shape {
  * Builds runtime [GradientDrawable]s for custom Views (buttons, shadow cards, toasts, ...) from
  * plain values, so each component doesn't hand-roll [GradientDrawable] setup individually.
  */
-object ShapeUtils {
+object ShapeDrawableFactory {
     fun buildDrawable(
-        shape: Shape,
+        shape: DrawableShape,
         cornerRadiusPx: Float,
         fillColor: Int,
         strokeWidthPx: Float = 0f,
@@ -25,11 +25,11 @@ object ShapeUtils {
         val drawable = GradientDrawable()
         drawable.shape =
             when (shape) {
-                Shape.RECTANGLE -> GradientDrawable.RECTANGLE
-                Shape.OVAL -> GradientDrawable.OVAL
+                DrawableShape.RECTANGLE -> GradientDrawable.RECTANGLE
+                DrawableShape.OVAL -> GradientDrawable.OVAL
             }
         drawable.setColor(fillColor)
-        if (shape == Shape.RECTANGLE) {
+        if (shape == DrawableShape.RECTANGLE) {
             drawable.cornerRadius = resolveCornerRadiusPx(cornerRadiusPx)
         }
         val resolvedStrokeWidthPx = resolveStrokeWidthPx(strokeWidthPx)

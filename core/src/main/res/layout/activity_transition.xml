@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading_pulse" />
+            app:lottie_rawRes="@raw/transition_loading_pulse" />
 
     </FrameLayout>
 

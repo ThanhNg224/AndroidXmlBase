@@ -53,9 +53,9 @@ class PromptDialogFragment : BaseDialogFragment<DialogPromptBinding>() {
         val type = args.getString(ARG_TYPE)?.let { PromptType.valueOf(it) } ?: PromptType.ERROR
         val iconRes =
             when (type) {
-                PromptType.SUCCESS -> R.drawable.ic_activation_success
-                PromptType.ERROR -> R.drawable.ic_failed
-                PromptType.INFO -> R.drawable.ic_shield_check
+                PromptType.SUCCESS -> R.drawable.ic_prompt_success
+                PromptType.ERROR -> R.drawable.ic_prompt_error
+                PromptType.INFO -> R.drawable.ic_prompt_info
             }
         binding.ivPromptIcon.setImageResource(iconRes)
 

@@ -1,4 +1,4 @@
-package com.thanhng224.androidxmlbase.core.ui.util
+package com.thanhng224.androidxmlbase.core.ui.window
 
 import android.os.Build
 import android.view.Window

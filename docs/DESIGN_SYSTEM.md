@@ -82,13 +82,13 @@ A `FrameLayout` that draws a soft platform shadow behind its content via elevati
 </com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout>
 ```
 
-### `CustomSwitch`
+### `ThemedSwitch`
 
 A thin `MaterialSwitch` subclass (`com.google.android.material.materialswitch.MaterialSwitch`) that retints the track/thumb from this base's color tokens instead of the platform default. No custom attrs — use it exactly like a `Switch`/`MaterialSwitch` (`android:text`, etc.). It does not reimplement touch/accessibility handling; that stays inherited from `MaterialSwitch`.
 
-### `CustomToast`
+### `StyledSnackbar`
 
-`CustomToast.show(anchorView: View, message: String, duration: Int = Snackbar.LENGTH_SHORT)`. Backed by `Snackbar`, not a custom `Toast` view — **takes a `View` anchor, not a `Context`**, because `Toast.setView` is deprecated since API 30 and custom-view toasts are suppressed while the host app is backgrounded, whereas a `Snackbar` anchored to a visible `View` always renders reliably in the foreground. Typical call site: `CustomToast.show(binding.root, getString(R.string.some_message))`.
+`StyledSnackbar.show(anchorView: View, message: String, duration: Int = Snackbar.LENGTH_SHORT)`. Backed by `Snackbar`, not a `Toast` view — **takes a `View` anchor, not a `Context`**, because `Toast.setView` is deprecated since API 30 and custom-view toasts are suppressed while the host app is backgrounded, whereas a `Snackbar` anchored to a visible `View` always renders reliably in the foreground. Typical call site: `StyledSnackbar.show(binding.root, getString(R.string.some_message))`.
 
 ### Single-choice controls
 
@@ -96,7 +96,7 @@ Use a Material single-choice dialog for a short, mutually exclusive settings val
 
 ### Bottom navigation
 
-`activity_main.xml` uses `Widget.Material3Expressive.BottomNavigationView` inside a rounded `MaterialCardView`. Keep all three labels visible, use the Material active indicator instead of a custom animation, and map item IDs directly to top-level destination IDs in `main_navigation.xml`. The bottom bar is limited to 3-5 equally important destinations; secondary actions such as Settings belong in the app bar.
+`activity_appshell_main.xml` uses `Widget.Material3Expressive.BottomNavigationView` inside a rounded `MaterialCardView`. Keep all three labels visible, use the Material active indicator instead of a custom animation, and map item IDs directly to top-level destination IDs in `main_navigation.xml`. The bottom bar is limited to 3-5 equally important destinations; secondary actions such as Settings belong in the app bar.
 
 ### Icon color
 
@@ -111,7 +111,7 @@ android:layout_marginTop="@dimen/_16sdp"
 app:buttonCornerRadius="@dimen/_8sdp"
 ```
 
-**No hardcoded non-zero `dp`/`sp` literal belongs in a layout XML this convention covers** — use the sdp/ssp resources consistently in `activity_main.xml`, `fragment_home.xml`, and `fragment_demo.xml`.
+**No hardcoded non-zero `dp`/`sp` literal belongs in a layout XML this convention covers** — use the sdp/ssp resources consistently in `activity_appshell_main.xml`, `fragment_appshell_home.xml`, and `fragment_demo.xml`.
 
 **There is no `Int.sdp()` / `Int.ssp()` Kotlin extension function, and that is a deliberate decision, not a gap.** The Phase 5 plan resolved this explicitly:
 
@@ -123,4 +123,4 @@ Related: `core.ui.responsive.ResponsiveContextWrapper` clamps `smallestScreenWid
 
 ## Live reference
 
-`sample/designsystem`'s `DesignSystemFragment` / `app/src/main/res/layout/fragment_design_system.xml` inflates every component and token described above in one screen: all 6 text styles (headline/body/caption/body-emphasis/body-medium/micro), a filled `FrameButton`, an outlined `FrameButton`, a `ShadowLayout` card, a `CustomSwitch`, a `FrameButton` that triggers `CustomToast`, and a 3-button `ResultState` (loading/success/error) demo driven by `DesignSystemViewModel`. When adding a new component or token, add it to this screen too so it stays the working reference.
+`sample/designsystem`'s `DesignSystemFragment` / `app/src/main/res/layout/fragment_design_system.xml` inflates every component and token described above in one screen: all 6 text styles (headline/body/caption/body-emphasis/body-medium/micro), a filled `FrameButton`, an outlined `FrameButton`, a `ShadowLayout` card, a `ThemedSwitch`, a `FrameButton` that triggers `StyledSnackbar`, and a 3-button `ResultState` (loading/success/error) demo driven by `DesignSystemViewModel`. When adding a new component or token, add it to this screen too so it stays the working reference.

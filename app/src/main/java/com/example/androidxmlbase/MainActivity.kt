@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.androidxmlbase.databinding.ActivityMainBinding
+import com.example.androidxmlbase.databinding.ActivityAppshellMainBinding
 import com.example.androidxmlbase.feature.settings.presentation.ui.SettingsActivity
 import com.thanhng224.androidxmlbase.core.navigation.ActivityDestination
 import com.thanhng224.androidxmlbase.core.navigation.ActivityNavigator
@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>() {
+class MainActivity : BaseActivity<ActivityAppshellMainBinding>() {
     @Inject
     lateinit var activityNavigator: ActivityNavigator
 
@@ -28,7 +28,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         splashScreen.setKeepOnScreenCondition { !themeManager.isThemeApplied.value }
     }
 
-    override fun inflateBinding(inflater: LayoutInflater): ActivityMainBinding = ActivityMainBinding.inflate(inflater)
+    override fun inflateBinding(inflater: LayoutInflater): ActivityAppshellMainBinding = ActivityAppshellMainBinding.inflate(inflater)
 
     override fun onBindingReady(savedInstanceState: Bundle?) {
         val navController =

@@ -114,15 +114,15 @@
 
         </com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout>
 
-        <com.thanhng224.androidxmlbase.core.ui.components.CustomSwitch
+        <com.thanhng224.androidxmlbase.core.ui.components.ThemedSwitch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/design_system_switch_label" />
 
-        <!-- FrameButton #3: triggers CustomToast -->
+        <!-- FrameButton #3: triggers StyledSnackbar -->
         <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
-            android:id="@+id/btnShowToast"
+            android:id="@+id/btnShowSnackbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_48sdp"
             android:layout_marginTop="@dimen/_16sdp"
@@ -134,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/design_system_show_toast"
+                android:text="@string/design_system_show_snackbar"
                 android:textColor="@color/color_on_primary" />
 
         </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>

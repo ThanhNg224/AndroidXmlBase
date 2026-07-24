@@ -1,4 +1,4 @@
-package com.thanhng224.androidxmlbase.core.ui.util
+package com.thanhng224.androidxmlbase.core.navigation
 
 import android.app.Activity
 import android.os.Bundle

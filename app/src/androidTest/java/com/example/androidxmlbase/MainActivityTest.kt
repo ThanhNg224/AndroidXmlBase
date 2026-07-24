@@ -23,7 +23,7 @@ class MainActivityTest {
         onView(withId(R.id.homeFragment)).check(matches(isSelected()))
         onView(withId(R.id.tvGreeting))
             .check(matches(isDisplayed()))
-            .check(matches(withText(R.string.hello_android)))
+            .check(matches(withText(R.string.appshell_home_greeting)))
     }
 
     @Test

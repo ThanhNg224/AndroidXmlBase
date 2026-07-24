@@ -13,7 +13,7 @@ import com.thanhng224.androidxmlbase.core.architecture.result.ResultState
 import com.thanhng224.androidxmlbase.core.architecture.result.fold
 import com.thanhng224.androidxmlbase.core.ui.base.BaseFragment
 import com.thanhng224.androidxmlbase.core.ui.base.toRenderState
-import com.thanhng224.androidxmlbase.core.ui.components.CustomToast
+import com.thanhng224.androidxmlbase.core.ui.components.StyledSnackbar
 import com.thanhng224.androidxmlbase.core.ui.text.resolve
 import dagger.hilt.android.AndroidEntryPoint
 import com.thanhng224.androidxmlbase.core.R as CoreR
@@ -31,8 +31,8 @@ class DesignSystemFragment : BaseFragment<FragmentDesignSystemBinding>() {
         view: View,
         savedInstanceState: Bundle?,
     ) {
-        binding.btnShowToast.setOnClickListener {
-            CustomToast.show(binding.root, getString(R.string.design_system_toast_message))
+        binding.btnShowSnackbar.setOnClickListener {
+            StyledSnackbar.show(binding.root, getString(R.string.design_system_snackbar_message))
         }
         binding.btnShowLoading.setOnClickListener {
             viewModel.onEvent(DesignSystemUiEvent.ShowLoadingClicked)

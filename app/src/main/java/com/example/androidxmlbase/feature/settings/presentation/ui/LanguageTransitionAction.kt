@@ -3,8 +3,8 @@ package com.example.androidxmlbase.feature.settings.presentation.ui
 import android.os.Bundle
 import com.example.androidxmlbase.feature.settings.domain.usecase.SetLanguageUseCase
 import com.thanhng224.androidxmlbase.core.localization.AppLanguage
+import com.thanhng224.androidxmlbase.core.navigation.getTyped
 import com.thanhng224.androidxmlbase.core.ui.transition.TransitionAction
-import com.thanhng224.androidxmlbase.core.ui.util.getTyped
 import javax.inject.Inject
 
 class LanguageTransitionAction

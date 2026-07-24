@@ -97,14 +97,14 @@
     </style>
 
     <style name="Animation_AndroidXmlBase_Dialog_Fade" parent="android:Animation">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
+        <item name="android:windowEnterAnimation">@anim/transition_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/transition_fade_out</item>
     </style>
 
     <style name="Animation_AndroidXmlBase_Transition">
-        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
-        <item name="android:activityOpenExitAnimation">@anim/no_anim</item>
-        <item name="android:activityCloseEnterAnimation">@anim/no_anim</item>
-        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+        <item name="android:activityOpenEnterAnimation">@anim/transition_fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/transition_no_animation</item>
+        <item name="android:activityCloseEnterAnimation">@anim/transition_no_animation</item>
+        <item name="android:activityCloseExitAnimation">@anim/transition_fade_out</item>
     </style>
 </resources>

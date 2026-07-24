@@ -170,7 +170,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
-                            android:text="@string/language_section_title"
+                            android:text="@string/settings_language_section_title"
                             android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
                             app:layout_constraintBottom_toTopOf="@id/tvLanguageSummary"
                             app:layout_constraintEnd_toStartOf="@id/ivLanguageChevron"

@@ -19,14 +19,14 @@
             android:id="@+id/tvGreeting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello_android"
+            android:text="@string/appshell_home_greeting"
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.Headline" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
-            android:text="@string/main_subtitle"
+            android:text="@string/appshell_home_subtitle"
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyMedium" />
 
         <com.google.android.material.card.MaterialCardView

@@ -8,7 +8,7 @@ import androidx.viewbinding.ViewBinding
 import com.thanhng224.androidxmlbase.core.architecture.result.ResultState
 import com.thanhng224.androidxmlbase.core.ui.responsive.ResponsiveConfig
 import com.thanhng224.androidxmlbase.core.ui.responsive.ResponsiveContextWrapper
-import com.thanhng224.androidxmlbase.core.ui.util.setImmersiveMode
+import com.thanhng224.androidxmlbase.core.ui.window.setImmersiveMode
 import kotlinx.coroutines.flow.Flow
 
 /**

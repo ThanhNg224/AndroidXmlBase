@@ -33,7 +33,7 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
 
     private fun render(state: SettingsUiState) {
         binding.tvAppearanceSummary.setText(state.theme.labelResId)
-        binding.tvLanguageSummary.setText(state.language?.displayNameResId ?: R.string.language_system)
+        binding.tvLanguageSummary.setText(state.language?.displayNameResId ?: R.string.settings_language_system)
     }
 
     private fun showThemeDialog(selectedTheme: AppTheme) {
@@ -50,8 +50,8 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
     private fun showLanguageDialog(selectedLanguage: AppLanguage?) {
         val options = listOf(null, AppLanguage.ENGLISH, AppLanguage.VIETNAMESE)
         showSingleChoiceDialog(
-            titleResId = R.string.language_dialog_title,
-            labels = options.map { language -> getString(language?.displayNameResId ?: R.string.language_system) }.toTypedArray(),
+            titleResId = R.string.settings_language_dialog_title,
+            labels = options.map { language -> getString(language?.displayNameResId ?: R.string.settings_language_system) }.toTypedArray(),
             checkedItem = options.indexOf(selectedLanguage),
         ) { selectedIndex ->
             viewModel.onEvent(SettingsUiEvent.LanguageSelected(options[selectedIndex]))
@@ -95,8 +95,8 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
     private val AppTheme.labelResId: Int
         get() =
             when (this) {
-                AppTheme.SYSTEM -> R.string.theme_system
-                AppTheme.LIGHT -> R.string.theme_light
-                AppTheme.DARK -> R.string.theme_dark
+                AppTheme.SYSTEM -> R.string.settings_theme_system
+                AppTheme.LIGHT -> R.string.settings_theme_light
+                AppTheme.DARK -> R.string.settings_theme_dark
             }
 }

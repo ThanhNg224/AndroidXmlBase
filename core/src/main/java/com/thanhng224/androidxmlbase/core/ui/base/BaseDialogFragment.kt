@@ -33,7 +33,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     protected open val dialogAnimation: DialogAnimation = DialogAnimation.SCALE
 
     /** Background drawable. Override to use custom shapes. */
-    protected open val backgroundDrawableRes: Int = R.drawable.bg_dialog
+    protected open val backgroundDrawableRes: Int = R.drawable.bg_dialog_surface
 
     override fun onCreateView(
         inflater: LayoutInflater,

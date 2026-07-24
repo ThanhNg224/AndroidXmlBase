@@ -319,17 +319,20 @@ app/src/main/java/com/example/androidxmlbase/
       responsive/
         ResponsiveConfig.kt                  # enabled + min/max smallestScreenWidthDp
         ResponsiveContextWrapper.kt          # clamps Configuration.smallestScreenWidthDp into the configured range
-      util/
-        ShapeUtils.kt                        # builds runtime GradientDrawables (RECTANGLE/OVAL) shared by the components below
+      drawable/
+        ShapeDrawableFactory.kt              # builds runtime GradientDrawables (RECTANGLE/OVAL) shared by the components below
+      window/
+        WindowExtensions.kt                  # edge-to-edge window configuration
       components/
         ButtonStyleDelegate.kt               # shared shape/ripple background logic, framework-attribute-agnostic
         FrameButton.kt                       # FrameLayout-based button, the one ButtonStyleDelegate consumer ported so far
         ShadowLayout.kt                      # FrameLayout drawing an elevation+outline shadow (caller sets android:elevation)
-        CustomSwitch.kt                      # MaterialSwitch wrapper tinted from the color tokens
-        CustomToast.kt                       # Snackbar-based Toast replacement styled with the color tokens
+        ThemedSwitch.kt                      # MaterialSwitch wrapper tinted from the color tokens
+        StyledSnackbar.kt                    # Snackbar message surface styled with the color tokens
         FullScreenLoaderView.kt              # Custom full-screen loading spinner overlay
         PromptDialogFragment.kt              # Status prompt dialog fragment (success, fail, info) with action callbacks
     navigation/
+      ArgumentDelegates.kt                   # type-safe Activity extras and Fragment argument accessors
       ActivityDestination.kt
       ActivityNavigator.kt                   # transition support (SLIDE_HORIZONTAL, FADE, etc.)
       NavigationOptions.kt
@@ -369,7 +372,7 @@ app/src/main/java/com/example/androidxmlbase/
       presentation/
         state/DesignSystemUiState.kt, DesignSystemUiEvent.kt
         viewmodel/DesignSystemViewModel.kt   # StateViewModel<DesignSystemUiState, DesignSystemUiEvent, UiEffect>, synchronous setState, no data/domain layers
-        ui/DesignSystemFragment.kt           # showcases FrameButton, ShadowLayout, CustomSwitch, CustomToast, and the ResultState demo
+        ui/DesignSystemFragment.kt           # showcases FrameButton, ShadowLayout, ThemedSwitch, StyledSnackbar, and the ResultState demo
 
 `feature/settings` is the canonical single-screen product feature. `SettingsActivity` renders theme and language as settings-list rows and uses single-choice dialogs for their finite values; those selections do not become separate screens merely to demonstrate package nesting. Its feature-owned `LanguageTransitionAction` runs inside the opaque core `TransitionActivity`, so the core owns only the reusable transition host. `SettingsRepository` is a feature-domain contract; its implementation adapts the reusable `ThemeManager` and `LocaleManager`, so UI never calls either core service directly. Hilt wires the feature binding in `feature/settings/di/SettingsModule`.
 

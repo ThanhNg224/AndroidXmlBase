@@ -24,17 +24,17 @@ class SettingsActivityTest {
         onView(withId(R.id.rowAppearance)).perform(click())
 
         onView(withText(R.string.settings_appearance_dialog_title)).check(matches(isDisplayed()))
-        onView(withText(R.string.theme_system)).check(matches(isDisplayed()))
-        onView(withText(R.string.theme_light)).check(matches(isDisplayed()))
-        onView(withText(R.string.theme_dark)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings_theme_system)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings_theme_light)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings_theme_dark)).check(matches(isDisplayed()))
     }
 
     @Test
     fun languageRow_opensSingleChoiceDialogOnTheSameScreen() {
         onView(withId(R.id.rowLanguage)).perform(click())
 
-        onView(withText(R.string.language_dialog_title)).check(matches(isDisplayed()))
-        onView(withText(R.string.language_system)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings_language_dialog_title)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings_language_system)).check(matches(isDisplayed()))
         onView(withText(CoreR.string.language_english)).check(matches(isDisplayed()))
         onView(withText(CoreR.string.language_vietnamese)).check(matches(isDisplayed()))
     }

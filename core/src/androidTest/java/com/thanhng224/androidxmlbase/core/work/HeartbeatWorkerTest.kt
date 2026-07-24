@@ -11,12 +11,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SampleHeartbeatWorkerTest {
+class HeartbeatWorkerTest {
     @Test
     fun doWork_returnsSuccess() =
         runTest {
             val context = ApplicationProvider.getApplicationContext<Context>()
-            val worker = TestListenableWorkerBuilder<SampleHeartbeatWorker>(context).build()
+            val worker = TestListenableWorkerBuilder<HeartbeatWorker>(context).build()
 
             val result = worker.doWork()
 

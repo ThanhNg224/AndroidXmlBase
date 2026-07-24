@@ -3,7 +3,7 @@
 
     <!--
         Shared shape/button attributes. Any custom View whose background is built via
-        ShapeUtils.buildDrawable can reuse these instead of declaring near-duplicate attrs.
+        ShapeDrawableFactory.buildDrawable can reuse these instead of declaring near-duplicate attrs.
     -->
     <attr name="buttonBackgroundColor" format="color" />
     <attr name="buttonCornerRadius" format="dimension" />

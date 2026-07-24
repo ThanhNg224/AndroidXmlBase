@@ -14,6 +14,6 @@
     <item
         android:id="@+id/designSystemFragment"
         android:icon="@drawable/ic_nav_ui_kit"
-        android:title="@string/ui_kit_title" />
+        android:title="@string/design_system_title" />
 
 </menu>

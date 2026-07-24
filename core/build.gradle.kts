@@ -127,7 +127,7 @@ kover {
                     "*.core.logging.ReleaseTree*",
                     "*.core.ui.base.Debouncer*",
                     "*.core.ui.base.ResultRenderState*",
-                    "*.core.ui.util.ShapeUtils*",
+                    "*.core.ui.drawable.ShapeDrawableFactory*",
                 )
             }
             excludes {
@@ -146,7 +146,7 @@ kover {
                     "*Fragment",
                     "*DialogFragment",
                     "*.core.ui.components.*",
-                    "*.core.work.SampleHeartbeatWorker",
+                    "*.core.work.HeartbeatWorker",
                 )
             }
         }

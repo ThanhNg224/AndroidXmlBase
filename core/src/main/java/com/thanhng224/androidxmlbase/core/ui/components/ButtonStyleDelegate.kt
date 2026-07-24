@@ -6,8 +6,8 @@ import android.graphics.drawable.RippleDrawable
 import android.util.TypedValue
 import android.view.View
 import androidx.core.graphics.ColorUtils
-import com.thanhng224.androidxmlbase.core.ui.util.Shape
-import com.thanhng224.androidxmlbase.core.ui.util.ShapeUtils
+import com.thanhng224.androidxmlbase.core.ui.drawable.DrawableShape
+import com.thanhng224.androidxmlbase.core.ui.drawable.ShapeDrawableFactory
 
 /**
  * Shared background/ripple logic for button-style custom Views. Framework-attribute-agnostic by
@@ -17,7 +17,7 @@ import com.thanhng224.androidxmlbase.core.ui.util.ShapeUtils
  */
 class ButtonStyleDelegate(
     private val targetView: View,
-    private val shape: Shape,
+    private val shape: DrawableShape,
     private val backgroundColor: Int,
     private val cornerRadiusPx: Float,
     private val strokeWidthPx: Float = 0f,
@@ -26,7 +26,7 @@ class ButtonStyleDelegate(
     /** Builds the shape drawable and applies it, wrapped in a themed ripple, as the target's background. */
     fun apply() {
         val shapeDrawable =
-            ShapeUtils.buildDrawable(
+            ShapeDrawableFactory.buildDrawable(
                 shape = shape,
                 cornerRadiusPx = cornerRadiusPx,
                 fillColor = backgroundColor,

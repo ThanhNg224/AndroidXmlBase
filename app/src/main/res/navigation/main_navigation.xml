@@ -17,6 +17,6 @@
     <fragment
         android:id="@+id/designSystemFragment"
         android:name="com.example.androidxmlbase.sample.designsystem.presentation.ui.DesignSystemFragment"
-        android:label="@string/ui_kit_title" />
+        android:label="@string/design_system_title" />
 
 </navigation>

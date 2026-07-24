@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/increment"
+            android:text="@string/demo_increment"
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
             android:textColor="@color/color_on_primary" />
 

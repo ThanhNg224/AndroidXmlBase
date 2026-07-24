@@ -9,7 +9,7 @@ import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.thanhng224.androidxmlbase.core.R
-import com.thanhng224.androidxmlbase.core.ui.util.Shape
+import com.thanhng224.androidxmlbase.core.ui.drawable.DrawableShape
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -35,7 +35,7 @@ class FrameButton
             val strokeColor = typedArray.getColor(R.styleable.FrameButton_buttonStrokeColor, Color.TRANSPARENT)
             typedArray.recycle()
 
-            val shape = if (shapeOrdinal == SHAPE_OVAL_ORDINAL) Shape.OVAL else Shape.RECTANGLE
+            val shape = if (shapeOrdinal == SHAPE_OVAL_ORDINAL) DrawableShape.OVAL else DrawableShape.RECTANGLE
             ButtonStyleDelegate(
                 targetView = this,
                 shape = shape,

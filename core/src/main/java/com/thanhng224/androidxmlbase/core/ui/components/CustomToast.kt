@@ -1,34 +1,17 @@
 package com.thanhng224.androidxmlbase.core.ui.components
 
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
-import com.thanhng224.androidxmlbase.core.R
-import com.thanhng224.androidxmlbase.core.ui.util.Shape
-import com.thanhng224.androidxmlbase.core.ui.util.ShapeUtils
 
-/** Custom status toast replacement utilizing a styled [Snackbar] for foreground reliability. */
+/** Source compatibility shim for [StyledSnackbar]. New code must use [StyledSnackbar]. */
+@Deprecated(
+    message = "Use StyledSnackbar.",
+    replaceWith = ReplaceWith("StyledSnackbar"),
+)
 object CustomToast {
     fun show(
         anchorView: View,
         message: String,
         duration: Int = Snackbar.LENGTH_SHORT,
-    ): Snackbar {
-        val context = anchorView.context
-        val density = context.resources.displayMetrics.density
-
-        val snackbar = Snackbar.make(anchorView, message, duration)
-        snackbar.setTextColor(ContextCompat.getColor(context, R.color.color_surface))
-        snackbar.view.backgroundTintList = null
-        snackbar.view.background =
-            ShapeUtils.buildDrawable(
-                shape = Shape.RECTANGLE,
-                cornerRadiusPx = CORNER_RADIUS_DP * density,
-                fillColor = ContextCompat.getColor(context, R.color.color_on_surface),
-            )
-        snackbar.show()
-        return snackbar
-    }
-
-    private const val CORNER_RADIUS_DP = 8f
+    ): Snackbar = StyledSnackbar.show(anchorView, message, duration)
 }

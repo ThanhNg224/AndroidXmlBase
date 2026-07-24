@@ -109,7 +109,7 @@ All three are registered as `<meta-data>` entries under `androidx.startup.Initia
 
 WorkManager wiring: `AndroidXmlBaseApplication` implements `Configuration.Provider`, supplying `HiltWorkerFactory` so `@HiltWorker` classes get constructor injection. WorkManager's default initializer is disabled in `AndroidManifest.xml` (`androidx.work.WorkManagerInitializer` removed from the `androidx.startup.InitializationProvider` merge) so this custom configuration is the one actually used.
 
-- `SampleHeartbeatWorker` (`@HiltWorker`, `CoroutineWorker`) — reference implementation only, not scheduled by default. Copy this shape (constructor pattern, `@Assisted context`/`@Assisted workerParameters`) for real background work.
+- `HeartbeatWorker` (`@HiltWorker`, `CoroutineWorker`) — reference implementation only, not scheduled by default. Copy this shape (constructor pattern, `@Assisted context`/`@Assisted workerParameters`) for real background work.
 
 **Consumers:** none yet — this is infrastructure for the first feature that needs background work.
 
@@ -134,7 +134,7 @@ Shared UI infrastructure.
 
 - `BaseActivity<VB : ViewBinding>` (abstract) — ViewBinding lifecycle, responsive context wrapping, immersive full-screen display cutout setup, and exit transitions.
 - `BaseFragment<VB : ViewBinding>` — Fragment view lifecycle binding and flow collector.
-- `BaseDialogFragment<VB : ViewBinding>` — rounded dialog fragment base using `R.drawable.bg_dialog`.
+- `BaseDialogFragment<VB : ViewBinding>` — rounded dialog fragment base using `R.drawable.bg_dialog_surface`.
 - `BaseBottomSheetDialogFragment<VB : ViewBinding>` — Material bottom-sheet view base.
 - `collectOnStartedBy(lifecycleOwner, action)` (in `LifecycleFlowExtensions.kt`) — shared lifecycle-safe Flow collection; each Base* host's `collectOnStarted` delegates here with its own `LifecycleOwner` (the host itself for `BaseActivity`, `viewLifecycleOwner` for the Fragment/BottomSheet hosts).
 - `renderResultState(result, contentRoot, dialogHost, onSuccess)` (in `ResultStateOverlay.kt`) — shared full-screen-loader + `PromptDialogFragment` error rendering; `BaseActivity`/`BaseFragment.bindResultState` both delegate here so the loading/error UI stays identical across hosts.
@@ -146,15 +146,19 @@ Shared UI infrastructure.
 - `ButtonStyleDelegate` — shape/ripple background logic, resolving ripple color from `colorControlHighlight`.
 - `FrameButton` (`FrameLayout` subclass) — custom shape button implementing `ButtonStyleDelegate`. Enforces 48dp minimum touch target.
 - `ShadowLayout` (`FrameLayout` subclass) — rounded shadow layout drawn via elevation outline.
-- `CustomSwitch` (`MaterialSwitch` subclass) — track and thumb tinted from color tokens, text hidden.
-- `CustomToast` (object) — show Snackbar toast styled on base colors, returns the Snackbar instance.
+- `ThemedSwitch` (`MaterialSwitch` subclass) — track and thumb tinted from color tokens, text hidden.
+- `StyledSnackbar` (object) — shows a Snackbar styled on base colors and returns the Snackbar instance.
 - `FullScreenLoaderView` — custom full-screen loading spinner overlay shown during async operations.
 - `PromptDialogFragment` — custom status dialog fragment supporting message, technical code, status icon (Success, Error, Info) and primary/secondary action handlers.
 
-## `core/ui/util`
+## `core/ui/drawable`
 
-- `Shape` (enum: `RECTANGLE`, `OVAL`).
-- `ShapeUtils` (object) — `buildDrawable(...)` programmatically creates GradientDrawables.
+- `DrawableShape` (enum: `RECTANGLE`, `OVAL`).
+- `ShapeDrawableFactory` (object) — `buildDrawable(...)` programmatically creates GradientDrawables.
+
+## `core/ui/window`
+
+- `Window.setImmersiveMode(enabled)` — edge-to-edge system-bar and display-cutout configuration used by `BaseActivity`.
 
 ## `core/ui/theme`
 
