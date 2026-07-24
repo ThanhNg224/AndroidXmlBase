@@ -37,14 +37,14 @@ Apply via `android:textAppearance="@style/TextAppearance.AndroidXmlBase.<Style>"
 
 ## Component reference
 
-All 5 components live in `com.example.androidxmlbase.core.ui.components` (full API surface in `docs/CORE_MODULES.md`'s "`core/ui/components`" section — this section focuses on when/how to use each, not the full class listing).
+All 5 components live in `com.thanhng224.androidxmlbase.core.ui.components` (full API surface in `docs/CORE_MODULES.md`'s "`core/ui/components`" section — this section focuses on when/how to use each, not the full class listing).
 
 ### `FrameButton`
 
 A `FrameLayout`-based button — the **only** button shape this base has built. Attrs: `app:buttonBackgroundColor`, `app:buttonCornerRadius`, `app:buttonStrokeWidth`, `app:buttonStrokeColor`, `app:buttonShape` (`rectangle` | `oval`). It is a container, not a text widget — wrap a `TextView` inside it for the label. The component marks itself as a button for accessibility and enforces a 48dp minimum touch target.
 
 ```xml
-<com.example.androidxmlbase.core.ui.components.FrameButton
+<com.thanhng224.androidxmlbase.core.ui.components.FrameButton
     android:layout_width="match_parent"
     android:layout_height="@dimen/_48sdp"
     app:buttonBackgroundColor="@color/color_primary"
@@ -58,7 +58,7 @@ A `FrameLayout`-based button — the **only** button shape this base has built. 
         android:text="@string/design_system_primary_button"
         android:textColor="@color/color_on_primary" />
 
-</com.example.androidxmlbase.core.ui.components.FrameButton>
+</com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 ```
 
 `fragment_design_system.xml` shows two styles side by side: filled (`buttonBackgroundColor="@color/color_primary"`, no stroke) and outlined (`buttonBackgroundColor="@color/color_surface"`, `buttonStrokeColor="@color/color_primary"`, `buttonStrokeWidth="@dimen/_1sdp"`).
@@ -72,14 +72,14 @@ A `FrameLayout` that draws a soft platform shadow behind its content via elevati
 **The caller must set `android:elevation` on the instance itself** — `ShadowLayout` does not force its own elevation internally, it only supplies the rounded outline the elevation shadow renders against:
 
 ```xml
-<com.example.androidxmlbase.core.ui.components.ShadowLayout
+<com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="@dimen/_4sdp"
     app:shadowBackgroundColor="@color/color_surface"
     app:shadowCornerRadius="@dimen/_8sdp">
     <!-- content -->
-</com.example.androidxmlbase.core.ui.components.ShadowLayout>
+</com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout>
 ```
 
 ### `CustomSwitch`

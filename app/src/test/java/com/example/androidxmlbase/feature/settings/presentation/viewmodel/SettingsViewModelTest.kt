@@ -1,8 +1,6 @@
 package com.example.androidxmlbase.feature.settings.presentation.viewmodel
 
 import app.cash.turbine.test
-import com.example.androidxmlbase.core.localization.AppLanguage
-import com.example.androidxmlbase.core.ui.theme.AppTheme
 import com.example.androidxmlbase.feature.settings.domain.repository.SettingsRepository
 import com.example.androidxmlbase.feature.settings.domain.usecase.GetCurrentLanguageUseCase
 import com.example.androidxmlbase.feature.settings.domain.usecase.ObserveThemeUseCase
@@ -10,6 +8,8 @@ import com.example.androidxmlbase.feature.settings.domain.usecase.SetThemeUseCas
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEffect
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEvent
 import com.example.androidxmlbase.testutil.MainDispatcherRule
+import com.thanhng224.androidxmlbase.core.localization.AppLanguage
+import com.thanhng224.androidxmlbase.core.ui.theme.AppTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle

@@ -1,9 +1,9 @@
 package com.example.androidxmlbase.feature.settings.di
 
-import com.example.androidxmlbase.core.ui.transition.TransitionAction
 import com.example.androidxmlbase.feature.settings.data.repository.SettingsRepositoryImpl
 import com.example.androidxmlbase.feature.settings.domain.repository.SettingsRepository
 import com.example.androidxmlbase.feature.settings.presentation.ui.LanguageTransitionAction
+import com.thanhng224.androidxmlbase.core.ui.transition.TransitionAction
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

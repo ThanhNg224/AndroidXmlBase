@@ -1,12 +1,12 @@
 package com.example.androidxmlbase.sample.designsystem.presentation.viewmodel
 
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.architecture.StateViewModel
-import com.example.androidxmlbase.core.architecture.UiEffect
-import com.example.androidxmlbase.core.architecture.result.ResultState
-import com.example.androidxmlbase.core.ui.text.UiText
 import com.example.androidxmlbase.sample.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.sample.designsystem.presentation.state.DesignSystemUiState
+import com.thanhng224.androidxmlbase.core.architecture.StateViewModel
+import com.thanhng224.androidxmlbase.core.architecture.UiEffect
+import com.thanhng224.androidxmlbase.core.architecture.result.ResultState
+import com.thanhng224.androidxmlbase.core.ui.text.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.sample.demo.data.datasource
 
-import com.example.androidxmlbase.core.network.ApiClient
-import com.example.androidxmlbase.core.network.ApiResult
 import com.example.androidxmlbase.sample.demo.data.dto.DemoWeatherResponseDto
+import com.thanhng224.androidxmlbase.core.network.ApiClient
+import com.thanhng224.androidxmlbase.core.network.ApiResult
 import javax.inject.Inject
 
 interface DemoRemoteDataSource {

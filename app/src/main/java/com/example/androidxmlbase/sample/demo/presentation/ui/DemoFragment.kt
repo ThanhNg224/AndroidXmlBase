@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.ui.base.BaseFragment
-import com.example.androidxmlbase.core.ui.base.setOnDebouncedClickListener
 import com.example.androidxmlbase.databinding.FragmentDemoBinding
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoUiEffect
@@ -16,6 +14,8 @@ import com.example.androidxmlbase.sample.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherError
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherState
 import com.example.androidxmlbase.sample.demo.presentation.viewmodel.DemoViewModel
+import com.thanhng224.androidxmlbase.core.ui.base.BaseFragment
+import com.thanhng224.androidxmlbase.core.ui.base.setOnDebouncedClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.feature.settings.domain.usecase
 
-import com.example.androidxmlbase.core.architecture.UseCase
-import com.example.androidxmlbase.core.localization.AppLanguage
 import com.example.androidxmlbase.feature.settings.domain.repository.SettingsRepository
+import com.thanhng224.androidxmlbase.core.architecture.UseCase
+import com.thanhng224.androidxmlbase.core.localization.AppLanguage
 import javax.inject.Inject
 
 class SetLanguageUseCase

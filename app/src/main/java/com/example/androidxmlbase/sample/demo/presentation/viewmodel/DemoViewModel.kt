@@ -1,9 +1,6 @@
 package com.example.androidxmlbase.sample.demo.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.example.androidxmlbase.core.architecture.StateViewModel
-import com.example.androidxmlbase.core.architecture.result.AppError
-import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
 import com.example.androidxmlbase.sample.demo.domain.usecase.FetchDemoWeatherUseCase
 import com.example.androidxmlbase.sample.demo.domain.usecase.IncrementCounterUseCase
@@ -14,6 +11,9 @@ import com.example.androidxmlbase.sample.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoUiState
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherError
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherState
+import com.thanhng224.androidxmlbase.core.architecture.StateViewModel
+import com.thanhng224.androidxmlbase.core.architecture.result.AppError
+import com.thanhng224.androidxmlbase.core.architecture.result.DomainResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first

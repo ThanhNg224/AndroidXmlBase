@@ -55,7 +55,7 @@
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.Micro" />
 
         <!-- FrameButton #1: primary filled -->
-        <com.example.androidxmlbase.core.ui.components.FrameButton
+        <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
             android:layout_width="match_parent"
             android:layout_height="@dimen/_48sdp"
             android:layout_marginTop="@dimen/_16sdp"
@@ -70,10 +70,10 @@
                 android:text="@string/design_system_primary_button"
                 android:textColor="@color/color_on_primary" />
 
-        </com.example.androidxmlbase.core.ui.components.FrameButton>
+        </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 
         <!-- FrameButton #2: outlined -->
-        <com.example.androidxmlbase.core.ui.components.FrameButton
+        <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
             android:layout_width="match_parent"
             android:layout_height="@dimen/_48sdp"
             android:layout_marginTop="@dimen/_12sdp"
@@ -90,14 +90,14 @@
                 android:text="@string/design_system_outlined_button"
                 android:textColor="@color/color_primary" />
 
-        </com.example.androidxmlbase.core.ui.components.FrameButton>
+        </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 
         <!--
             ShadowLayout's shadow only renders where the caller sets android:elevation on the
             instance itself (it does not force its own elevation internally) — see Phase 5 Task A
             notes.
         -->
-        <com.example.androidxmlbase.core.ui.components.ShadowLayout
+        <com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
@@ -112,16 +112,16 @@
                 android:text="@string/design_system_shadow_card_text"
                 android:textAppearance="@style/TextAppearance.AndroidXmlBase.Body" />
 
-        </com.example.androidxmlbase.core.ui.components.ShadowLayout>
+        </com.thanhng224.androidxmlbase.core.ui.components.ShadowLayout>
 
-        <com.example.androidxmlbase.core.ui.components.CustomSwitch
+        <com.thanhng224.androidxmlbase.core.ui.components.CustomSwitch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/design_system_switch_label" />
 
         <!-- FrameButton #3: triggers CustomToast -->
-        <com.example.androidxmlbase.core.ui.components.FrameButton
+        <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
             android:id="@+id/btnShowToast"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_48sdp"
@@ -137,7 +137,7 @@
                 android:text="@string/design_system_show_toast"
                 android:textColor="@color/color_on_primary" />
 
-        </com.example.androidxmlbase.core.ui.components.FrameButton>
+        </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 
         <TextView
             android:layout_width="wrap_content"

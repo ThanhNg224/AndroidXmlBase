@@ -1,8 +1,8 @@
 package com.example.androidxmlbase.sample.designsystem.presentation.viewmodel
 
-import com.example.androidxmlbase.core.architecture.result.ResultState
-import com.example.androidxmlbase.core.ui.text.UiText
 import com.example.androidxmlbase.sample.designsystem.presentation.state.DesignSystemUiEvent
+import com.thanhng224.androidxmlbase.core.architecture.result.ResultState
+import com.thanhng224.androidxmlbase.core.ui.text.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -18,8 +18,6 @@
     <string name="language_section_title">App language</string>
     <string name="language_dialog_title">Choose app language</string>
     <string name="language_system">System</string>
-    <string name="language_english">English</string>
-    <string name="language_vietnamese">Tiếng Việt</string>
     <string name="action_back">Back</string>
     <string name="action_cancel">Cancel</string>
     <string name="demo_title">Demo</string>
@@ -62,11 +60,8 @@
     <string name="design_system_loading_button">Loading</string>
     <string name="design_system_success_button">Success</string>
     <string name="design_system_error_button">Error</string>
-    <string name="design_system_result_loading">Loading…</string>
     <string name="design_system_result_success">Success!</string>
     <string name="design_system_error_sample">Something went wrong. Please try again.</string>
-    <string name="error_dialog_retry">Retry</string>
-    <string name="error_dialog_close">Close</string>
     <string name="error_network">No internet connection</string>
     <string name="error_parse">Data parsing error</string>
     <string name="error_empty_body">Empty response from server</string>

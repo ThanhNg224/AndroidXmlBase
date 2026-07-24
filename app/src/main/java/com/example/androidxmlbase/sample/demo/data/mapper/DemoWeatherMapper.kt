@@ -1,10 +1,10 @@
 package com.example.androidxmlbase.sample.demo.data.mapper
 
-import com.example.androidxmlbase.core.architecture.result.AppError
-import com.example.androidxmlbase.core.architecture.result.DomainResult
-import com.example.androidxmlbase.core.network.ApiResult
 import com.example.androidxmlbase.sample.demo.data.dto.DemoWeatherResponseDto
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
+import com.thanhng224.androidxmlbase.core.architecture.result.AppError
+import com.thanhng224.androidxmlbase.core.architecture.result.DomainResult
+import com.thanhng224.androidxmlbase.core.network.ApiResult
 
 fun ApiResult<DemoWeatherResponseDto>.toDomainResult(): DomainResult<DemoWeather> =
     when (this) {

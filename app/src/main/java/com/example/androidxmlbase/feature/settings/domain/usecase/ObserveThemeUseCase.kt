@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.feature.settings.domain.usecase
 
-import com.example.androidxmlbase.core.ui.theme.AppTheme
 import com.example.androidxmlbase.feature.settings.domain.repository.SettingsRepository
+import com.thanhng224.androidxmlbase.core.ui.theme.AppTheme
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

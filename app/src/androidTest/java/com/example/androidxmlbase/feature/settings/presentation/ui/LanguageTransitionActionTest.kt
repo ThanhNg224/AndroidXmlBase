@@ -5,9 +5,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.androidxmlbase.core.localization.AppLanguage
-import com.example.androidxmlbase.core.localization.LocaleManager
-import com.example.androidxmlbase.core.ui.base.TransitionActivity
+import com.thanhng224.androidxmlbase.core.localization.AppLanguage
+import com.thanhng224.androidxmlbase.core.localization.LocaleManager
+import com.thanhng224.androidxmlbase.core.ui.base.TransitionActivity
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before

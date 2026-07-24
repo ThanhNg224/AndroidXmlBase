@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.androidxmlbase.core.ui.base.BaseFragment
 import com.example.androidxmlbase.databinding.FragmentHomeBinding
+import com.thanhng224.androidxmlbase.core.ui.base.BaseFragment
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun inflateBinding(

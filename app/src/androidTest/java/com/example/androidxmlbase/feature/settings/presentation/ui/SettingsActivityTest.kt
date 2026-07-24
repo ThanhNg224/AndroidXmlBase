@@ -12,6 +12,7 @@ import com.example.androidxmlbase.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.thanhng224.androidxmlbase.core.R as CoreR
 
 @RunWith(AndroidJUnit4::class)
 class SettingsActivityTest {
@@ -34,7 +35,7 @@ class SettingsActivityTest {
 
         onView(withText(R.string.language_dialog_title)).check(matches(isDisplayed()))
         onView(withText(R.string.language_system)).check(matches(isDisplayed()))
-        onView(withText(R.string.language_english)).check(matches(isDisplayed()))
-        onView(withText(R.string.language_vietnamese)).check(matches(isDisplayed()))
+        onView(withText(CoreR.string.language_english)).check(matches(isDisplayed()))
+        onView(withText(CoreR.string.language_vietnamese)).check(matches(isDisplayed()))
     }
 }

@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.androidxmlbase.core.navigation.ActivityDestination
-import com.example.androidxmlbase.core.navigation.ActivityNavigator
-import com.example.androidxmlbase.core.ui.base.BaseActivity
-import com.example.androidxmlbase.core.ui.theme.ThemeManager
 import com.example.androidxmlbase.databinding.ActivityMainBinding
 import com.example.androidxmlbase.feature.settings.presentation.ui.SettingsActivity
+import com.thanhng224.androidxmlbase.core.navigation.ActivityDestination
+import com.thanhng224.androidxmlbase.core.navigation.ActivityNavigator
+import com.thanhng224.androidxmlbase.core.ui.base.BaseActivity
+import com.thanhng224.androidxmlbase.core.ui.theme.ThemeManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

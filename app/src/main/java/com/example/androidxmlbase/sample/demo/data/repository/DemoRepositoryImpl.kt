@@ -1,12 +1,12 @@
 package com.example.androidxmlbase.sample.demo.data.repository
 
-import com.example.androidxmlbase.core.architecture.result.DomainResult
-import com.example.androidxmlbase.core.storage.settings.SettingsKey
-import com.example.androidxmlbase.core.storage.settings.SettingsStore
 import com.example.androidxmlbase.sample.demo.data.datasource.DemoRemoteDataSource
 import com.example.androidxmlbase.sample.demo.data.mapper.toDomainResult
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
 import com.example.androidxmlbase.sample.demo.domain.repository.DemoRepository
+import com.thanhng224.androidxmlbase.core.architecture.result.DomainResult
+import com.thanhng224.androidxmlbase.core.storage.settings.SettingsKey
+import com.thanhng224.androidxmlbase.core.storage.settings.SettingsStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

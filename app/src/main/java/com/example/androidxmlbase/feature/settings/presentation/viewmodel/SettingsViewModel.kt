@@ -1,13 +1,13 @@
 package com.example.androidxmlbase.feature.settings.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.example.androidxmlbase.core.architecture.StateViewModel
 import com.example.androidxmlbase.feature.settings.domain.usecase.GetCurrentLanguageUseCase
 import com.example.androidxmlbase.feature.settings.domain.usecase.ObserveThemeUseCase
 import com.example.androidxmlbase.feature.settings.domain.usecase.SetThemeUseCase
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEffect
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEvent
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiState
+import com.thanhng224.androidxmlbase.core.architecture.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

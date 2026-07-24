@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.sample.demo.presentation.state
 
-import com.example.androidxmlbase.core.architecture.UiState
+import com.thanhng224.androidxmlbase.core.architecture.UiState
 
 data class DemoUiState(
     val count: Int = 0,

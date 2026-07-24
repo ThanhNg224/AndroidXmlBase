@@ -18,8 +18,6 @@
     <string name="language_section_title">Ngôn ngữ ứng dụng</string>
     <string name="language_dialog_title">Chọn ngôn ngữ ứng dụng</string>
     <string name="language_system">Theo hệ thống</string>
-    <string name="language_english">English</string>
-    <string name="language_vietnamese">Tiếng Việt</string>
     <string name="action_back">Quay lại</string>
     <string name="action_cancel">Huỷ</string>
     <string name="demo_title">Demo</string>
@@ -62,11 +60,8 @@
     <string name="design_system_loading_button">Đang tải</string>
     <string name="design_system_success_button">Thành công</string>
     <string name="design_system_error_button">Lỗi</string>
-    <string name="design_system_result_loading">Đang tải…</string>
     <string name="design_system_result_success">Thành công!</string>
     <string name="design_system_error_sample">Đã có lỗi xảy ra. Vui lòng thử lại.</string>
-    <string name="error_dialog_retry">Thử lại</string>
-    <string name="error_dialog_close">Đóng</string>
     <string name="error_network">Không có kết nối mạng</string>
     <string name="error_parse">Lỗi xử lý dữ liệu</string>
     <string name="error_empty_body">Không nhận được phản hồi từ máy chủ</string>

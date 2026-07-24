@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.sample.demo.domain.usecase
 
-import com.example.androidxmlbase.core.architecture.UseCase
 import com.example.androidxmlbase.sample.demo.domain.repository.DemoRepository
+import com.thanhng224.androidxmlbase.core.architecture.UseCase
 import javax.inject.Inject
 
 class SaveDemoCountUseCase

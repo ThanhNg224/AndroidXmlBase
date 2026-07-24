@@ -6,16 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.architecture.result.ResultState
-import com.example.androidxmlbase.core.architecture.result.fold
-import com.example.androidxmlbase.core.ui.base.BaseFragment
-import com.example.androidxmlbase.core.ui.base.toRenderState
-import com.example.androidxmlbase.core.ui.components.CustomToast
-import com.example.androidxmlbase.core.ui.text.resolve
 import com.example.androidxmlbase.databinding.FragmentDesignSystemBinding
 import com.example.androidxmlbase.sample.designsystem.presentation.state.DesignSystemUiEvent
 import com.example.androidxmlbase.sample.designsystem.presentation.viewmodel.DesignSystemViewModel
+import com.thanhng224.androidxmlbase.core.architecture.result.ResultState
+import com.thanhng224.androidxmlbase.core.architecture.result.fold
+import com.thanhng224.androidxmlbase.core.ui.base.BaseFragment
+import com.thanhng224.androidxmlbase.core.ui.base.toRenderState
+import com.thanhng224.androidxmlbase.core.ui.components.CustomToast
+import com.thanhng224.androidxmlbase.core.ui.text.resolve
 import dagger.hilt.android.AndroidEntryPoint
+import com.thanhng224.androidxmlbase.core.R as CoreR
 
 @AndroidEntryPoint
 class DesignSystemFragment : BaseFragment<FragmentDesignSystemBinding>() {
@@ -55,7 +56,7 @@ class DesignSystemFragment : BaseFragment<FragmentDesignSystemBinding>() {
         binding.progressDemoResult.visibility = if (renderState.isLoadingVisible) View.VISIBLE else View.GONE
         binding.tvDemoResult.text =
             result.fold(
-                onLoading = { getString(R.string.design_system_result_loading) },
+                onLoading = { getString(CoreR.string.design_system_result_loading) },
                 onSuccess = { getString(R.string.design_system_result_success) },
                 onError = { message, _ -> message.resolve(requireContext()) },
             )

@@ -42,7 +42,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <com.example.androidxmlbase.core.ui.components.FrameButton
+    <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
         android:id="@+id/btnRefreshWeather"
         android:layout_width="0dp"
         android:layout_height="@dimen/_48sdp"
@@ -64,7 +64,7 @@
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
             android:textColor="@color/color_primary" />
 
-    </com.example.androidxmlbase.core.ui.components.FrameButton>
+    </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 
     <TextView
         android:id="@+id/tvCounterTitle"
@@ -89,7 +89,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvCounterTitle"
         tools:text="0" />
 
-    <com.example.androidxmlbase.core.ui.components.FrameButton
+    <com.thanhng224.androidxmlbase.core.ui.components.FrameButton
         android:id="@+id/btnIncrement"
         android:layout_width="0dp"
         android:layout_height="@dimen/_48sdp"
@@ -109,6 +109,6 @@
             android:textAppearance="@style/TextAppearance.AndroidXmlBase.BodyEmphasis"
             android:textColor="@color/color_on_primary" />
 
-    </com.example.androidxmlbase.core.ui.components.FrameButton>
+    </com.thanhng224.androidxmlbase.core.ui.components.FrameButton>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.feature.settings.presentation.state
 
-import com.example.androidxmlbase.core.architecture.UiEffect
-import com.example.androidxmlbase.core.localization.AppLanguage
+import com.thanhng224.androidxmlbase.core.architecture.UiEffect
+import com.thanhng224.androidxmlbase.core.localization.AppLanguage
 
 sealed interface SettingsUiEffect : UiEffect {
     data class ApplyLanguage(

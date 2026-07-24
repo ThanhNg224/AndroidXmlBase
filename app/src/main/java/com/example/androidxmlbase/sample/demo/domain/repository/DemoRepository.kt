@@ -1,7 +1,7 @@
 package com.example.androidxmlbase.sample.demo.domain.repository
 
-import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
+import com.thanhng224.androidxmlbase.core.architecture.result.DomainResult
 import kotlinx.coroutines.flow.Flow
 
 interface DemoRepository {

@@ -1,8 +1,6 @@
 package com.example.androidxmlbase.sample.demo.presentation.viewmodel
 
 import app.cash.turbine.test
-import com.example.androidxmlbase.core.architecture.result.AppError
-import com.example.androidxmlbase.core.architecture.result.DomainResult
 import com.example.androidxmlbase.sample.demo.domain.model.DemoWeather
 import com.example.androidxmlbase.sample.demo.domain.repository.DemoRepository
 import com.example.androidxmlbase.sample.demo.domain.usecase.FetchDemoWeatherUseCase
@@ -14,6 +12,8 @@ import com.example.androidxmlbase.sample.demo.presentation.state.DemoUiEvent
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherError
 import com.example.androidxmlbase.sample.demo.presentation.state.DemoWeatherState
 import com.example.androidxmlbase.testutil.MainDispatcherRule
+import com.thanhng224.androidxmlbase.core.architecture.result.AppError
+import com.thanhng224.androidxmlbase.core.architecture.result.DomainResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

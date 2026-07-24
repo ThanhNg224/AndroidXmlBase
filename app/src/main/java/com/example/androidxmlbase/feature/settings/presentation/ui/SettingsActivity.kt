@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
 import com.example.androidxmlbase.R
-import com.example.androidxmlbase.core.localization.AppLanguage
-import com.example.androidxmlbase.core.ui.base.BaseActivity
-import com.example.androidxmlbase.core.ui.base.TransitionActivity
-import com.example.androidxmlbase.core.ui.theme.AppTheme
 import com.example.androidxmlbase.databinding.ActivitySettingsBinding
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEffect
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiEvent
 import com.example.androidxmlbase.feature.settings.presentation.state.SettingsUiState
 import com.example.androidxmlbase.feature.settings.presentation.viewmodel.SettingsViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.thanhng224.androidxmlbase.core.localization.AppLanguage
+import com.thanhng224.androidxmlbase.core.ui.base.BaseActivity
+import com.thanhng224.androidxmlbase.core.ui.base.TransitionActivity
+import com.thanhng224.androidxmlbase.core.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

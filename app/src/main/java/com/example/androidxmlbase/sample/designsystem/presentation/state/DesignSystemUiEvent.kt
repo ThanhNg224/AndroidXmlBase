@@ -1,6 +1,6 @@
 package com.example.androidxmlbase.sample.designsystem.presentation.state
 
-import com.example.androidxmlbase.core.architecture.UiEvent
+import com.thanhng224.androidxmlbase.core.architecture.UiEvent
 
 sealed interface DesignSystemUiEvent : UiEvent {
     data object ShowLoadingClicked : DesignSystemUiEvent
